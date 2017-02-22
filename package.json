@@ -2,7 +2,7 @@
   "name": "microflex",
   "version": "0.0.1",
   "description": "MicroFlex - The World's First Microplate Library",
-  "main": "/src/modules/microflex.js",
+  "main": "microflex.js",
   "directories": {
     "doc": "doc"
   },

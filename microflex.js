@@ -29,9 +29,9 @@
  * @see <a href="mailto:hello@jessemull.com">hello@jessemull.com</a>
  */
 module.exports = {
-   IO: require('../modules/io'),
-   Microplate: require('../modules/microplate'),
-   Operations: require('../modules/operations'),
-   Statistics: require('../modules/statistics'),
-   Utilities: require('../modules/utilities')
+   IO: require('./src/modules/io'),
+   Microplate: require('./src/modules/microplate'),
+   Operations: require('./src/modules/operations'),
+   Statistics: require('./src/modules/statistics'),
+   Utilities: require('./src/modules/utilities')
 }
