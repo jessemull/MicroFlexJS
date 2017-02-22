@@ -35,5 +35,13 @@
     "analysis"
   ],
   "author": "“Jesse <“hello@jessemull.com”> (http://www.jessemull.com)",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jessemull/MicroFlex.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jessemull/MicroFlex/issues"
+  },
+  "homepage": "https://github.com/jessemull/MicroFlex#readme"
 }
