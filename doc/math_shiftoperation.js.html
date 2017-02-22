@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: math/shiftoperation.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: math/shiftoperation.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+"use strict";
+
+// shiftoperation.js
+
+/*---------------------------------- Exports ---------------------------------*/
+
+module.exports = ShiftOperation;
+
+/*------------------------------- Dependencies -------------------------------*/
+
+var Well = require('../plate/well');
+var WellSet = require('../plate/wellset');
+var Plate = require('../plate/plate');
+var Stack = require('../plate/stack');
+var Validation = require('../util/validation');
+var WellValidation = require('../util/wellvalidation');
+var WellSetValidation = require('../util/wellsetvalidation');
+
+/*-------------------------------- Constructor -------------------------------*/
+
+/**
+ * This class performs mathematical shift operations for stacks, plates, wells
+ * and well sets. To create a custom shift operation extend this class and
+ * override the calculate methods using the appropriate operation. Shift operations
+ * can also be performed on a subset of data by passing indices into the well
+ * data array as arguments.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;b>Well Operation Example:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> leftShift = &lt;span style="color: purple;">new&lt;/span> LeftShift();&lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> well = &lt;span style="color: purple;">new&lt;/span> Well('A1', [1,2,3,4]);&lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> bits = 2;&lt;br>
+ * &lt;pre style="margin: 0; display: inline;">leftShift.&lt;span style="color: Sienna;">well&lt;/span>(well, bits) => Well {
+ *                                  base: 26,
+ *                                  row: 0,
+ *                                  column: 1,
+ *                                  data: [ 4, 8, 12, 16 ]
+ *                               }&lt;/pre>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;b>Set Operation Example:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> leftShift = &lt;span style="color: purple;">new&lt;/span> LeftShift();&lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> WellSet(wells, "Example Set");&lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> bits = 2;&lt;br>
+ * &lt;pre style="margin: 0; display: inline;">leftShift.&lt;span style="color: Sienna;">set&lt;/span>(set, bits); => WellSet {
+ *                                 name: 'Result - Example Set',
+ *                                 wells: TypedHashSet {
+ *                                    values: {
+ *                                       A1: Well { base: 26, row: 0, column: 1, data: [ 4, 8, 12, 16 ] },
+ *                                       B2: Well { base: 26, row: 1, column: 2, data: [ 18, 20, 22, 24 ] }
+ *                                    },
+ *                                    type: 'Well'
+ *                                 }
+ *                              }&lt;/pre>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;b>Plate Operation Example:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> leftShift = &lt;span style="color: purple;">new&lt;/span> LeftShift();&lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> Plate(8, 12, set, "Example Plate");&lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> bits = 2;&lt;br>
+ * &lt;pre style="margin: 0; display: inline;">leftShift.&lt;span style="color: Sienna;">plate&lt;/span>(plate, bits); => WellSet {
+ *                                     name: 'Result - Example Plate',
+ *                                     wells: TypedHashSet {
+ *                                        values: {
+ *                                           A1: Well { base: 26, row: 0, column: 1, data: [ 4, 8, 12, 16 ] },
+ *                                           B2: Well { base: 26, row: 1, column: 2, data: [ 18, 20, 22, 24 ] }
+ *                                        },
+ *                                        type: 'Well'
+ *                                     }
+ *                                  }&lt;/pre>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;b>Stack Operation Example:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> leftShift = &lt;span style="color: purple;">new&lt;/span> LeftShift();&lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> stack = &lt;span style="color: purple;">new&lt;/span> Stack(plates, "Example Stack");&lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> bits = 2;&lt;br>
+ * &lt;pre style="margin: 0; display: inline;">leftShift.&lt;span style="color: Sienna;">stack&lt;/span>(stack, bits); => [ WellSet {
+ *                                       name: 'Result - Example Plate 1',
+ *                                       wells: TypedHashSet {
+ *                                          values: {
+ *                                             A1: Well { base: 26, row: 0, column: 1, data: [ 4, 8, 12, 16 ] },
+ *                                             B2: Well { base: 26, row: 1, column: 2, data: [ 18, 20, 22, 24 ] }
+ *                                          },
+ *                                          type: 'Well'
+ *                                       }
+ *                                    },
+ *                                    WellSet {
+ *                                       name: 'Result - Example Plate 2',
+ *                                       wells: TypedHashSet {
+ *                                          values: {
+ *                                             A1: Well { base: 26, row: 0, column: 1, data: [ 41, 82, 12, 16 ] },
+ *                                             B2: Well { base: 26, row: 1, column: 2, data: [ 44, 91, 42, 24 ] }
+ *                                          },
+ *                                          type: 'Well'
+ *                                       }
+ *                                    },
+ *                                  ]&lt;/pre>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;b>MicroFlex Operators:&lt;/b>
+ *
+ * &lt;table class="mytable" cellspacing="5px" border="0" style="text-align:left; margin: 20px;">
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Addition&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; AND&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *      &lt;td>&amp;raquo;&amp;nbsp; Compliment&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Decrement&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Division&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Increment&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Left Shift&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Modulus&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Multiplication&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; OR&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Right Shift Arithmetic&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Right Shift Logical&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Subtraction&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; XOR&lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * @constructor
+ * @memberof module:Operations
+ * @author Jesse L. Mull
+ * @version Updated February 17, 2016
+ * @license Apache License 2.0
+ * @see &lt;a href="http://www.jessemull.com" target="_blank">http://www.jessemull.com&lt;/a>&lt;br>
+ * @see &lt;a href="mailto:hello@jessemull.com">hello@jessemull.com&lt;/a>
+ */
+function ShiftOperation() {}
+
+/*------------------------------ Well Functions ------------------------------*/
+
+/**
+ * Performs the shift operation on a well. Missing data points due to uneven array
+ * lengths are treated as zeros. The operation can be restricted to a subset of
+ * data by passing a beginning and ending index into the well data array,
+ * @param {Well} well - the input well
+ * @param {number} n - the number of bits to shift
+ * @param {number} begin - the beginning index
+ * @param {number} end - the ending index
+ * @returns {Well} the result of the shift operation
+ */
+ShiftOperation.prototype.well = function(well, n, begin, end) {
+
+   switch(arguments.length) {
+
+      case 2: WellValidation.validateWell(well);
+
+              if(Validation.getType(n) != '[object Number]') {
+                 throw new TypeError("Number of bits to shift must be a number: " + n);
+              }
+
+              var result = this.calculate(well.getData(), n);
+              return new Well(well.toString(), result);
+
+      case 4: WellValidation.validateWell(well);
+
+              if(Validation.getType(n) != '[object Number]') {
+                 throw new TypeError("Number of bits to shift must be a number: " + n);
+              }
+
+              Validation.validatePositiveRange(begin, end);
+
+              var result = this.calculateRange(well.getData(), n, begin, end);
+              return new Well(well.toString(), result);
+
+      default: throw new TypeError("Invalid argument number: " + arguments.length);
+
+   }
+
+}
+
+/**
+ * Performs the shift operation on a well set. Missing data points due to uneven
+ * array lengths are treated as zeros. The operation can be restricted to a subset
+ * of data by passing a beginning and ending index into the well data array,
+ * @param {WellSet} set - the input set
+ * @param {number} n - the number of bits to shift
+ * @param {number} begin - the beginning index
+ * @param {number} end - the ending index
+ * @returns {WellSet} the result of the shift operation
+ */
+ShiftOperation.prototype.set = function(set, n, begin, end) {
+
+   switch(arguments.length) {
+
+      case 2: WellSetValidation.validateWellSet(set);
+
+              if(Validation.getType(n) != '[object Number]') {
+                 throw new TypeError("Number of bits to shift must be a number: " + n);
+              }
+
+              var result = new WellSet("Result - " + set.name);
+
+              for(var well of set) {
+                 result.add(this.well(well, n));
+              }
+
+              return result;
+
+      case 4: WellSetValidation.validateWellSet(set);
+              Validation.validatePositiveRange(begin, end);
+
+              if(Validation.getType(n) != '[object Number]') {
+                 throw new TypeError("Number of bits to shift must be a number: " + n);
+              }
+
+              var result = new WellSet("Result - " + set.name);
+
+              for(var well of set) {
+                 result.add(this.well(well, n, begin, end));
+              }
+
+              return result;
+
+      default: throw new TypeError("Invalid argument number: " + arguments.length);
+
+   }
+
+}
+
+/**
+ * Performs the shift operation on a plate. Missing data points due to uneven
+ * array lengths are treated as zeros. The operation can be restricted to a subset
+ * of data by passing a beginning and ending index into the well data array,
+ * @param {Plate} well - the input plate
+ * @param {number} n - the number of bits to shift
+ * @param {number} begin - the beginning index
+ * @param {number} end - the ending index
+ * @returns {Plate} the result of the shift operation
+ */
+ShiftOperation.prototype.plate = function(plate, n, begin, end) {
+
+   switch(arguments.length) {
+
+      case 2: WellSetValidation.validatePlate(plate);
+
+              if(Validation.getType(n) != '[object Number]') {
+                 throw new TypeError("Number of bits to shift must be a number: " + n);
+              }
+
+              var result = new WellSet("Result - " + plate.name);
+
+              for(var well of plate) {
+                 result.add(this.well(well, n));
+              }
+
+              return result;
+
+      case 4: WellSetValidation.validatePlate(plate);
+              Validation.validatePositiveRange(begin, end);
+
+              if(Validation.getType(n) != '[object Number]') {
+                 throw new TypeError("Number of bits to shift must be a number: " + n);
+              }
+
+              var result = new WellSet("Result - " + plate.name);
+
+              for(var well of plate) {
+                 result.add(this.well(well, n, begin, end));
+              }
+
+              return result;
+
+      default: throw new TypeError("Invalid argument number: " + arguments.length);
+
+   }
+
+}
+
+/**
+ * Performs the shift operation on a stack. Missing data points due to uneven
+ * array lengths are treated as zeros. The operation can be restricted to a subset
+ * of data by passing a beginning and ending index into the well data array,
+ * @param {Stack} stack - the input stack
+ * @param {number} n - the number of bits to shift
+ * @param {number} begin - the beginning index
+ * @param {number} end - the ending index
+ * @returns {Plate[]} the result of the shift operation
+ */
+ShiftOperation.prototype.stack = function(stack, n, begin, end) {
+
+   switch(arguments.length) {
+
+      case 2: WellSetValidation.validateStack(stack);
+
+              if(Validation.getType(n) != '[object Number]') {
+                 throw new TypeError("Number of bits to shift must be a number: " + n);
+              }
+
+              var result = [];
+
+              for(var plate of stack) {
+                 result.push(this.plate(plate, n));
+              }
+
+              return result;
+
+      case 4: WellSetValidation.validateStack(stack);
+              Validation.validatePositiveRange(begin, end);
+
+              if(Validation.getType(n) != '[object Number]') {
+                 throw new TypeError("Number of bits to shift must be a number: " + n);
+              }
+
+              var result = [];
+
+              for(var plate of stack) {
+                 result.push(this.plate(plate, n, begin, end));
+              }
+
+              return result;
+
+      default: throw new TypeError("Invalid argument number: " + arguments.length);
+
+   }
+
+}
+
+/**
+ * Performs the shift operation on a well. Missing data points due to uneven array
+ * lengths are omitted. The operation can be restricted to a subset of data by
+ * passing a beginning and ending index into the well data array,
+ * @param {Well} well - the input well
+ * @param {number} n - the number of bits to shift
+ * @param {number} begin - the beginning index
+ * @param {number} end - the ending index
+ * @returns {Well} the result of the shift operation
+ */
+ShiftOperation.prototype.wellStrict = function(well, n, begin, end) {
+
+   Validation.validateArguments(arguments.length, ShiftOperation.prototype.wellStrict.length, "ShiftOperation.prototype.wellStrict");
+
+   WellValidation.validateWell(well);
+   Validation.validatePositiveRange(begin, end);
+
+   if(Validation.getType(n) != '[object Number]') {
+      throw new TypeError("Number of bits to shift must be a number: " + n);
+   }
+
+   var array = well.getData().slice(begin, end);
+   var result = this.calculate(array, n);
+
+   return new Well(well.toString(), result);
+
+}
+
+/**
+ * Performs the shift operation on a well set. Missing data points due to uneven
+ * array lengths are omitted. The operation can be restricted to a subset of data
+ * by passing a beginning and ending index into the well data array,
+ * @param {WellSet} set - the input set
+ * @param {number} n - the number of bits to shift
+ * @param {number} begin - the beginning index
+ * @param {number} end - the ending index
+ * @returns {WellSet} the result of the shift operation
+ */
+ShiftOperation.prototype.setStrict = function(set, n, begin, end) {
+
+   Validation.validateArguments(arguments.length, ShiftOperation.prototype.setStrict.length, "ShiftOperation.prototype.setStrict");
+
+   WellSetValidation.validateWellSet(set);
+   Validation.validatePositiveRange(begin, end);
+
+   if(Validation.getType(n) != '[object Number]') {
+      throw new TypeError("Number of bits to shift must be a number: " + n);
+   }
+
+   var result = new WellSet("Result - " + set.name);
+
+   for(var well of set) {
+      result.add(this.wellStrict(well, n, begin, end));
+   }
+
+   return result;
+}
+
+/**
+ * Performs the shift operation on a plate. Missing data points due to uneven
+ * array lengths are omitted. The operation can be restricted to a subset
+ * of data by passing a beginning and ending index into the well data array,
+ * @param {Plate} well - the input plate
+ * @param {number} n - the number of bits to shift
+ * @param {number} begin - the beginning index
+ * @param {number} end - the ending index
+ * @returns {Plate} the result of the shift operation
+ */
+ShiftOperation.prototype.plateStrict = function(plate, n, begin, end) {
+
+   Validation.validateArguments(arguments.length, ShiftOperation.prototype.plateStrict.length, "ShiftOperation.prototype.plateStrict");
+
+   WellSetValidation.validatePlate(plate);
+   Validation.validatePositiveRange(begin, end);
+
+   if(Validation.getType(n) != '[object Number]') {
+      throw new TypeError("Number of bits to shift must be a number: " + n);
+   }
+
+   var result = new WellSet("Result - " + plate.name);
+
+   for(var well of plate) {
+      result.add(this.wellStrict(well, n, begin, end));
+   }
+
+   return result;
+}
+
+/**
+ * Performs the shift operation on a stack. Missing data points due to uneven
+ * array lengths are omitted. The operation can be restricted to a subset of data
+ * by passing a beginning and ending index into the well data array,
+ * @param {Stack} stack - the input stack
+ * @param {number} n - the number of bits to shift
+ * @param {number} begin - the beginning index
+ * @param {number} end - the ending index
+ * @returns {Plate[]} the result of the shift operation
+ */
+ShiftOperation.prototype.stackStrict = function(stack, n, begin, end) {
+
+   Validation.validateArguments(arguments.length, ShiftOperation.prototype.stackStrict.length, "ShiftOperation.prototype.stackStrict");
+
+   WellSetValidation.validateStack(stack);
+   Validation.validatePositiveRange(begin, end);
+
+   if(Validation.getType(n) != '[object Number]') {
+      throw new TypeError("Number of bits to shift must be a number: " + n);
+   }
+
+   var result = [];
+
+   for(var plate of stack) {
+      result.push(this.plateStrict(plate, n, begin, end));
+   }
+
+   return result;
+}
+
+/**
+ * Performs the shift operation on the array and returns the result.
+ * @param {number[]} array1 - the array
+ * @param {number} n - the number of bits to shift
+ * @returns {number[]} the result of the operation
+ */
+ShiftOperation.prototype.calculate = function(array, n) {}
+
+/**
+ * Performs the shift operation on the array using the values between the indices
+ * and returns the result.
+ * @param {number[]} array1 - the array
+ * @param {number} n - the number of bits to shift
+ * @param {number} begin - the beginning index
+ * @param {number} end - the ending index
+ * @returns {number[]} the result of the operation
+ */
+ShiftOperation.prototype.calculateRange = function(array, n, begin, end) {}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-MicroFlex.html">MicroFlex</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Feb 21 2017 21:32:03 GMT-0800 (PST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

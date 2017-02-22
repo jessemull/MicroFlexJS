@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: Well</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: Well</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="module-Microplate.html">Microplate</a>.</span>Well</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="Well"><span class="type-signature"></span>new Well<span class="signature">(var1, var2, var3)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    This class represents a well within a microplate. It contains the the logic to
+convert row letters to integers and vice-versa, enforces the correct format for
+well IDs, and holds an array of data set values.
+
+<br><br>
+
+Plate, well set, and well group objects cannot contain duplicate wells. However,
+the well object does not check for wells outside a specified range. This logic
+is housed within the well set, plate and stack objects. Wells are compared using
+row and column numbers in that order. This class implements a compareTo method
+for comparing two well objects and a sort method for sorting well objects
+contained within an array.
+
+<br><br>
+
+The well object constructor accepts arguments in the following formats:
+
+<table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+   <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Arguments<div></th>
+   <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Example<div></th>
+   <tr>
+      <td>
+         <table>
+            <tr>
+               <td><span style="color: purple;">Well Index</span></td>
+            </tr>
+         </table>
+      </td>
+      <td valign="top">
+         <table border="0">
+            <tr>
+               <td><span style="color: purple;">var</span> well = <span style="color: purple;">new</span> <span style="color: chocolate;">Well</span>(<span style="color: maroon;">'A1'</span>)</td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+   <tr>
+      <td>
+         <table>
+            <tr>
+               <td><span style="color: purple;">Well Index, Data Array</span></td>
+            </tr>
+         </table>
+      </td>
+      <td valign="top">
+         <table border="0">
+            <tr>
+               <td><span style="color: purple;">var</span> well = <span style="color: purple;">new</span> <span style="color: chocolate;">Well</span>(<span style="color: maroon;">'A1'</span>, <span style="color: maroon;">[1, 2, 3, 4]</span>)</td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+   <tr>
+      <td>
+         <table>
+            <tr>
+               <td><span style="color: purple;">Row Number, Column Number</span></td>
+            </tr>
+         </table>
+      </td>
+      <td valign="top">
+         <table border="0">
+            <tr>
+               <td><span style="color: purple;">var</span> well = <span style="color: purple;">new</span> <span style="color: chocolate;">Well</span>(<span style="color: maroon;">0</span>, <span style="color: maroon;">1</span>)</td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+   <tr>
+      <td>
+         <table>
+            <tr>
+               <td><span style="color: purple;">Row Number, Column Number, Data Array</span></td>
+            </tr>
+         </table>
+      </td>
+      <td valign="top">
+         <table border="0">
+            <tr>
+               <td><span style="color: purple;">var</span> well = <span style="color: purple;">new</span> <span style="color: chocolate;">Well</span>(<span style="color: maroon;">0</span>, <span style="color: maroon;">1</span>, <span style="color: maroon;">[1, 2, 3, 4]</span>)</td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>var1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+|
+
+<span class="param-type">Well</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">well index | row number | well to clone</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>var2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">column number | data array</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>var3</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">data array</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>Updated February 17, 2016</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Jesse L. Mull</li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Apache License 2.0</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line131">line 131</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="http://www.jessemull.com" target="_blank">http://www.jessemull.com</a><br></li>
+        
+            <li><a href="mailto:hello@jessemull.com">hello@jessemull.com</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(data)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Adds data to the data set. The preferential use of this function when adding
+data is recommended in order to avoid errors and maintain data integrity.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">Array.&lt;number></span>
+|
+
+<span class="param-type">Well</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">input data</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line281">line 281</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        on invalid input data
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">TypeError</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="clear"><span class="type-signature"></span>clear<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Clears the data set.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line430">line 430</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="compareTo"><span class="type-signature"></span>compareTo<span class="signature">(well)</span><span class="type-signature"> &rarr; {number}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Compares two wells.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>well</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Well</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the well for comparison</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line700">line 700</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        on invalid well input
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">TypeError</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    0 if wells are equal, -1 if the input well is greater, 1 if the input well is lesser
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="contains"><span class="type-signature"></span>contains<span class="signature">(data)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns true if the data set contains the input values.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">Array.&lt;number></span>
+|
+
+<span class="param-type">Well</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">input data</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line558">line 558</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    true if the data set contains the input values
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getData"><span class="type-signature"></span>getData<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;number>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns the data set array.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line672">line 672</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    data set
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;number></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="indexOf"><span class="type-signature"></span>indexOf<span class="signature">(number)</span><span class="type-signature"> &rarr; {number}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns the index of the input value;
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>number</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">input number</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line689">line 689</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the index or -1 if the number is not in the data set
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="isEmpty"><span class="type-signature"></span>isEmpty<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns true if the data set is empty.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line680">line 680</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    true if the data set is empty
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="remove"><span class="type-signature"></span>remove<span class="signature">(data)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Removes data from the data set. The preferential use of this function when
+removing data is recommended in order to avoid errors and maintain data integrity.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">Array.&lt;number></span>
+|
+
+<span class="param-type">Well</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">input data</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line344">line 344</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        on invalid input data
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">TypeError</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="removeRange"><span class="type-signature"></span>removeRange<span class="signature">(begin, length)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Removes the range of values.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>begin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">beginning index</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>length</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">length of subset</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line419">line 419</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        on invalid input data
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">TypeError</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="retain"><span class="type-signature"></span>retain<span class="signature">(data)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Retains data from the data set. The data array is traversed using the input
+in order to maintain the data set array order.  The preferential use of this
+function when retaining data is recommended in order to avoid errors and maintain
+data integrity.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">Array.&lt;number></span>
+|
+
+<span class="param-type">Well</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">input data</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line444">line 444</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        on invalid input data
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">TypeError</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="retainRange"><span class="type-signature"></span>retainRange<span class="signature">(begin, end)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Retains the range of values.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>begin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">beginning index</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ending index</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line543">line 543</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        on invalid input data
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">TypeError</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="rowString"><span class="type-signature"></span>rowString<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns the row index as a string.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line639">line 639</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    row string
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="size"><span class="type-signature"></span>size<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns the size of the data set.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line664">line 664</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    size of the data set
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="sort"><span class="type-signature"></span>sort<span class="signature">(well1, well2)</span><span class="type-signature"> &rarr; {number}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Sorts wells by well row and column.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>well1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Well</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the first well</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>well2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Well</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the second well</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line731">line 731</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        on invalid well input
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">TypeError</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    0 if wells are equal, -1 if well1 is greater than well2, 1 if well1 is less than well2
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="toString"><span class="type-signature"></span>toString<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns the well index as a string.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plate_well.js.html">plate/well.js</a>, <a href="plate_well.js.html#line656">line 656</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    well index string
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-MicroFlex.html">MicroFlex</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Feb 21 2017 21:32:03 GMT-0800 (PST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

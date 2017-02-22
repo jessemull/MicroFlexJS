@@ -1,0 +1,39 @@
+{
+  "name": "microflex",
+  "version": "0.0.1",
+  "description": "MicroFlex - The World's First Microplate Library",
+  "main": "/src/modules/microflex.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "keywords": [
+    "microplate",
+    "microflex",
+    "microtiter",
+    "lab",
+    "science",
+    "statistics",
+    "well",
+    "wellset",
+    "plate",
+    "stack",
+    "biology",
+    "biochemistry",
+    "pharmaceutical",
+    "wetlab",
+    "assay",
+    "experiment",
+    "data",
+    "dataset",
+    "biotechnology",
+    "chemistry",
+    "analyze",
+    "analytical",
+    "analysis"
+  ],
+  "author": "“Jesse <“hello@jessemull.com”> (http://www.jessemull.com)",
+  "license": "Apache-2.0"
+}

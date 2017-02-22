@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: stat/percentile.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: stat/percentile.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+"use strict";
+
+// percentile.js
+
+/*------------------------------- Dependencies -------------------------------*/
+
+var QuantileStatistic = require('./quantilestatistic');
+
+/*------------------------------- Constructor --------------------------------*/
+
+/**
+ * This class calculates and returns the p-th percentile for the data set. The
+ * percentile, p, must be a value between 1 and 100. The p-th percentile is a value
+ * such that at most (100 * p) percent of the measurements are less than this value
+ * and at most 100 * (1 - p) percent are greater.
+ *
+ * &lt;br>&lt;br>
+ *
+ * From wikipedia: a percentile (or a centile) is a measure used in statistics
+ * indicating the value below which a given percentage of observations in a group
+ * of observations fall. For example, the 20th percentile is the value (or score)
+ * below which 20% of the observations may be found. The term percentile and the
+ * related term percentile rank are often used in the reporting of scores from
+ * norm-referenced tests. For example, if a score is at the 86th percentile, where
+ * 86 is the percentile rank, it is equal to the value below which 86% of the
+ * observations may be found (carefully contrast with in the 86th percentile,
+ * which means the score is at or below the value of which 86% of the observations
+ * may be found - every score is in the 100th percentile). The 25th percentile is
+ * also known as the first quartile (Q1), the 50th percentile as the median or
+ * second quartile (Q2), and the 75th percentile as the third quartile (Q3).
+ * In general, percentiles and quartiles are specific types of quantiles.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;a href="https://en.wikipedia.org/wiki/Percentile" target="_blank">https://en.wikipedia.org/wiki/Percentile&lt;/a>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;b>Example:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> percentile = &lt;span style="color: purple;">new&lt;/span> Percentile();&lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];&lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> percentile = 25;&lt;br>
+ * percentile.&lt;span style="color: Sienna;">calculate&lt;/span>(array, percentile) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> 2.75;
+ *
+ * &lt;br>&lt;br>
+ *
+ * Statistical operations can be performed using standard or aggregated functions.
+ * Standard functions calculate the desired statistic for each well in the stack,
+ * plate or set. Aggregated functions aggregate the values from all wells in the
+ * stack, plate or set and perform the statistical operation on the aggregated
+ * values. Both standard and aggregated functions can be performed on a subset of
+ * data by passing indices into the well data set as arguments.
+ *
+ * &lt;br>&lt;br>
+ *
+ * The methods within the MicroFlex library are meant to be flexible and the
+ * descriptive statistic object supports operations using a single stack, plate,
+ * set or well as well as arrays of stacks, plates, sets or wells. In case of the
+ * latter a result for each stack, plate, set or well is returned.
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Operation&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 2px;">Beginning&lt;br>Index&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 2px;">Length of&lt;br>Subset&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input/Output&lt;/div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Standard&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>+/-&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>+/-&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Accepts a single well, set, plate or stack as input&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>Calculates the statistic for each well in a well, set, plate or stack&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Aggregated&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>+/-&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>+/-&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Accepts a single well/set/plate/stack or an array of wells/sets/plates/stacks as input&lt;/td>
+ *             &lt;/tr>
+ *              &lt;tr>
+ *                &lt;td>Aggregates the data from all the wells in a well/set/plate/stack and calculates the statistic using the aggregated data&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * &lt;b>Standard Operation Examples:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> well1 = &lt;span style="color: purple;">new&lt;/span> Well('A1', [1, 2, 3, 4, 5]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> well2 = &lt;span style="color: purple;">new&lt;/span> Well('B2', [6, 7, 8, 9, 10]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [well1, well2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">wells&lt;/span>(array) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { well: 'A1', result: 3 }, { well: 'B2', result: 8 } ]; &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> WellSet(wells, "Example Set"); &lt;br>
+ * Mean.&lt;span style="color: Sienna">sets&lt;/span>(set) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { set: 'Example Set', result: [ { well: 'A1', result: 3 }, { well: 'B2', result: 8 } ] } ]; &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> Plate(rows, columns, wells, "Example Plate"); &lt;br>
+ * Mean.&lt;span style="color: Sienna">plates&lt;/span>(plate) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate', result: [ { well: 'A1', result: 3 }, { well: 'B2', result: 8 } ] } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> stack = &lt;span style="color: purple;">new&lt;/span> Stack(rows, columns, plates, "Example Stack"); &lt;br>
+ * Mean.&lt;span style="color: Sienna">stacks&lt;/span>(stack) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate 1', result: [ { well: 'A1', result: 33 }, { well: 'B2', result: 18 } ] },&lt;br>
+ * &lt;span style="margin-left: 160px;">&lt;/span>{ plate: 'Example Plate 2', result: [ { well: 'C3', result: 29 }, { well: 'D4', result: 12 } ] } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;b>Aggregated Operation Examples:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> well1 = &lt;span style="color: purple;">new&lt;/span> Well('A1', [1, 2, 3, 4, 5]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> well2 = &lt;span style="color: purple;">new&lt;/span> Well('B2', [6, 7, 8, 9, 10]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [well1, well2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">wellsAggregated&lt;/span>(array) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> { wells: [ 'A1', 'B2' ], result: 5.5 } &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> set1 = &lt;span style="color: purple;">new&lt;/span> WellSet(wells1, "Example Set 1"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> set2 = &lt;span style="color: purple;">new&lt;/span> WellSet(wells2, "Example Set 2"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [set1, set2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">setsAggregated&lt;/span>(array) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { set: 'Example Set 1', result: 5.5 }, { set: 'Example Set 2', result: 15.5 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> plate1 = &lt;span style="color: purple;">new&lt;/span> Plate(8, 12, set1, "Example Plate 1"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> plate2 = &lt;span style="color: purple;">new&lt;/span> Plate(8, 12, set2, "Example Plate 2"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [plate1, plate2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">platesAggregated&lt;/span>(array) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate 1', result: 5.5 }, { plate: 'Example Plate 2', result: 15.5 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> stack = &lt;span style="color: purple;">new&lt;/span> Stack(rows, columns, plates, "Example Stack"); &lt;br>
+ * Mean.&lt;span style="color: Sienna">stacksAggregated&lt;/span>(stack) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { stack: 'Example Stack', result: 10.5 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;b>MicroFlex Statistical Operations:&lt;/b>
+ *
+ * &lt;table class="mytable" cellspacing="5px" border="0" style="text-align:left; margin: 20px;">
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Bins&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Central Moment&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *      &lt;td>&amp;raquo;&amp;nbsp; Chunk&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Coefficient of Variation&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Contra-harmonic Mean&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Cumulative Product&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Cumulative Sum&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Differences&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Equal Binning&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Geometric Mean&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Harmonic Mean&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Interquartile Range&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Kurtosis&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Maximum&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Mean&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Mean Deviation&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Median&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Median Deviation&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Minimum&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Mode&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; N&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Percentile&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Population Standard Deviation&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Population Variance&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Power Deviation&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Product&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Quantile&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Quartile Deviation&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Quartiles&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Quartile Skewness&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Random Sample&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Range&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Root Mean Square&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Sample Standard Deviation&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Sample Variance&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Shuffle&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Skewness&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Standard Error&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Sum&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>&amp;raquo;&amp;nbsp; Sum of Squares&lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * @constructor
+ * @memberof module:Statistics
+ * @author Jesse L. Mull
+ * @version Updated February 17, 2016
+ * @license Apache License 2.0
+ * @augments QuantileStatistic
+ * @see &lt;a href="http://www.jessemull.com" target="_blank">http://www.jessemull.com&lt;/a>&lt;br>
+ * @see &lt;a href="mailto:hello@jessemull.com">hello@jessemull.com&lt;/a>
+ */
+function Percentile() {
+   QuantileStatistic.call(this);
+}
+
+Percentile.prototype = new QuantileStatistic();
+Percentile.prototype.constructor = Percentile;
+
+/*---------------------------------- Exports ---------------------------------*/
+
+module.exports = new Percentile();
+
+/*---------------------------- Calculate Function ----------------------------*/
+
+/**
+ * Returns the data set percentile.
+ * @param {number[]} data - the data set
+ * @param {number} percentile - the percentile
+ * @returns {number} the result
+ */
+Percentile.prototype.calculate = function(data, percentile) {
+
+   if(percentile &lt; 0 || percentile > 100) {
+      return NaN;
+   }
+
+   var n = data.length;
+
+ 	if(n === 1) {
+ 		return data[0];
+ 	}
+
+   data.sort(function(a, b){return a-b});
+
+   var pos = (percentile * (n + 1)) / 100.0;
+
+   if(pos &lt; 1) {
+  	   return data[0];
+   }
+
+   if(pos >= n) {
+  	   return data[data.length - 1];
+   }
+
+   if(pos === Math.floor(pos) &amp;&amp; isFinite(pos)) {
+  	   return data[pos - 1];
+   }
+
+   var lowerIndex = Math.floor(pos) - 1;
+   var upperIndex = lowerIndex + 1;
+
+   var lower = data[lowerIndex];
+   var upper = data[upperIndex];
+   var d = pos - 1 - lowerIndex;
+
+   return (upper - lower) * d + lower;
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-MicroFlex.html">MicroFlex</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Feb 21 2017 21:32:03 GMT-0800 (PST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

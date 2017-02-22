@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: io/microxml.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: io/microxml.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+"use strict";
+
+// microjson.js
+
+/*---------------------------------- Exports ---------------------------------*/
+
+module.exports = new MicroXML();
+
+/*------------------------------- Dependencies -------------------------------*/
+
+var Well = require('../plate/well');
+var WellSet = require('../plate/wellset');
+var WellGroup = require('../plate/wellgroup');
+var Plate = require('../plate/plate');
+var Stack = require('../plate/stack');
+var Validation = require('../util/validation');
+var WellValidation = require('../util/wellvalidation');
+var WellSetValidation = require('../util/wellsetvalidation');
+var PlateValidation = require('../util/platevalidation');
+
+/*-------------------------------- Constructor -------------------------------*/
+
+/**
+ * This class formats stack, plate, well set and well objects into a condensed and
+ * easy to read XML format. Wells, well groups and plates are housed within typed
+ * hash set objects. This class converts the hash sets to simple objects which are
+ * easier to read and parse.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;b>Examples of XML Output:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Well&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Well Group&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Well Set&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Plate&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Stack&lt;/b>&lt;/div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td  style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">&amp;lt;WELL&amp;gt;
+ *    &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *    &amp;lt;ROW&amp;gt;0&amp;lt;/ROW&amp;gt;
+ *    &amp;lt;COLUMN&amp;gt;1&amp;lt;/COLUMN&amp;gt;
+ *    &amp;lt;DATA&amp;gt;
+ *       &amp;lt;VALUE&amp;gt;1&amp;lt;/VALUE&amp;gt;
+ *       &amp;lt;VALUE&amp;gt;2&amp;lt;/VALUE&amp;gt;
+ *       &amp;lt;VALUE&amp;gt;3&amp;lt;/VALUE&amp;gt;
+ *       &amp;lt;VALUE&amp;gt;4&amp;lt;/VALUE&amp;gt;
+ *    &amp;lt;/DATA&amp;gt;
+ * &amp;lt;/WELL&amp;gt;&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td  style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">&amp;lt;WELLGROUP&amp;gt;
+ *    &amp;lt;LABEL&amp;gt;Group&amp;lt;/LABEL&amp;gt;
+ *    &amp;lt;WELLS&amp;gt;
+ *       &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *       &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *       &amp;lt;INDEX&amp;gt;C5&amp;lt;/INDEX&amp;gt;
+ *       &amp;lt;INDEX&amp;gt;D9&amp;lt;/INDEX&amp;gt;
+ *    &amp;lt;/WELLS&amp;gt;
+ * &amp;lt;/WELLGROUP&amp;gt;&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td  style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">&amp;lt;WELLSET&amp;gt;
+ *    &amp;lt;LABEL&amp;gt;Example Set&amp;lt;/LABEL&amp;gt;
+ *    &amp;lt;WELLS&amp;gt;
+ *       &amp;lt;WELL&amp;gt;
+ *          &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *          &amp;lt;ROW&amp;gt;0&amp;lt;/ROW&amp;gt;
+ *          &amp;lt;COLUMN&amp;gt;1&amp;lt;/COLUMN&amp;gt;
+ *          &amp;lt;DATA&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;1&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;2&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;3&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;4&amp;lt;/VALUE&amp;gt;
+ *          &amp;lt;/DATA&amp;gt;
+ *       &amp;lt;/WELL&amp;gt;
+ *       &amp;lt;WELL&amp;gt;
+ *          &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *          &amp;lt;ROW&amp;gt;1&amp;lt;/ROW&amp;gt;
+ *          &amp;lt;COLUMN&amp;gt;2&amp;lt;/COLUMN&amp;gt;
+ *          &amp;lt;DATA&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;5&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;6&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;7&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;8&amp;lt;/VALUE&amp;gt;
+ *          &amp;lt;/DATA&amp;gt;
+ *       &amp;lt;/WELL&amp;gt;
+ *    &amp;lt;/WELLS&amp;gt;
+ * &amp;lt;/WELLSET&amp;gt;&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>
+ *                   &lt;pre style="margin: 0; display: inline;">&amp;lt;PLATE&amp;gt;
+ *    &amp;lt;LABEL&amp;gt;Example Plate&amp;lt;/LABEL&amp;gt;
+ *    &amp;lt;ROWS&amp;gt;8&amp;lt;/ROWS&amp;gt;
+ *    &amp;lt;COLUMNS&amp;gt;12&amp;lt;/COLUMNS&amp;gt;
+ *    &amp;lt;DESCRIPTOR&amp;gt;96-Well&amp;lt;/DESCRIPTOR&amp;gt;
+ *    &amp;lt;WELLGROUPS&amp;gt;
+ *       &amp;lt;WELLGROUP&amp;gt;
+ *          &amp;lt;LABEL&amp;gt;Group&amp;lt;/LABEL&amp;gt;
+ *          &amp;lt;WELLS&amp;gt;
+ *             &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *             &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *          &amp;lt;/WELLS&amp;gt;
+ *       &amp;lt;/WELLGROUP&amp;gt;
+ *    &amp;lt;/WELLGROUPS&amp;gt;
+ *    &amp;lt;WELLS&amp;gt;
+ *       &amp;lt;WELL&amp;gt;
+ *          &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *          &amp;lt;ROW&amp;gt;0&amp;lt;/ROW&amp;gt;
+ *          &amp;lt;COLUMN&amp;gt;1&amp;lt;/COLUMN&amp;gt;
+ *          &amp;lt;DATA&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;1&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;2&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;3&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;4&amp;lt;/VALUE&amp;gt;
+ *          &amp;lt;/DATA&amp;gt;
+ *       &amp;lt;/WELL&amp;gt;
+ *       &amp;lt;WELL&amp;gt;
+ *          &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *          &amp;lt;ROW&amp;gt;1&amp;lt;/ROW&amp;gt;
+ *          &amp;lt;COLUMN&amp;gt;2&amp;lt;/COLUMN&amp;gt;
+ *          &amp;lt;DATA&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;5&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;6&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;7&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;8&amp;lt;/VALUE&amp;gt;
+ *          &amp;lt;/DATA&amp;gt;
+ *       &amp;lt;/WELL&amp;gt;
+ *    &amp;lt;/WELLS&amp;gt;
+ * &amp;lt;/PLATE&amp;gt;&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">&amp;lt;STACK&amp;gt;
+ *    &amp;lt;LABEL&amp;gt;Test Stack&amp;lt;/LABEL&amp;gt;
+ *    &amp;lt;ROWS&amp;gt;8&amp;lt;/ROWS&amp;gt;
+ *    &amp;lt;COLUMNS&amp;gt;12&amp;lt;/COLUMNS&amp;gt;
+ *    &amp;lt;DESCRIPTOR&amp;gt;96-Well&amp;lt;/DESCRIPTOR&amp;gt;
+ *    &amp;lt;PLATES&amp;gt;
+ *       &amp;lt;PLATE&amp;gt;
+ *          &amp;lt;LABEL&amp;gt;Example Plate&amp;lt;/LABEL&amp;gt;
+ *          &amp;lt;ROWS&amp;gt;8&amp;lt;/ROWS&amp;gt;
+ *          &amp;lt;COLUMNS&amp;gt;12&amp;lt;/COLUMNS&amp;gt;
+ *          &amp;lt;DESCRIPTOR&amp;gt;96-Well&amp;lt;/DESCRIPTOR&amp;gt;
+ *          &amp;lt;WELLGROUPS&amp;gt;
+ *             &amp;lt;WELLGROUP&amp;gt;
+ *                &amp;lt;LABEL&amp;gt;Group&amp;lt;/LABEL&amp;gt;
+ *                &amp;lt;WELLS&amp;gt;
+ *                   &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *                   &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;/WELLS&amp;gt;
+ *             &amp;lt;/WELLGROUP&amp;gt;
+ *          &amp;lt;/WELLGROUPS&amp;gt;
+ *          &amp;lt;WELLS&amp;gt;
+ *             &amp;lt;WELL&amp;gt;
+ *                &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;ROW&amp;gt;0&amp;lt;/ROW&amp;gt;
+ *                &amp;lt;COLUMN&amp;gt;1&amp;lt;/COLUMN&amp;gt;
+ *                &amp;lt;DATA&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;1&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;2&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;3&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;4&amp;lt;/VALUE&amp;gt;
+ *                &amp;lt;/DATA&amp;gt;
+ *             &amp;lt;/WELL&amp;gt;
+ *             &amp;lt;WELL&amp;gt;
+ *                &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;ROW&amp;gt;1&amp;lt;/ROW&amp;gt;
+ *                &amp;lt;COLUMN&amp;gt;2&amp;lt;/COLUMN&amp;gt;
+ *                &amp;lt;DATA&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;5&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;6&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;7&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;8&amp;lt;/VALUE&amp;gt;
+ *                &amp;lt;/DATA&amp;gt;
+ *             &amp;lt;/WELL&amp;gt;
+ *          &amp;lt;/WELLS&amp;gt;
+ *       &amp;lt;/PLATE&amp;gt;
+ *       &amp;lt;PLATE&amp;gt;
+ *          &amp;lt;LABEL&amp;gt;Example Plate 2&amp;lt;/LABEL&amp;gt;
+ *          &amp;lt;ROWS&amp;gt;8&amp;lt;/ROWS&amp;gt;
+ *          &amp;lt;COLUMNS&amp;gt;12&amp;lt;/COLUMNS&amp;gt;
+ *          &amp;lt;DESCRIPTOR&amp;gt;96-Well&amp;lt;/DESCRIPTOR&amp;gt;
+ *          &amp;lt;WELLGROUPS&amp;gt;
+ *             &amp;lt;WELLGROUP&amp;gt;
+ *                &amp;lt;LABEL&amp;gt;Group&amp;lt;/LABEL&amp;gt;
+ *                &amp;lt;WELLS&amp;gt;
+ *                   &amp;lt;INDEX&amp;gt;C5&amp;lt;/INDEX&amp;gt;
+ *                   &amp;lt;INDEX&amp;gt;D9&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;/WELLS&amp;gt;
+ *             &amp;lt;/WELLGROUP&amp;gt;
+ *          &amp;lt;/WELLGROUPS&amp;gt;
+ *          &amp;lt;WELLS&amp;gt;
+ *             &amp;lt;WELL&amp;gt;
+ *                &amp;lt;INDEX&amp;gt;C5&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;ROW&amp;gt;2&amp;lt;/ROW&amp;gt;
+ *                &amp;lt;COLUMN&amp;gt;5&amp;lt;/COLUMN&amp;gt;
+ *                &amp;lt;DATA&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;9&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;10&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;11&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;12&amp;lt;/VALUE&amp;gt;
+ *                &amp;lt;/DATA&amp;gt;
+ *             &amp;lt;/WELL&amp;gt;
+ *             &amp;lt;WELL&amp;gt;
+ *                &amp;lt;INDEX&amp;gt;D9&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;ROW&amp;gt;3&amp;lt;/ROW&amp;gt;
+ *                &amp;lt;COLUMN&amp;gt;9&amp;lt;/COLUMN&amp;gt;
+ *                &amp;lt;DATA&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;13&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;14&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;15&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;16&amp;lt;/VALUE&amp;gt;
+ *                &amp;lt;/DATA&amp;gt;
+ *             &amp;lt;/WELL&amp;gt;
+ *          &amp;lt;/WELLS&amp;gt;
+ *       &amp;lt;/PLATE&amp;gt;
+ *    &amp;lt;/PLATES&amp;gt;
+ * &amp;lt;/STACK&amp;gt;&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ * @constructor
+ * @memberof module:IO
+ * @author Jesse L. Mull
+ * @version Updated February 17, 2016
+ * @license Apache License 2.0
+ * @see &lt;a href="http://www.jessemull.com" target="_blank">http://www.jessemull.com&lt;/a>&lt;br>
+ * @see &lt;a href="mailto:hello@jessemull.com">hello@jessemull.com&lt;/a>
+ */
+function MicroXML() {
+
+   this.labelRegex = /(&lt;LABEL>)(.*)(&lt;\/LABEL>)/i;
+   this.rowRegex = /(&lt;ROW>)(.*)(&lt;\/ROW>)/i;
+   this.rowsRegex = /(&lt;ROWS>)(.*)(&lt;\/ROWS>)/i;
+   this.columnRegex = /(&lt;COLUMN>)(.*)(&lt;\/COLUMN>)/i;
+   this.columnsRegex = /(&lt;COLUMNS>)(.*)(&lt;\/COLUMNS>)/i;
+   this.wellsRegex = /(&lt;WELLS>)([\s\S]*)(&lt;\/WELLS>)/i;
+   this.dataRegex = /(&lt;DATA>)([\s\S]*)(&lt;\/DATA>)/i;
+   this.valueRegex = /(&lt;VALUE>)(.*)(&lt;\/VALUE>)/i;
+   this.indexRegex = /(&lt;INDEX>)(.*)(&lt;\/INDEX>)/i;
+   this.groupsRegex = /(&lt;WELLGROUPS>)([\s\S]*)(&lt;\/WELLGROUPS>)/i;
+   this.platesRegex = /(&lt;PLATES>)([\s\S]*)(&lt;\/PLATES>)/i;
+   this.globalWellRegex = /&lt;WELL>([\s\S]*?)&lt;\/WELL>/gi;
+   this.globalValueRegex = /&lt;VALUE>.*&lt;\/VALUE>/gi;
+   this.globalIndexRegex = /&lt;INDEX>.*&lt;\/INDEX>/gi;
+   this.globalPlateRegex = /&lt;PLATE>([\s\S]*?)&lt;\/PLATE>/gi;
+   this.globalGroupsRegex = /&lt;WELLGROUP>([\s\S]*?)&lt;\/WELLGROUP>/gi;
+
+}
+
+/**
+ * Formats a well, well set, well group, plate or stack as an XML string.
+ * @param {(Well|WellSet|WellGroup|Plate|Stack)} input - the input object
+ * @returns {string} the XML formatted string
+ */
+ MicroXML.prototype.stringify = function(input) {
+
+    Validation.validateArgumentRange(arguments.length, 1, 3, "MicroXML.prototype.stringify");
+
+    switch(Validation.getType(input)) {
+
+      case '[object Well]': return this.stringifyWell(input, "");
+
+      case '[object WellSet]': return this.stringifyWellSet(input, "");
+
+      case '[object WellGroup]': return this.stringifyWellGroup(input, "");
+
+      case '[object Plate]': return this.stringifyPlate(input, "");
+
+      case '[object Stack]': return this.stringifyStack(input, "");
+
+      default: throw new TypeError("Invalid input type: " + input);
+   }
+
+}
+
+/**
+ * Formats a well as an XML string.
+ * @ignore
+ * @param {Well} well - the input well
+ * @returns {string} the XML formatted string
+ */
+MicroXML.prototype.stringifyWell = function(well, indent) {
+
+   WellValidation.validateWell(well);
+
+   var formatted = "";
+
+   formatted += indent + "&lt;WELL>" + "\n";
+   formatted += indent + "   &lt;INDEX>" + well.toString() + "&lt;/INDEX>" + "\n";
+   formatted += indent + "   &lt;ROW>" + well.row + "&lt;/ROW>" +  "\n";
+   formatted += indent + "   &lt;COLUMN>" + well.column + "&lt;/COLUMN>" +  "\n";
+   formatted += indent + "   &lt;DATA>" + "\n";
+
+   for(var value of well) {
+      formatted += indent + "      &lt;VALUE>" + value + "&lt;/VALUE>" +"\n";
+   }
+
+   formatted += indent + "   &lt;/DATA>" + "\n";
+   formatted += indent + "&lt;/WELL>" + "\n";
+
+   return formatted;
+}
+
+/**
+ * Formats a well set as an XML string.
+ * @ignore
+ * @param {WellSet} set - the input set
+ * @returns {string} the XML formatted string
+ */
+MicroXML.prototype.stringifyWellSet = function(set, indent) {
+
+   WellSetValidation.validateWellSet(set);
+
+   var formatted = "";
+
+   formatted += indent + "&lt;WELLSET>" + "\n";
+   formatted += indent + "   &lt;LABEL>" +set.name + "&lt;/LABEL>" + "\n";
+   formatted += indent + "   &lt;WELLS>" + "\n";
+
+   for(var well of set) {
+      formatted += indent + this.stringifyWell(well, indent + "      ");
+   }
+
+   formatted += indent + "   &lt;/WELLS>" + "\n";
+   formatted += indent + "&lt;/WELLSET>" + "\n";
+
+   return formatted;
+}
+
+/**
+ * Formats a well group as an XML string.
+ * @ignore
+ * @param {WellGroup} group - the input group
+ * @returns {string} the XML formatted string
+ */
+MicroXML.prototype.stringifyWellGroup = function(group, indent) {
+
+   WellSetValidation.validateGroup(group);
+
+   var formatted = "";
+
+   formatted += indent + "&lt;WELLGROUP>" + "\n";
+   formatted += indent + "   &lt;LABEL>" + group.groupName + "&lt;/LABEL>" + "\n";
+   formatted += indent + "   &lt;WELLS>" + "\n";
+
+   for(var index of group.toArray()) {
+      formatted += indent + "      &lt;INDEX>" + index + "&lt;/INDEX>" +"\n";
+   }
+
+   formatted += indent + "   &lt;/WELLS>" + "\n";
+   formatted += indent + "&lt;/WELLGROUP>" + "\n";
+
+   return formatted;
+}
+
+/**
+ * Formats a plate as an XML string.
+ * @ignore
+ * @param {Plate} plate - the input plate
+ * @returns {string} the XML formatted string
+ */
+MicroXML.prototype.stringifyPlate = function(plate, indent) {
+
+   WellSetValidation.validatePlate(plate);
+
+   var formatted = "";
+
+   formatted += indent + "&lt;PLATE>" + "\n";
+   formatted += indent + "   &lt;LABEL>" + plate.name + "&lt;/LABEL>" + "\n";
+   formatted += indent + "   &lt;ROWS>" + plate.rows + "&lt;/ROWS>" + "\n";
+   formatted += indent + "   &lt;COLUMNS>" + plate.columns + "&lt;/COLUMNS>" + "\n";
+   formatted += indent + "   &lt;DESCRIPTOR>" + this.descriptor(plate.plateType, plate.rows, plate.columns) + "&lt;/DESCRIPTOR>" + "\n";
+   formatted += indent + "   &lt;WELLGROUPS>" + "\n";
+
+   for(var group of plate.allGroupsToArray()) {
+      formatted += this.stringifyWellGroup(group, indent + "      ");
+   }
+
+   formatted += indent + "   &lt;/WELLGROUPS>" + "\n";
+   formatted += indent + "   &lt;WELLS>" + "\n";
+
+   for(var well of plate) {
+      formatted += this.stringifyWell(well, indent + "      ");
+   }
+
+   formatted += indent + "   &lt;/WELLS>" + "\n";
+   formatted += indent + "&lt;/PLATE>" + "\n";
+
+   return formatted;
+}
+
+/**
+ * Formats a stack as an XML string.
+ * @ignore
+ * @param {Stack} stack - the input stack
+ * @returns {string} the XML formatted string
+ */
+MicroXML.prototype.stringifyStack = function(stack, indent) {
+
+   WellSetValidation.validateStack(stack);
+
+   var formatted = "";
+
+   formatted += indent + "&lt;STACK>" + "\n";
+   formatted += indent + "   &lt;LABEL>" + stack.name + "&lt;/LABEL>" + "\n";
+   formatted += indent + "   &lt;ROWS>" + stack.rows + "&lt;/ROWS>" + "\n";
+   formatted += indent + "   &lt;COLUMNS>" + stack.columns + "&lt;/COLUMNS>" + "\n";
+   formatted += indent + "   &lt;DESCRIPTOR>" + this.descriptor(stack.plateType, stack.rows, stack.columns) + "&lt;/DESCRIPTOR>" + "\n";
+   formatted += indent + "   &lt;PLATES>" + "\n";
+
+   for(var plate of stack) {
+      formatted += indent + this.stringifyPlate(plate, indent + "      ");
+   }
+
+   formatted += indent + "   &lt;/PLATES>" + "\n";
+   formatted += indent + "&lt;/STACK>" + "\n";
+
+   return formatted;
+}
+
+/**
+ * Parses a well, well set, well group, plate or stack XML string.
+ * @param {string} input - the XML formatted string
+ * @returns {(Well|WellSet|WellGroup|Plate|Stack)} the parsed object
+ */
+ MicroXML.prototype.parse = function(input) {
+
+    Validation.validateArguments(arguments.length, MicroXML.prototype.parse.length, "MicroXML.prototype.parse");
+
+    if(Validation.getType(input) != '[object String]') {
+      throw new TypeError("Input must be a string: " + input);
+    }
+
+    var split = input.split("\n");
+
+    switch(split[0].trim()) {
+
+      case '&lt;WELL>':      return this.parseWell(input);
+
+      case '&lt;WELLSET>':   return this.parseWellSet(input);
+
+      case '&lt;WELLGROUP>': return this.parseWellGroup(input);
+
+      case '&lt;PLATE>':     return this.parsePlate(input);
+
+      case '&lt;STACK>':     return this.parseStack(input);
+
+      default: throw new TypeError("Invalid XML string: " + parsed.type);
+   }
+
+}
+
+/**
+ * Converts an XML parsed well into a well object.
+ * @ignore
+ * @param {Object} input - the XML parsed well
+ * @returns {Well} the well object
+ */
+MicroXML.prototype.parseWell = function(input) {
+
+   var row = Number.parseInt(this.extractTagValue(input, this.rowRegex));
+   var column = Number.parseInt(this.extractTagValue(input, this.columnRegex));
+   var data = this.extractTagValue(input, this.dataRegex);
+
+   var values = [];
+
+   var result;
+
+   while(result = this.globalValueRegex.exec(data)) {
+      var value = this.extractTagValue(result[0], this.valueRegex);
+      values.push(Number.parseFloat(value));
+   }
+
+   return new Well(row, column, values);
+}
+
+/**
+ * Converts an XML parsed well set into a well object.
+ * @ignore
+ * @param {Object} input - the XML parsed well set
+ * @returns {WellSet} the well set object
+ */
+MicroXML.prototype.parseWellSet = function(input) {
+
+   var label = this.extractTagValue(input, this.labelRegex);
+   var wells = this.extractTagValue(input, this.wellsRegex);
+
+   var set = new WellSet(label);
+
+   var result;
+
+   while(result = this.globalWellRegex.exec(wells)) {
+      var well = this.parseWell(result[0]);
+      set.add(well);
+   }
+
+   return set;
+}
+
+/**
+ * Converts an XML parsed well group into a well group object.
+ * @ignore
+ * @param {Object} input - the XML parsed well group
+ * @returns {WellGroup} the well group object
+ */
+MicroXML.prototype.parseWellGroup = function(input) {
+
+   var label = this.extractTagValue(input, this.labelRegex);
+   var wells = this.extractTagValue(input, this.wellsRegex);
+
+   var indices = [];
+
+   var result;
+
+   while(result = this.globalIndexRegex.exec(wells)) {
+      var index = this.extractTagValue(result[0], this.indexRegex);
+      indices.push(index);
+   }
+
+   return new WellGroup(indices, label);
+}
+
+/**
+ * Converts an XML parsed plate into a plate object.
+ * @ignore
+ * @param {Object} input - the XML parsed plate
+ * @returns {Plate} the plate object
+ */
+MicroXML.prototype.parsePlate = function(input) {
+
+   var label = this.extractTagValue(input, this.labelRegex);
+   var rows = Number.parseInt(this.extractTagValue(input, this.rowsRegex));
+   var columns = Number.parseInt(this.extractTagValue(input, this.columnsRegex));
+   var wells = this.extractTagValue(input, this.wellsRegex);
+   var groups = this.extractTagValue(input, this.groupsRegex);
+
+   var plate = new Plate(rows, columns, label);
+
+   var result;
+
+   while(result = this.globalGroupsRegex.exec(groups)) {
+      var group = this.parseWellGroup(result[0]);
+      plate.addGroups(group);
+   }
+
+   while(result = this.globalWellRegex.exec(wells)) {
+      var well = this.parseWell(result[0]);
+      plate.add(well);
+   }
+
+   return plate;
+}
+
+/**
+ * Converts an XML parsed stack into a stack object.
+ * @ignore
+ * @param {Object} input - the XML parsed stack
+ * @returns {Stack} the stack object
+ */
+MicroXML.prototype.parseStack = function(input) {
+
+   var label = this.extractTagValue(input, this.labelRegex);
+   var rows = Number.parseInt(this.extractTagValue(input, this.rowsRegex));
+   var columns = Number.parseInt(this.extractTagValue(input, this.columnsRegex));
+   var plates = this.extractTagValue(input, this.platesRegex);
+
+   var stack = new Stack(rows, columns, label);
+
+   var result;
+
+   while(result = this.globalPlateRegex.exec(plates)) {
+      var plate = this.parsePlate(result[0]);
+      stack.add(plate);
+   }
+
+   return stack;
+}
+
+/**
+ * Extracts an XML tag value if the regex matches the tag.
+ * @ignore
+ * @param {string} input - the input string containing the XML tag/value
+ * @param {Regex} regex - the regex object for matching the tag
+ * @returns {string} the extracted value
+ */
+MicroXML.prototype.extractTagValue = function(input, regex) {
+
+   var matches = input.match(regex);
+
+   if(matches.length != 4) {
+      throw new TypeError("Invalid XML string: " + input);
+   }
+
+   return matches[2];
+}
+
+/**
+ * Returns a descriptor of the plate type.
+ * @ignore
+ * @param {number} type - the plate type flag
+ * @returns {string} the plate type descriptor
+ */
+MicroXML.prototype.descriptor = function(type, rows, columns) {
+
+   switch(type) {
+
+      case PlateValidation.PLATE_6WELL:    return "6-Well";
+
+      case PlateValidation.PLATE_12WELL:   return "12-Well";
+
+      case PlateValidation.PLATE_24WELL:   return "24-Well";
+
+      case PlateValidation.PLATE_48WELL:   return "48-Well";
+
+      case PlateValidation.PLATE_96WELL:   return "96-Well";
+
+      case PlateValidation.PLATE_384WELL:  return "384-Well";
+
+      case PlateValidation.PLATE_1536WELL: return "1536-Well";
+
+      default:                             return "Custom Plate " + rows + "x" + columns;
+
+   }
+
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-MicroFlex.html">MicroFlex</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Feb 21 2017 21:32:03 GMT-0800 (PST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

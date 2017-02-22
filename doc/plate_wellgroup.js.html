@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: plate/wellgroup.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: plate/wellgroup.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+"use strict";
+
+/*------------------------------- Dependencies -------------------------------*/
+
+var Validation = require('../util/validation');
+var WellValidation = require('../util/wellvalidation');
+var WellSetValidation = require('../util/wellsetvalidation');
+var PlateValidation = require('../util/platevalidation');
+var TypedHashSet = require('../util/typedhashset');
+
+/*--------------------------------- Exports ----------------------------------*/
+
+module.exports = WellGroup;
+
+/*------------------------------- Constructor --------------------------------*/
+
+/**
+ * This class houses a list of well indices associated with a plate object. It
+ * represents a simplified version of the well set object. Unlike the well set
+ * object, the well group object does not store wells or well data, only a list
+ * of indices.
+ *
+ * &lt;br>&lt;br>
+ *
+ * Well groups provide a means to retrieve and analyze well subsets
+ * within a plate. A microplate experiment often contains control and experimental
+ * wells. These subsets can be housed within various well groups to facilitate
+ * statistical or mathematical operations.
+ *
+ * &lt;br>&lt;br>
+ *
+ * Well groups do not enforce row and column numbers. This logic is housed within
+ * the plate object. Wells are compared using the group name, number of wells,
+ * and greatest well index in that order. This class implements a compareTo method
+ * for comparing two well group objects and functions for sorting well indices
+ * and well groups.
+ *
+ * &lt;br>&lt;br>
+ *
+ * The well object constructor accepts arguments in the following formats:
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Arguments&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Example&lt;div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">No Arguments&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> group = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>()&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Label&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> group = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">"Example Group"&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Index Array&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> group = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">['A1, 'B2, 'C5']&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Index Array, Label&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> group = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">['A1, 'B2, 'C5']&lt;/span>, &lt;span style="color: maroon;">"Example Group"&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Well Array&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> array = [&lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'A1'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'B2'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'C5'&lt;/span>)]&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> group = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">array&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Well Array, Label&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> array = [&lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'A1'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'B2'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'C5'&lt;/span>)]&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> group = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">array&lt;/span>, &lt;span style="color: maroon;">"Example Group"&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">WellGroup&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> input = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">['A1, 'B2, 'C5']&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> group = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">input&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">WellGroup, Label&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> input = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">['A1, 'B2, 'C5']&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> group = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">input&lt;/span>, &lt;span style="color: maroon;">"Example Group"&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">WellSet&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> array = [&lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'A1'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'B2'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'C5'&lt;/span>)]&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> WellSet(&lt;span style="color: maroon;">array&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> group = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">set&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">WellSet, Label&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> array = [&lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'A1'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'B2'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'C5'&lt;/span>)]&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> WellSet(&lt;span style="color: maroon;">array&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> group = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellGroup&lt;/span>(&lt;span style="color: maroon;">set&lt;/span>, &lt;span style="color: maroon;">"Example Group"&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * @constructor
+ * @memberof module:Microplate
+ * @author Jesse L. Mull
+ * @version Updated February 17, 2016
+ * @license Apache License 2.0
+ * @see &lt;a href="http://www.jessemull.com" target="_blank">http://www.jessemull.com&lt;/a>&lt;br>
+ * @see &lt;a href="mailto:hello@jessemull.com">hello@jessemull.com&lt;/a>
+ * @param {(string[]|Well[]|WellSet|WellGroup|string)} [wells] - well indices | group label
+ * @param {string} [label] - group label
+ * @throws {TypeError} on invalid number of arguments
+ */
+function WellGroup(wells, label) {
+
+   this.groupName = "Group";
+   this.wells = new TypedHashSet("String");
+
+   if(arguments.length === 0) {
+      return;
+   }
+
+   if(arguments.length &lt; 1 || arguments.length > 2) {
+      this.typeError();
+   }
+
+   switch(Validation.getType(wells)) {
+
+      case '[object Array]':     this.addArray(wells);
+                                 break;
+
+      case '[object WellSet]':   this.addSet(wells);
+                                 this.groupName = wells.name;
+                                 break;
+
+      case '[object WellGroup]': this.addGroup(wells);
+                                 this.groupName = wells.groupName;
+                                 break;
+
+      case '[object String]':    this.groupName = wells;
+                                 break;
+
+      default: this.typeError();
+
+   }
+
+   if(arguments.length === 2) {
+      Validation.validateString(label);
+      this.groupName = label;
+   }
+
+}
+
+/**
+ * Throws an error when the well constructor receives invalid input parameters.
+ * @ignore
+ * @throws {TypeError} when function is called
+ */
+ WellGroup.prototype.typeError = function() {
+    throw new TypeError("Well group constructor accepts the following combinations of arguments: " + "\n" +
+                        "  -> Well[] - initial indices" + "\n" +
+                        "  -> String[] - initial indices" + "\n" +
+                        "  -> WellSet - initial indices" + "\n" +
+                        "  -> WellGroup - initial indices" + "\n" +
+                        "  -> Well[] - initial indices, String - label" + "\n" +
+                        "  -> String[] - initial indices, String - label" + "\n" +
+                        "  -> WellSet - initial indices, String - label" + "\n" +
+                        "  -> WellGroup - initial indices, String - label" + "\n");
+}
+
+/**
+ * Adds a well to the group.
+ * @param {(Well|string)} well - input well | index
+ * @throws {TypeError} on invalid well input
+ */
+WellGroup.prototype.add = function(well) {
+
+   Validation.validateArguments(arguments.length, WellGroup.prototype.add.length, "WellGroup.protoype.add");
+
+   switch(Validation.getType(well)) {
+
+      case '[object Well]':   WellValidation.validateWellIndex(well.toString());
+                              this.wells.add(well.toString());
+                              break;
+
+      case '[object String]': WellValidation.validateWellIndex(well);
+                              this.wells.add(well);
+                              break;
+
+      default: throw new TypeError("Input must be a string or well object: " + well);
+
+   }
+
+}
+
+/**
+ * Adds an array of wells or well indices to the group.
+ * @param {(Well[]|string[])} wells - input wells | well indices
+ * @throws {TypeError} on invalid well/index input
+ */
+WellGroup.prototype.addArray = function(wells) {
+
+   Validation.validateArguments(arguments.length, WellGroup.prototype.addArray.length, "WellGroup.protoype.addArray");
+   WellSetValidation.validateWellOrIndexArray(wells);
+
+   for(var well of wells) {
+      this.add(well);
+   }
+
+}
+
+/**
+ * Adds a well set to the group.
+ * @param {WellSet} set - input well set
+ * @throws {TypeError} on invalid well set input
+ */
+WellGroup.prototype.addSet = function(set) {
+
+   Validation.validateArguments(arguments.length, WellGroup.prototype.addSet.length, "WellGroup.protoype.addSet");
+   WellSetValidation.validateWellSet(set);
+
+   for(var well of set) {
+      this.add(well);
+   }
+
+}
+
+/**
+ * Adds another well group to the group.
+ * @param {WellGroup} group - input well group
+ * @throws {TypeError} on invalid well group input
+ */
+WellGroup.prototype.addGroup = function(group) {
+
+   Validation.validateArguments(arguments.length, WellGroup.prototype.addGroup.length, "WellGroup.protoype.addGroup");
+   WellSetValidation.validateGroup(group);
+
+   if(Validation.getType(group) != '[object WellGroup]') {
+      throw new TypeError("Input must be a well group: " + group);
+   }
+
+   this.addArray(group.toArray());
+
+}
+
+/**
+ * Removes a well from the group.
+ * @param {(Well|string)} well - well or well index
+ * @throws {TypeError} on invalid well or well index input
+ */
+WellGroup.prototype.remove = function(well) {
+
+   Validation.validateArguments(arguments.length, WellGroup.prototype.remove.length, "WellGroup.protoype.remove");
+
+   switch(Validation.getType(well)) {
+
+      case '[object Well]':   WellValidation.validateWellIndex(well.toString());
+                              this.wells.remove(well.toString());
+                              break;
+
+      case '[object String]': WellValidation.validateWellIndex(well);
+                              this.wells.remove(well);
+                              break;
+
+      default: throw new TypeError("Input must be a string or well object: " + well);
+
+   }
+
+}
+
+/**
+ * Removes an array from the group.
+ * @param {(Well[]|string[])} wells - input wells | input indices
+ * @throws {TypeError} on invalid well/index input
+ */
+WellGroup.prototype.removeArray = function(wells) {
+
+   Validation.validateArguments(arguments.length, WellGroup.prototype.removeArray.length, "WellGroup.protoype.removeArray");
+   WellSetValidation.validateWellOrIndexArray(wells);
+
+   if(Validation.getType(wells) != '[object Array]') {
+      throw new TypeError("Input must be an array: " + wells);
+   }
+
+   for(var well of wells) {
+      this.remove(well);
+   }
+
+}
+
+/**
+ * Removes a well set from the group.
+ * @param {WellSet} set - well or well index
+ * @throws {TypeError} on invalid well set input
+ */
+WellGroup.prototype.removeSet = function(set) {
+
+   Validation.validateArguments(arguments.length, WellGroup.prototype.removeSet.length, "WellGroup.protoype.removeSet");
+   WellSetValidation.validateWellSet(set);
+
+   if(Validation.getType(set) != '[object WellSet]') {
+      throw new TypeError("Input must be a well set: " + set);
+   }
+
+   for(var well of set) {
+      this.remove(well);
+   }
+
+}
+
+/**
+ * Removes another well group from this group.
+ * @param {WellGroup} group - input well group
+ * @throws {TypeError} on invalid well group input
+ */
+WellGroup.prototype.removeGroup = function(group) {
+
+   Validation.validateArguments(arguments.length, WellGroup.prototype.addGroup.length, "WellGroup.protoype.addGroup");
+   WellSetValidation.validateGroup(group);
+
+   if(Validation.getType(group) != '[object WellGroup]') {
+      throw new TypeError("Input must be a well group: " + group);
+   }
+
+   this.removeArray(group.toArray());
+
+}
+
+/**
+ * Clears the well group.
+ */
+WellGroup.prototype.clear = function() {
+   this.wells.clear();
+}
+
+/**
+ * Returns the group label.
+ * @returns {string} group label
+ */
+WellGroup.prototype.label = function() {
+   return this.groupName;
+}
+
+/**
+ * Returns the size of the well group.
+ * @returns {number} size of the well group
+ */
+WellGroup.prototype.size = function() {
+   return this.wells.size();
+}
+
+/**
+ * Returns an array holding the well group indices.
+ * @returns {string[]} array of well indices
+ */
+WellGroup.prototype.toArray = function() {
+   var array = this.wells.toArray();
+   return array.sort(this.sortIndices);
+}
+
+/**
+ * Compares two well groups using the group name, number of wells and greatest
+ * well index in that order.
+ * @param {WellGroup} group - well group for comparison
+ * @return {number} 0 if groups are equal, -1 if the input group is greater, 1 if the input group is lesser
+ * @throws {TypeError} on invalid well group input
+ */
+WellGroup.prototype.compareTo = function(group) {
+
+   WellSetValidation.validateGroup(group);
+
+   if(group.groupName > this.groupName) {
+      return -1;
+   }
+
+   if(group.groupName &lt; this.groupName) {
+      return 1;
+   }
+
+   if(group.wells.size() > this.wells.size()) {
+      return -1;
+   }
+
+   if(group.wells.size() &lt; this. wells.size()) {
+      return 1;
+   }
+
+   var inputArray = group.toArray();
+   var thisArray = this.toArray();
+
+   if(inputArray.length > thisArray.length) {
+      return -1;
+   }
+
+   if(inputArray.length &lt; this.Array.length) {
+      return 1;
+   }
+
+   for(var i = 0; i &lt; thisArray.length; i++) {
+
+      var sort = this.sortIndices(inputArray[i], thisArray[i]);
+
+      if(sort === 1) {
+         return -1;
+      }
+
+      if(sort === -1) {
+         return 1;
+      }
+
+   }
+
+   return 0;
+}
+
+/**
+ * Sorts well groups using the group name, number of wells and greatest well
+ * index in that order.
+ * @param {WellGroup} group1 - first group
+ * @param {WellGroup} group2 - second group
+ * @return {number} 0 if groups are equal, -1 if group1 is greater than group2, 1 if group1 is less than group2
+ * @throws {TypeError} on invalid well group input
+ */
+WellGroup.prototype.sort = function(group1, group2) {
+
+   Validation.validateArguments(arguments.length, WellGroup.prototype.sort.length, "WellGroup.protoype.sort");
+   WellSetValidation.validateGroup(group1);
+   WellSetValidation.validateGroup(group2);
+
+   return group1.compareTo(group2);
+}
+
+/**
+ * Sorts well indices.
+ * @param {string} index1 - first well
+ * @param {string} index2 - second well
+ * @return {Number} 0 if indices are equal, -1 if the index1 is greater than index2, 1 if index1 is less than index2
+ * @throws {TypeError} on invalid well index input
+ */
+WellGroup.prototype.sortIndices = function(index1, index2) {
+
+   Validation.validateArguments(arguments.length, WellGroup.prototype.sortIndices.length, "WellGroup.protoype.sortIndices");
+   var parsed1 = WellValidation.validateWellIndex(index1);
+   var parsed2 = WellValidation.validateWellIndex(index2);
+
+   if(parsed2.row > parsed1.row) {
+      return -1;
+   }
+
+   if(parsed2.row &lt; parsed1.row) {
+      return 1;
+   }
+
+   if(parsed2.column > parsed1.column) {
+      return -1;
+   }
+
+   if(parsed2.column &lt; parsed1.column) {
+      return 1;
+   }
+
+   return 0;
+
+}
+
+/**
+ * Returns a JSON string for the group. This allows a unique value to be passed
+ * to a typed hashset preventing duplicate groups in a plate.
+ * @returns {string} well group JSON string
+ */
+WellGroup.prototype.toString = function() {
+   return JSON.stringify(this);
+}
+
+WellGroup.prototype[Symbol.iterator] = function() {
+   return this.wells[Symbol.iterator]();
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-MicroFlex.html">MicroFlex</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Feb 21 2017 21:32:03 GMT-0800 (PST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

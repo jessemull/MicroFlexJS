@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: plate/plate.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: plate/plate.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+"use strict";
+
+/*---------------------------------- Exports ---------------------------------*/
+
+module.exports = Plate;
+
+/*------------------------------- Dependencies -------------------------------*/
+
+var Well = require('./well');
+var WellSet = require('./wellset');
+var WellGroup = require('./wellgroup');
+var Validation = require('../util/validation');
+var WellSetValidation = require('../util/wellsetvalidation');
+var PlateValidation = require('../util/platevalidation');
+var TypedHashSet = require('../util/typedhashset');
+
+/*------------------------------- Local fields -------------------------------*/
+
+/* Flags for standard plate types */
+
+Plate.prototype.PLATE_6WELL = 0;
+Plate.prototype.PLATE_12WELL = 1;
+Plate.prototype.PLATE_24WELL = 2;
+Plate.prototype.PLATE_48WELL = 3;
+Plate.prototype.PLATE_96WELL = 4;
+Plate.prototype.PLATE_384WELL = 5;
+Plate.prototype.PLATE_1536WELL = 6;
+
+/* Flags for standard row numbers */
+
+Plate.prototype.ROWS_6WELL = 2;
+Plate.prototype.ROWS_12WELL = 3;
+Plate.prototype.ROWS_24WELL = 4;
+Plate.prototype.ROWS_48WELL = 6;
+Plate.prototype.ROWS_96WELL = 8;
+Plate.prototype.ROWS_384WELL = 16;
+Plate.prototype.ROWS_1536WELL = 32;
+
+/* Flags for standard column numbers */
+
+Plate.prototype.COLUMNS_6WELL = 3;
+Plate.prototype.COLUMNS_12WELL = 4;
+Plate.prototype.COLUMNS_24WELL = 6;
+Plate.prototype.COLUMNS_48WELL = 8;
+Plate.prototype.COLUMNS_96WELL = 12;
+Plate.prototype.COLUMNS_384WELL = 24;
+Plate.prototype.COLUMNS_1536WELL = 48;
+
+/*-------------------------------- Constructor -------------------------------*/
+
+/**
+ * This class represents a microplate used by chemists, biologists, physicists
+ * and many other natural science researchers. A microplate consists of a
+ * rectangular grid of wells. Rows are assigned a letter starting with A and
+ * working towards Z. Rows outside this range are identified by adding an
+ * additional letter to the row index (A -> ... -> Z -> AA -> AB). Columns
+ * are assigned integer values starting at zero working towards infinity.
+ * The row and column indices uniquely identify a single well (A1, A2 etc). A
+ * plate cannot contain duplicate wells or wells with invalid row or column
+ * indices.
+ *
+ * &lt;br>&lt;br>
+ *
+ * Example of a typical microplate layout:
+ *
+ * &lt;table cellpadding="10px" border="1px" style="margin: 50px; text-align: center">
+ *    &lt;tr>
+ *       &lt;td>&lt;/td>
+ *       &lt;td>1&lt;/td>
+ *       &lt;td>2&lt;/td>
+ *       &lt;td>3&lt;/td>
+ *       &lt;td>4&lt;/td>
+ *       &lt;td>5&lt;/td>
+ *       &lt;td>6&lt;/td>
+ *       &lt;td>7&lt;/td>
+ *       &lt;td>8&lt;/td>
+ *       &lt;td>9&lt;/td>
+ *       &lt;td>10&lt;/td>
+ *       &lt;td>11&lt;/td>
+ *       &lt;td>12&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>A&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>B&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>C&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>D&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>E&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>F&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>G&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>H&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * The plate constructor accepts a flag for plates with standard dimensions:
+ *
+ * &lt;table cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Plate Type&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Flag&lt;/div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td>6-Well&lt;/td>
+ *       &lt;td>PLATE_6WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>12-Well&lt;/td>
+ *       &lt;td>PLATE_12WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>24-Well&lt;/td>
+ *       &lt;td>PLATE_24WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>48-Well&lt;/td>
+ *       &lt;td>PLATE_48WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>96-Well&lt;/td>
+ *       &lt;td>PLATE_96WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>384-Well&lt;/td>
+ *       &lt;td>PLATE_384WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>1536-Well&lt;/td>
+ *       &lt;td>PLATE_1536WELL&lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * Row and column numbers for plates with custom dimensions can be passed to the
+ * plate constructor.
+ *
+ * The plate data is implemented as a set of wells and a set of subgroups.
+ * Wells house the well ID and a list of values. Well subsets are used to
+ * aggregate data for different experimental conditions or replicates.
+ *
+ * Descriptive statistics and mathematical operations between plate stacks,
+ * plates, well sets and wells are performed using static methods housed within
+ * the statistics and math packages respectively. Custom mathematical or statistical
+ * calculations can be added by extending the Operation and DescriptiveStatistics
+ * classes and overriding the calculate methods.
+ *
+ * &lt;br>&lt;br>
+ *
+ * The plate class also implements a compareTo function for comparing plates and
+ * a sort function for sorting plates within an array. Plates are ordered by label,
+ * row number, column number, well number, greatest well and group number in that
+ * order.
+ *
+ * &lt;br>&lt;br>
+ *
+ * The well set object constructor accepts arguments in the following formats:
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Arguments&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Example&lt;div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Plate&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Plate&lt;/span>(&lt;span style="color: maroon;">Plate.PLATE_96WELL&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Plate&lt;/span>(&lt;span style="color: maroon;">plate&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Plate Type&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Plate&lt;/span>(&lt;span style="color: maroon;">Plate.PLATE_96WELL&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Plate Type, Label&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Plate&lt;/span>(&lt;span style="color: maroon;">Plate.PLATE_96WELL&lt;/span>, &lt;span style="color: maroon;">"Example Plate"&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Plate Type, WellSet&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> array = [&lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'A1'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'B2'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'C5'&lt;/span>)]&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellSet&lt;/span>(&lt;span style="color: maroon;">array&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Plate&lt;/span>(&lt;span style="color: maroon;">Plate.PLATE_96WELL&lt;/span>, &lt;span style="color: maroon;">set&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Plate Type, WellSet, Label&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> array = [&lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'A1'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'B2'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'C5'&lt;/span>)]&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellSet&lt;/span>(&lt;span style="color: maroon;">array&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Plate&lt;/span>(&lt;span style="color: maroon;">Plate.PLATE_96WELL&lt;/span>, &lt;span style="color: maroon;">set&lt;/span>, &lt;span style="color: maroon;">"Example Plate"&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Row Number, Column Number&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Plate&lt;/span>(&lt;span style="color: maroon;">8&lt;/span>, &lt;span style="color: maroon;">12&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Row Number, Column Number, Label&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Plate&lt;/span>(&lt;span style="color: maroon;">8&lt;/span>, &lt;span style="color: maroon;">12&lt;/span>, &lt;span style="color: maroon;">"Example Plate"&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Row Number, Column Number, WellSet&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> array = [&lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'A1'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'B2'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'C5'&lt;/span>)]&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellSet&lt;/span>(&lt;span style="color: maroon;">array&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Plate&lt;/span>(&lt;span style="color: maroon;">8&lt;/span>, &lt;span style="color: maroon;">12&lt;/span>, &lt;span style="color: maroon;">set&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">Row Number, Column Number, WellSet, Label&lt;/span>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> array = [&lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'A1'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'B2'&lt;/span>), &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Well&lt;/span>(&lt;span style="color: maroon;">'C5'&lt;/span>)]&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">WellSet&lt;/span>(&lt;span style="color: maroon;">array&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>&lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> &lt;span style="color: chocolate;">Plate&lt;/span>(&lt;span style="color: maroon;">8&lt;/span>, &lt;span style="color: maroon;">12&lt;/span>, &lt;span style="color: maroon;">set&lt;/span>, &lt;span style="color: maroon;">"Example Plate"&lt;/span>)&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>&lt;td>&amp;nbsp;&lt;/td>&lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * @constructor
+ * @memberof module:Microplate
+ * @author Jesse L. Mull
+ * @version Updated February 17, 2016
+ * @license Apache License 2.0
+ * @see &lt;a href="http://www.jessemull.com" target="_blank">http://www.jessemull.com&lt;/a>&lt;br>
+ * @see &lt;a href="mailto:hello@jessemull.com">hello@jessemull.com&lt;/a>
+ * @augments WellSet
+ * @param {(number|Plate|number)} var1 - plate type flag | input plate | plate row number
+ * @param {(number|WellSet|string)} var2 - plate column number| initial well set | plate label
+ * @param {(WellSet|string)} [var3] - initial well set | plate label
+ * @param {string} [var4] - plate label
+ */
+function Plate(var1, var2, var3, var4) {
+
+   this.plateType = -1;                            // The plate type flag
+   this.rows = null;                               // The number of plate rows
+   this.columns = null;                            // The number of plate columns
+   this.groups = new TypedHashSet("WellGroup");    // The plate well groups
+
+   switch(arguments.length) {
+
+      case 1: this.initializeOneArgument(var1);
+              break;
+
+      case 2: this.initializeTwoArguments(var1, var2);
+              break;
+
+      case 3: this.initializeThreeArguments(var1, var2, var3);
+              break;
+
+      case 4: this.initializeFourArguments(var1, var2, var3, var4);
+              break;
+
+      default: this.typeError();
+   }
+}
+
+Plate.prototype = new WellSet();
+Plate.prototype.constructor = Plate;
+
+/*----------------------- Constructor Helper Functions -----------------------*/
+
+/**
+ * Initializes a plate using one argument.
+ * @ignore
+ * @param {number|number|Plate} var1 - plate type | row number | input plate
+ * @throws {TypeError} on invalid plate input
+ */
+Plate.prototype.initializeOneArgument = function(var1) {
+
+   if(Validation.getType(var1) === '[object Number]') {
+
+      var parsed = PlateValidation.validatePlateType(var1);
+
+      this.rows = parsed.rows;
+      this.columns = parsed.columns;
+      this.plateType = var1;
+
+      WellSet.call(this, "Plate");
+
+      return;
+   }
+
+   if(Validation.getType(var1) === '[object Plate]') {
+
+      WellSetValidation.validatePlate(var1);
+
+      this.rows = var1.rows;
+      this.columns = var1.columns;
+      this.plateType = var1.plateType;
+      this.groups.addAll(var1.groups.toArray());
+
+      WellSet.call(this, var1.wells.toArray(), var1.name);
+
+      return;
+   }
+
+   this.typeError();
+
+}
+
+/**
+ * Initializes a plate using two arguments.
+ * @ignore
+ * @param {(number|number)} var1 - plate type | row number
+ * @param {(number|WellSet|string)} var2 - column number | initial well set | plate label
+ * @throws {TypeError} on invalid plate input
+ */
+Plate.prototype.initializeTwoArguments = function(var1, var2) {
+
+   if(Validation.getType(var1) === '[object Number]' &amp;&amp; Validation.getType(var2) === '[object String]') {
+
+      var parsed = PlateValidation.validatePlateType(var1);
+      Validation.validateString(var2);
+
+      this.rows = parsed.rows;
+      this.columns = parsed.columns;
+      this.plateType = var1;
+
+      WellSet.call(this, var2);
+
+      return;
+   }
+
+   if(Validation.getType(var1) === '[object Number]' &amp;&amp; Validation.getType(var2) === '[object WellSet]') {
+
+      var parsed = PlateValidation.validatePlateType(var1);
+
+      this.rows = parsed.rows;
+      this.columns = parsed.columns;
+      this.plateType = var1;
+
+      WellSet.call(this, var2);
+
+      return;
+   }
+
+   if(Validation.getType(var1) === '[object Number]' &amp;&amp; Validation.getType(var2) === '[object Number]') {
+
+      Validation.validatePositiveNumber(var1);
+      Validation.validatePositiveNumber(var2);
+
+      this.plateType = PlateValidation.plateType(var1, var2);
+      this.rows = var1;
+      this.columns = var2;
+
+      WellSet.call(this, "Plate");
+
+      return;
+   }
+
+   this.typeError();
+}
+
+/**
+ * Initializes a plate using three arguments.
+ * @ignore
+ * @param {(number|number)} var1 - plate type | row number
+ * @param {(number|WellSet|string)} var2 -  column number | initial well set | plate label
+ * @param {(WellSet|string)} var3 - initial well set | plate label
+ * @throws {TypeError} on invalid plate input
+ */
+Plate.prototype.initializeThreeArguments = function(var1, var2, var3) {
+
+   if(Validation.getType(var1) === '[object Number]' &amp;&amp; Validation.getType(var2) === '[object WellSet]' &amp;&amp; Validation.getType(var3) === '[object String]') {
+
+      var parsed = PlateValidation.validatePlateType(var1);
+      Validation.validateString(var3);
+
+      this.rows = parsed.rows;
+      this.columns = parsed.columns;
+      this.plateType = var1;
+
+      WellSet.call(this, var2, var3);
+
+      return;
+   }
+
+   if(Validation.getType(var1) === '[object Number]' &amp;&amp; Validation.getType(var2) === '[object Number]' &amp;&amp; Validation.getType(var3) === '[object String]') {
+
+      Validation.validatePositiveNumber(var1);
+      Validation.validatePositiveNumber(var2);
+      Validation.validateString(var3);
+
+      this.plateType = PlateValidation.plateType(var1, var2);
+      this.rows = var1;
+      this.columns = var2;
+
+      WellSet.call(this, var3);
+
+      return;
+   }
+
+   if(Validation.getType(var1) === '[object Number]' &amp;&amp; Validation.getType(var2) === '[object Number]' &amp;&amp; Validation.getType(var3) === '[object WellSet]') {
+
+      Validation.validatePositiveNumber(var1);
+      Validation.validatePositiveNumber(var2);
+
+      this.plateType = PlateValidation.plateType(var1, var2);
+      this.rows = var1;
+      this.columns = var2;
+
+      WellSet.call(this, var3);
+
+      return;
+   }
+
+   this.typeError();
+}
+
+/**
+ * Initializes a plate using four arguments.
+ * @ignore
+ * @param {number} var1 - row number
+ * @param {number} var2 - column number
+ * @param {WellSet} var3 - initial well set
+ * @param {string} var4 - plate label
+ * @throws {TypeError} on invalid plate input
+ */
+Plate.prototype.initializeFourArguments = function(var1, var2, var3, var4) {
+
+   if(Validation.getType(var1) === '[object Number]' &amp;&amp; Validation.getType(var2) === '[object Number]' &amp;&amp;
+      Validation.getType(var3) === '[object WellSet]' &amp;&amp; Validation.getType(var4) === '[object String]') {
+
+         Validation.validatePositiveNumber(var1);
+         Validation.validatePositiveNumber(var2);
+         Validation.validateString(var4);
+
+         this.plateType = PlateValidation.plateType(var1, var2);
+         this.rows = var1;
+         this.columns = var2;
+
+         WellSet.call(this, var3, var4);
+
+         return;
+   }
+
+   this.typeError();
+}
+
+/**
+ * Throws an error when the plate constructor receives invalid input parameters.
+ * @ignore
+ * @throws {TypeError} when the function is called
+ */
+Plate.prototype.typeError = function() {
+   throw new TypeError("Well plate constructor accepts the following combinations of arguments: " + "\n" +
+                       "  -> Plate - plate to clone" + "\n" +
+                       "  -> number - plate type" + "\n" +
+                       "  -> number - plate type, string - plate label" + "\n" +
+                       "  -> number - plate type, WellSet - initial data set" + "\n" +
+                       "  -> number - plate type, WellSet - initial data set, string - plate label" + "\n" +
+                       "  -> number - row number, number - column number" + "\n" +
+                       "  -> number - row number, number - column number, string - plate label" + "\n" +
+                       "  -> number - row number, number - column number, WellSet - initial data set" + "\n" +
+                       "  -> number - row number, number - column number, WellSet - initial data set, string - plate label" + "\n");
+}
+
+/*----------------------------- Group Functions ------------------------------*/
+
+/**
+ * Adds the well groups if they are not already present in the set.
+ * @param {(WellGroup|WellGroup[])} groups - input group | input group array
+ * @returns {boolean} true if all input groups are added to the set
+ * @throws {TypeError} on invalid group input
+ */
+Plate.prototype.addGroups = function(groups) {
+
+   Validation.validateArguments(arguments.length, Plate.prototype.addGroups.length, "Plate.prototype.addGroups");
+
+   switch(Validation.getType(groups)) {
+
+      case "[object Array]":     PlateValidation.validateGroupArray(groups, this.rows, this.columns);
+                                 return this.groups.addAll(groups);
+
+      case "[object WellGroup]": PlateValidation.validateGroup(groups, this.rows, this.columns);
+                                 return this.groups.add(groups);
+
+      default: throw new TypeError("Invalid input parameter: " + groups);
+
+   }
+
+}
+
+/**
+ * Removes the well groups if they exist in the set.
+ * @param {(WellGroup|WellGroup[])} groups - input groups
+ * @returns {boolean} true if all input groups are removed successfully
+ * @throws {TypeError} on invalid plate input
+ */
+Plate.prototype.removeGroups = function(groups) {
+
+   Validation.validateArguments(arguments.length, Plate.prototype.removeGroups.length, "Plate.prototype.removeGroups");
+
+   switch(Validation.getType(groups)) {
+
+      case "[object Array]":     return this.groups.removeAll(groups);
+
+      case "[object WellGroup]": return this.groups.remove(groups);
+
+      default: throw new TypeError("Invalid input parameter: " + groups);
+
+   }
+
+}
+
+/**
+ * Removes groups with the input names.
+ * @param {(string|string[])} names - input group | input group array
+ * @returns {boolean} true if all the input groups are removed successfully
+ * @throws {TypeError} on invalid group input
+ */
+Plate.prototype.removeGroupNames = function(names) {
+
+   Validation.validateArguments(arguments.length, Plate.prototype.removeGroupNames.length, "Plate.prototype.removeGroupNames");
+
+   var toRemove = [];
+
+   switch(Validation.getType(names)) {
+
+      case "[object Array]":  for(var group of this.groups) {
+                                 if(names.indexOf(group.groupName) > -1) {
+                                    toRemove.push(group);
+                                 }
+                              }
+
+                              break;
+
+      case "[object String]": for(var group of this.groups) {
+                                 if(group.groupName === names) {
+                                    toRemove.push(group);
+                                 }
+                              }
+
+                              break;
+
+      default: throw new TypeError("Invalid input parameter: " + groups);
+
+   }
+
+   return this.groups.removeAll(toRemove);
+}
+
+/**
+ * Clears the well groups.
+ */
+Plate.prototype.clearGroups = function() {
+   this.groups.clear();
+}
+
+/**
+ * Returns true if the well groups exist.
+ * @param {(WellGroup|WellGroup[])} groups - input group | input group array
+ * @returns {boolean} true if the plate contains all the input groups
+ * @throws {TypeError} on invalid group input
+ */
+Plate.prototype.containsGroups = function(groups) {
+
+   Validation.validateArguments(arguments.length, Plate.prototype.containsGroups.length, "Plate.prototype.containsGroups");
+
+   switch(Validation.getType(groups)) {
+
+      case "[object Array]":     return this.groups.containsAll(groups);
+
+      case "[object WellGroup]": return this.groups.contains(groups);
+
+      default: throw new TypeError("Invalid input parameter: " + groups);
+
+   }
+
+}
+
+/**
+ * Returns true if the plate contains all the groups with the input names.
+ * @param {(string|string[])} names - input group | input group array
+ * @returns {boolean} true if the plate contains groups with the input names
+ * @throws {TypeError} on invalid group input
+ */
+Plate.prototype.containsGroupNames = function(names) {
+
+   Validation.validateArguments(arguments.length, Plate.prototype.removeGroupNames.length, "Plate.prototype.GroupNames");
+
+   switch(Validation.getType(names)) {
+
+      case "[object Array]":  var array = names.slice();
+
+                              for(var group of this.groups) {
+
+                                 var index = array.indexOf(group.groupName);
+
+                                 if(index > -1) {
+                                    array.splice(index, 1);
+                                 }
+
+                              }
+
+                              return array.length === 0;
+
+      case "[object String]": for(var group of this.groups) {
+
+                                 if(group.groupName === names) {
+                                    return true;
+                                 }
+
+                              }
+
+                              return false;
+
+      default: throw new TypeError("Invalid input parameter: " + groups);
+
+   }
+}
+
+/**
+ * Returns an array holding the input groups if they exist in the plate.
+ * @param {(WellGroup|WellGroup[])} input - input group | input group array
+ * @returns {WellGroup[]} array of well groups
+ * @throws {TypeError} on invalid group input
+ */
+Plate.prototype.groupsToArray = function(input) {
+
+   var toReturn = [];
+
+   switch(Validation.getType(input)) {
+
+      case '[object WellGroup]': if(this.groups.values[input] != undefined) {
+                                    toReturn.push(this.groups.values[input]);
+                                 }
+
+                                 break;
+
+      case '[object Array]':     for(var group of input) {
+
+                                    if(Validation.getType(group) != '[object WellGroup]') {
+                                       throw new TypeError("Input groups must be well group objects: " + group);
+                                    }
+
+                                    if(this.groups.values[group] != undefined) {
+                                       toReturn.push(this.groups.values[group]);
+                                    }
+
+                                 }
+
+                                 break;
+
+      default: throw new TypeError("Invalid input parameter: " + input);
+
+   }
+
+   return toReturn.sort(WellGroup.prototype.sort);
+}
+
+/**
+ * Returns an array holding the groups with the input names if they exist.
+ * @param {(WellGroup|WellGroup[])} input - input group | input group array
+ * @returns {WellGroup[]} array of groups
+ * @throws {TypeError} on invalid group input
+ */
+Plate.prototype.groupNamesToArray = function(input) {
+
+   var toReturn = [];
+
+   switch(Validation.getType(input)) {
+
+      case '[object String]':    for(var group of this.groups) {
+                                    if(group.groupName === input) {
+                                       toReturn.push(group);
+                                    }
+                                 }
+
+                                 break;
+
+      case '[object Array]':     for(var group of this.groups) {
+                                    if(input.indexOf(group.groupName) > -1) {
+                                       toReturn.push(group);
+                                    }
+                                 }
+
+                                 break;
+
+      default: throw new TypeError("Invalid input parameter: " + input);
+
+   }
+
+   return toReturn.sort(WellGroup.prototype.sort);
+}
+
+/**
+ * Returns an array of arrays holding the well indices of the input groups if
+ * they exist.
+ * @param {(WellGroup|WellGroup[])} input - input group | input group array
+ * @returns {Object} the array of arrays holding the plate group well indices
+ * @throws {TypeError} on invalid group input
+ */
+Plate.prototype.groupsToString = function(input) {
+
+   var toReturn = [];
+
+   switch(Validation.getType(input)) {
+
+      case '[object WellGroup]': if(this.groups.values[input] != undefined) {
+
+                                    var group = this.groups.values[input];
+                                    var toAdd = {};
+
+                                    toAdd.name = group.groupName;
+                                    toAdd.wells = group.toArray();
+                                    toReturn.push(toAdd);
+                                 }
+
+                                 break;
+
+      case '[object Array]':     for(var group of input) {
+
+                                    var type = Validation.getType(group);
+
+                                    if(Validation.getType(group) != '[object WellGroup]') {
+                                       throw new TypeError("Input groups must be well group objects: " + group);
+                                    }
+
+                                    if(this.groups.values[group] != undefined) {
+
+                                       var value = this.groups.values[group];
+                                       var toAdd = {};
+
+                                       toAdd.name = value.groupName;
+                                       toAdd.wells = value.toArray();
+                                       toReturn.push(toAdd);
+                                    }
+
+                                 }
+
+                                 break;
+
+      default: throw new TypeError("Invalid input parameter: " + input);
+
+   }
+
+   return toReturn;
+}
+
+/**
+ * Returns an array of arrays holding the well indices of the groups with the
+ * input names if they exist.
+ * @param {(string|string[])} input - input group | input group array
+ * @returns {Object} the array of arrays holding the plate group well indices
+ * @throws {TypeError} on invalid group input
+ */
+Plate.prototype.groupNamesToString = function(input) {
+
+   var toReturn = [];
+
+   switch(Validation.getType(input)) {
+
+      case '[object String]':    for(var group of this.groups) {
+
+                                    if(group.groupName === input) {
+
+                                       var toAdd = {};
+
+                                       toAdd.name = group.groupName;
+                                       toAdd.wells = group.toArray();
+                                       toReturn.push(toAdd);
+
+                                    }
+                                 }
+
+                                 break;
+
+      case '[object Array]':     for(var group of this.groups) {
+
+                                    if(input.indexOf(group.groupName) > -1) {
+
+                                       var toAdd = {};
+
+                                       toAdd.name = group.groupName;
+                                       toAdd.wells = group.toArray();
+                                       toReturn.push(toAdd);
+                                    }
+
+                                 }
+
+                                 break;
+
+      default: throw new TypeError("Invalid input parameter: " + input);
+
+   }
+
+   return toReturn;
+}
+
+/**
+ * Returns an array holding the plate data for the input groups if they exist.
+ * @param {(WellGroup|WellGroup[])} input - input group | input group array
+ * @returns {WellSet[]} well set array containing the plate data for the input groups
+ * @throws {TypeError} on invalid group input
+ */
+Plate.prototype.groupsToWellSet = function(input) {
+
+   var toReturn = [];
+
+   switch(Validation.getType(input)) {
+
+      case '[object WellGroup]': if(this.groups.values[input] != undefined) {
+
+                                    var indices = this.groups.values[input].toArray();
+                                    var wells = this.get(indices);
+
+                                    toReturn.push(new WellSet(wells, this.groups.values[input].groupName));
+                                 }
+
+                                 break;
+
+      case '[object Array]':     for(var group of input) {
+
+                                    var type = Validation.getType(group);
+
+                                    if(Validation.getType(group) != '[object WellGroup]') {
+                                       throw new TypeError("Input groups must be well group objects: " + group);
+                                    }
+
+                                    if(this.groups.values[group] != undefined) {
+
+                                       var indices = this.groups.values[group].toArray();
+                                       var wells = this.get(indices);
+
+                                       toReturn.push(new WellSet(wells, this.groups.values[group].groupName));
+                                    }
+
+                                 }
+
+                                 break;
+
+      default: throw new TypeError("Invalid input parameter: " + input);
+   }
+
+   return toReturn;
+}
+
+/**
+ * Returns an array holding the plate data for the plate groups with the input
+ * names if they exist.
+ * @param {(string|string[])} input - input group name | array of input group names
+ * @returns {WellSet[]} well set array containing the plate data for the input groups
+ * @throws {TypeError} on invalid group input
+ */
+Plate.prototype.groupNamesToWellSet = function(input) {
+
+   var toReturn = [];
+
+   switch(Validation.getType(input)) {
+
+      case '[object String]':   for(var group of this.groups) {
+                                    if(group.groupName === input) {
+                                       var wells = this.get(group.toArray());
+                                       toReturn.push(new WellSet(wells, group.groupName));
+                                    }
+                                 }
+
+                                 break;
+
+      case '[object Array]':     for(var group of this.groups) {
+                                    if(input.indexOf(group.groupName) > -1) {
+                                       var wells = this.get(group.toArray());
+                                       toReturn.push(new WellSet(wells, group.groupName));
+                                    }
+                                 }
+
+                                 break;
+
+      default: throw new TypeError("Invalid input parameter: " + input);
+   }
+
+   return toReturn;
+}
+
+/**
+ * Returns an array holding all the plate's well group objects.
+ * @returns {WellGroup[]} the array of groups
+ */
+Plate.prototype.allGroupsToArray = function() {
+   var array = this.groups.toArray();
+   return array.sort();
+}
+
+/**
+ * Returns an array of arrays holding the well indices for all plate groups.
+ * @returns {Object} the array of arrays holding all plate group well indices
+ */
+Plate.prototype.allGroupsToString = function() {
+
+   var array = [];
+
+   for(var group of this.groups) {
+
+      var toAdd = {};
+
+      toAdd.name = group.groupName;
+      toAdd.wells = group.toArray();
+      array.push(toAdd);
+   }
+
+   return array;
+}
+
+/**
+ * Returns an array containing the plate data for all plate groups.
+ * @returns {WellSet[]} well set array containing the plate data for all plate groups
+ */
+Plate.prototype.allGroupsToWellSet = function() {
+
+   var array = [];
+
+   for(var group of this.groups) {
+      var indices = group.toArray();
+      var set = new WellSet(this.get(indices), group.groupName);
+      array.push(set);
+   }
+
+   return array;
+}
+
+/**
+ * Returns an array holding the group names.
+ * @returns {string[]} array holding the group names
+ */
+Plate.prototype.groupNames = function() {
+
+   var toReturn = [];
+
+   for(var group of this.groups) {
+      toReturn.push(group.groupName);
+   }
+
+   return toReturn.sort();
+}
+
+/*------------------------------ Well Functions ------------------------------*/
+
+/**
+ * Adds wells to the plate if they are not already present.
+ * @param {(Well|Well[]|WellSet)} input - input well | input well array | input well set
+ * @returns {boolean} true if this plate is changed as a result of the call
+ * @throws {TypeError} on invalid well input
+ */
+Plate.prototype.add = function(input) {
+
+   Validation.validateArguments(arguments.length, Plate.prototype.add.length, "Plate.prototype.add");
+
+   switch(Validation.getType(input)) {
+
+      case '[object Well]':    PlateValidation.validateWell(input, this.rows, this.columns);
+                               return this.addWell(input);
+
+      case '[object Array]':   PlateValidation.validateWellArray(input, this.rows, this.columns);
+                               return this.addArray(input);
+
+      case '[object WellSet]': PlateValidation.validateWellSet(input, this.rows, this.columns);
+                               return this.addSet(input);
+
+      case '[object Plate]':   PlateValidation.validateWellSet(input, this.rows, this.columns);
+                               return this.addSet(input.toArray());
+
+      default:                 throw new TypeError("Invalid input type: " + input);
+
+   }
+
+}
+
+/**
+ * Returns the number of plate rows.
+ * @returns {number} row number
+ */
+Plate.prototype.rowNumber = function() {
+   return this.rows;
+}
+
+/**
+ * Returns the number of plate columns.
+ * @returns {number} column number
+ */
+Plate.prototype.columnNumber = function() {
+   return this.columns;
+}
+
+/**
+ * Returns the plate type.
+ * @returns {number} plate type
+ */
+Plate.prototype.type = function() {
+   return this.plateType;
+}
+
+/**
+ * Returns the plate label.
+ * @returns {string} plate name
+ */
+Plate.prototype.toString = function() {
+   return JSON.stringify(this);
+}
+
+/**
+ * Compares two plates. Plates are compared using the name, rows, columns, size,
+ * greatest well index and groups size in that order.
+ * @param {Plate} plate - plate for comparison
+ * @return {number} 0 if plates are equal, -1 if the input plate is greater, 1 if the input plate is lesser
+ */
+Plate.prototype.compareTo = function(plate) {
+
+   Validation.validateArguments(arguments.length, Plate.prototype.compareTo.length, "Plate.protoype.compareTo");
+   WellSetValidation.validatePlate(plate);
+
+   if(plate.name > this.name) {
+      return -1;
+   }
+
+   if(plate.name &lt; this.name) {
+      return 1;
+   }
+
+   if(plate.rows > this.rows) {
+      return -1;
+   }
+
+   if(plate.rows &lt; this.rows) {
+      return 1;
+   }
+
+   if(plate.columns > this.columns) {
+      return -1;
+   }
+
+   if(plate.columns &lt; this.columns) {
+      return 1;
+   }
+
+   if(plate.size() > this.size()) {
+      return -1;
+   }
+
+   if(plate.size() &lt; this.size()) {
+      return 1;
+   }
+
+   var inputArray = plate.wells.toArray();
+   var thisArray = this.wells.toArray();
+
+   for(var i = 0; i &lt; inputArray.length &amp;&amp; i &lt; thisArray.length; i++) {
+
+      if(inputArray[i].compareTo(thisArray[i]) != 0) {
+
+         if(inputArray[i].compareTo(thisArray[i]) > 0) {
+            return -1;
+         } else {
+            return 1;
+         }
+
+      }
+
+   }
+
+   if(plate.groups.size() > this.groups.size()) {
+      return -1;
+   }
+
+   if(plate.groups.size() &lt; this.groups.size()) {
+      return 1;
+   }
+
+   return 0;
+}
+
+/**
+ * Sorts plates using the name, rows, columns, size, greatest well index and
+ * groups size in that order.
+ * @param {Plate} plate1 - first plate
+ * @param {Plate} plate2 - second plate
+ * @return {Number} 0 if plates are equal, -1 if plate1 is greater than plate2, 1 if plate1 is less than plate2
+ */
+Plate.prototype.sort = function(plate1, plate2) {
+
+   Validation.validateArguments(arguments.length, Plate.prototype.sort.length, "Plate.protoype.sort");
+   WellSetValidation.validatePlate(plate1);
+   WellSetValidation.validatePlate(plate2);
+
+   return plate1.compareTo(plate2);
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-MicroFlex.html">MicroFlex</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Feb 21 2017 21:32:03 GMT-0800 (PST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

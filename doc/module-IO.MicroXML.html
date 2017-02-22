@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: MicroXML</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: MicroXML</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="module-IO.html">IO</a>.</span>MicroXML</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="MicroXML"><span class="type-signature"></span>new MicroXML<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    This class formats stack, plate, well set and well objects into a condensed and
+easy to read XML format. Wells, well groups and plates are housed within typed
+hash set objects. This class converts the hash sets to simple objects which are
+easier to read and parse.
+
+<br><br>
+
+<b>Examples of XML Output:</b>
+
+<br><br>
+
+<table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+   <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Well</b><div></th>
+   <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Well Group</b><div></th>
+   <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Well Set</b><div></th>
+   <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Plate</b><div></th>
+   <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Stack</b></div></th>
+   <tr>
+      <td  style="font-size: 70%" valign="top">
+         <table border="0">
+            <tr>
+               <td style="padding-top: 7px;">
+                  <pre style="margin: 0; display: inline;">&lt;WELL&gt;
+   &lt;INDEX&gt;A1&lt;/INDEX&gt;
+   &lt;ROW&gt;0&lt;/ROW&gt;
+   &lt;COLUMN&gt;1&lt;/COLUMN&gt;
+   &lt;DATA&gt;
+      &lt;VALUE&gt;1&lt;/VALUE&gt;
+      &lt;VALUE&gt;2&lt;/VALUE&gt;
+      &lt;VALUE&gt;3&lt;/VALUE&gt;
+      &lt;VALUE&gt;4&lt;/VALUE&gt;
+   &lt;/DATA&gt;
+&lt;/WELL&gt;</pre>
+               </td>
+            </tr>
+         </table>
+      </td>
+      <td  style="font-size: 70%" valign="top">
+         <table border="0">
+            <tr>
+               <td style="padding-top: 7px;">
+                  <pre style="margin: 0; display: inline;">&lt;WELLGROUP&gt;
+   &lt;LABEL&gt;Group&lt;/LABEL&gt;
+   &lt;WELLS&gt;
+      &lt;INDEX&gt;A1&lt;/INDEX&gt;
+      &lt;INDEX&gt;B2&lt;/INDEX&gt;
+      &lt;INDEX&gt;C5&lt;/INDEX&gt;
+      &lt;INDEX&gt;D9&lt;/INDEX&gt;
+   &lt;/WELLS&gt;
+&lt;/WELLGROUP&gt;</pre>
+               </td>
+            </tr>
+         </table>
+      </td>
+      <td  style="font-size: 70%" valign="top">
+         <table border="0">
+            <tr>
+               <td style="padding-top: 7px;">
+                  <pre style="margin: 0; display: inline;">&lt;WELLSET&gt;
+   &lt;LABEL&gt;Example Set&lt;/LABEL&gt;
+   &lt;WELLS&gt;
+      &lt;WELL&gt;
+         &lt;INDEX&gt;A1&lt;/INDEX&gt;
+         &lt;ROW&gt;0&lt;/ROW&gt;
+         &lt;COLUMN&gt;1&lt;/COLUMN&gt;
+         &lt;DATA&gt;
+            &lt;VALUE&gt;1&lt;/VALUE&gt;
+            &lt;VALUE&gt;2&lt;/VALUE&gt;
+            &lt;VALUE&gt;3&lt;/VALUE&gt;
+            &lt;VALUE&gt;4&lt;/VALUE&gt;
+         &lt;/DATA&gt;
+      &lt;/WELL&gt;
+      &lt;WELL&gt;
+         &lt;INDEX&gt;B2&lt;/INDEX&gt;
+         &lt;ROW&gt;1&lt;/ROW&gt;
+         &lt;COLUMN&gt;2&lt;/COLUMN&gt;
+         &lt;DATA&gt;
+            &lt;VALUE&gt;5&lt;/VALUE&gt;
+            &lt;VALUE&gt;6&lt;/VALUE&gt;
+            &lt;VALUE&gt;7&lt;/VALUE&gt;
+            &lt;VALUE&gt;8&lt;/VALUE&gt;
+         &lt;/DATA&gt;
+      &lt;/WELL&gt;
+   &lt;/WELLS&gt;
+&lt;/WELLSET&gt;</pre>
+               </td>
+            </tr>
+         </table>
+      </td>
+      <td style="font-size: 70%" valign="top">
+         <table>
+            <tr>
+               <td>
+                  <pre style="margin: 0; display: inline;">&lt;PLATE&gt;
+   &lt;LABEL&gt;Example Plate&lt;/LABEL&gt;
+   &lt;ROWS&gt;8&lt;/ROWS&gt;
+   &lt;COLUMNS&gt;12&lt;/COLUMNS&gt;
+   &lt;DESCRIPTOR&gt;96-Well&lt;/DESCRIPTOR&gt;
+   &lt;WELLGROUPS&gt;
+      &lt;WELLGROUP&gt;
+         &lt;LABEL&gt;Group&lt;/LABEL&gt;
+         &lt;WELLS&gt;
+            &lt;INDEX&gt;A1&lt;/INDEX&gt;
+            &lt;INDEX&gt;B2&lt;/INDEX&gt;
+         &lt;/WELLS&gt;
+      &lt;/WELLGROUP&gt;
+   &lt;/WELLGROUPS&gt;
+   &lt;WELLS&gt;
+      &lt;WELL&gt;
+         &lt;INDEX&gt;A1&lt;/INDEX&gt;
+         &lt;ROW&gt;0&lt;/ROW&gt;
+         &lt;COLUMN&gt;1&lt;/COLUMN&gt;
+         &lt;DATA&gt;
+            &lt;VALUE&gt;1&lt;/VALUE&gt;
+            &lt;VALUE&gt;2&lt;/VALUE&gt;
+            &lt;VALUE&gt;3&lt;/VALUE&gt;
+            &lt;VALUE&gt;4&lt;/VALUE&gt;
+         &lt;/DATA&gt;
+      &lt;/WELL&gt;
+      &lt;WELL&gt;
+         &lt;INDEX&gt;B2&lt;/INDEX&gt;
+         &lt;ROW&gt;1&lt;/ROW&gt;
+         &lt;COLUMN&gt;2&lt;/COLUMN&gt;
+         &lt;DATA&gt;
+            &lt;VALUE&gt;5&lt;/VALUE&gt;
+            &lt;VALUE&gt;6&lt;/VALUE&gt;
+            &lt;VALUE&gt;7&lt;/VALUE&gt;
+            &lt;VALUE&gt;8&lt;/VALUE&gt;
+         &lt;/DATA&gt;
+      &lt;/WELL&gt;
+   &lt;/WELLS&gt;
+&lt;/PLATE&gt;</pre>
+               </td>
+            </tr>
+         </table>
+      </td>
+      <td style="font-size: 70%" valign="top">
+         <table>
+            <tr>
+               <td style="padding-top: 7px;">
+                  <pre style="margin: 0; display: inline;">&lt;STACK&gt;
+   &lt;LABEL&gt;Test Stack&lt;/LABEL&gt;
+   &lt;ROWS&gt;8&lt;/ROWS&gt;
+   &lt;COLUMNS&gt;12&lt;/COLUMNS&gt;
+   &lt;DESCRIPTOR&gt;96-Well&lt;/DESCRIPTOR&gt;
+   &lt;PLATES&gt;
+      &lt;PLATE&gt;
+         &lt;LABEL&gt;Example Plate&lt;/LABEL&gt;
+         &lt;ROWS&gt;8&lt;/ROWS&gt;
+         &lt;COLUMNS&gt;12&lt;/COLUMNS&gt;
+         &lt;DESCRIPTOR&gt;96-Well&lt;/DESCRIPTOR&gt;
+         &lt;WELLGROUPS&gt;
+            &lt;WELLGROUP&gt;
+               &lt;LABEL&gt;Group&lt;/LABEL&gt;
+               &lt;WELLS&gt;
+                  &lt;INDEX&gt;A1&lt;/INDEX&gt;
+                  &lt;INDEX&gt;B2&lt;/INDEX&gt;
+               &lt;/WELLS&gt;
+            &lt;/WELLGROUP&gt;
+         &lt;/WELLGROUPS&gt;
+         &lt;WELLS&gt;
+            &lt;WELL&gt;
+               &lt;INDEX&gt;A1&lt;/INDEX&gt;
+               &lt;ROW&gt;0&lt;/ROW&gt;
+               &lt;COLUMN&gt;1&lt;/COLUMN&gt;
+               &lt;DATA&gt;
+                  &lt;VALUE&gt;1&lt;/VALUE&gt;
+                  &lt;VALUE&gt;2&lt;/VALUE&gt;
+                  &lt;VALUE&gt;3&lt;/VALUE&gt;
+                  &lt;VALUE&gt;4&lt;/VALUE&gt;
+               &lt;/DATA&gt;
+            &lt;/WELL&gt;
+            &lt;WELL&gt;
+               &lt;INDEX&gt;B2&lt;/INDEX&gt;
+               &lt;ROW&gt;1&lt;/ROW&gt;
+               &lt;COLUMN&gt;2&lt;/COLUMN&gt;
+               &lt;DATA&gt;
+                  &lt;VALUE&gt;5&lt;/VALUE&gt;
+                  &lt;VALUE&gt;6&lt;/VALUE&gt;
+                  &lt;VALUE&gt;7&lt;/VALUE&gt;
+                  &lt;VALUE&gt;8&lt;/VALUE&gt;
+               &lt;/DATA&gt;
+            &lt;/WELL&gt;
+         &lt;/WELLS&gt;
+      &lt;/PLATE&gt;
+      &lt;PLATE&gt;
+         &lt;LABEL&gt;Example Plate 2&lt;/LABEL&gt;
+         &lt;ROWS&gt;8&lt;/ROWS&gt;
+         &lt;COLUMNS&gt;12&lt;/COLUMNS&gt;
+         &lt;DESCRIPTOR&gt;96-Well&lt;/DESCRIPTOR&gt;
+         &lt;WELLGROUPS&gt;
+            &lt;WELLGROUP&gt;
+               &lt;LABEL&gt;Group&lt;/LABEL&gt;
+               &lt;WELLS&gt;
+                  &lt;INDEX&gt;C5&lt;/INDEX&gt;
+                  &lt;INDEX&gt;D9&lt;/INDEX&gt;
+               &lt;/WELLS&gt;
+            &lt;/WELLGROUP&gt;
+         &lt;/WELLGROUPS&gt;
+         &lt;WELLS&gt;
+            &lt;WELL&gt;
+               &lt;INDEX&gt;C5&lt;/INDEX&gt;
+               &lt;ROW&gt;2&lt;/ROW&gt;
+               &lt;COLUMN&gt;5&lt;/COLUMN&gt;
+               &lt;DATA&gt;
+                  &lt;VALUE&gt;9&lt;/VALUE&gt;
+                  &lt;VALUE&gt;10&lt;/VALUE&gt;
+                  &lt;VALUE&gt;11&lt;/VALUE&gt;
+                  &lt;VALUE&gt;12&lt;/VALUE&gt;
+               &lt;/DATA&gt;
+            &lt;/WELL&gt;
+            &lt;WELL&gt;
+               &lt;INDEX&gt;D9&lt;/INDEX&gt;
+               &lt;ROW&gt;3&lt;/ROW&gt;
+               &lt;COLUMN&gt;9&lt;/COLUMN&gt;
+               &lt;DATA&gt;
+                  &lt;VALUE&gt;13&lt;/VALUE&gt;
+                  &lt;VALUE&gt;14&lt;/VALUE&gt;
+                  &lt;VALUE&gt;15&lt;/VALUE&gt;
+                  &lt;VALUE&gt;16&lt;/VALUE&gt;
+               &lt;/DATA&gt;
+            &lt;/WELL&gt;
+         &lt;/WELLS&gt;
+      &lt;/PLATE&gt;
+   &lt;/PLATES&gt;
+&lt;/STACK&gt;</pre>
+               </td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>Updated February 17, 2016</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Jesse L. Mull</li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Apache License 2.0</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="io_microxml.js.html">io/microxml.js</a>, <a href="io_microxml.js.html#line283">line 283</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="http://www.jessemull.com" target="_blank">http://www.jessemull.com</a><br></li>
+        
+            <li><a href="mailto:hello@jessemull.com">hello@jessemull.com</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="parse"><span class="type-signature"></span>parse<span class="signature">(input)</span><span class="type-signature"> &rarr; {Well|WellSet|WellGroup|Plate|Stack}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Parses a well, well set, well group, plate or stack XML string.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the XML formatted string</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="io_microxml.js.html">io/microxml.js</a>, <a href="io_microxml.js.html#line480">line 480</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the parsed object
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Well</span>
+|
+
+<span class="param-type">WellSet</span>
+|
+
+<span class="param-type">WellGroup</span>
+|
+
+<span class="param-type">Plate</span>
+|
+
+<span class="param-type">Stack</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="stringify"><span class="type-signature"></span>stringify<span class="signature">(input)</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Formats a well, well set, well group, plate or stack as an XML string.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Well</span>
+|
+
+<span class="param-type">WellSet</span>
+|
+
+<span class="param-type">WellGroup</span>
+|
+
+<span class="param-type">Plate</span>
+|
+
+<span class="param-type">Stack</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the input object</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="io_microxml.js.html">io/microxml.js</a>, <a href="io_microxml.js.html#line309">line 309</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the XML formatted string
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-MicroFlex.html">MicroFlex</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Feb 21 2017 21:32:03 GMT-0800 (PST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
