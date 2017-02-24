@@ -51,7 +51,7 @@ var TypedHashSet = Utilities.TypedHashSet;
 
 ### Features:
 
-### MicroFlex.Microplate
+#### MicroFlex.Microplate
 
 Well-based data structures
 
@@ -60,7 +60,7 @@ Well-based data structures
 * Plates
 * Stacks
 
-### MicroFlex.Operators
+#### MicroFlex.Operators
 
 Mathematical operators for wells, sets, plates and stacks
 
@@ -79,14 +79,14 @@ Mathematical operators for wells, sets, plates and stacks
 * Right Shift Arithmetic
 * Right Shift Logical
 
-### MicroFlex.IO
+#### MicroFlex.IO
 
 Condensed, efficient and easy to read input/output
 
 * JSON
 * XML
 
-### MicroFlex.Utilities
+#### MicroFlex.Utilities
 
 Helper functions for testing and validation
 
@@ -94,7 +94,7 @@ Helper functions for testing and validation
 * Validation for all microplate types
 * Hash set and typed hash set implementations
 
-### MicroFlex.Statistics
+#### MicroFlex.Statistics
 
 Descriptive statistics
 
