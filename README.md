@@ -1,8 +1,8 @@
 ## MicroFlex
 
-Microplate assays produce semi-structured data in a variety of formats. Due to recent advances in high throughput biology, data from a single experiment can exceed billions or even trillions of data points. Combining, normalizing time, money and resources.
+Microplate assays produce semi-structured data in a variety of formats. Due to recent advances in high throughput biology, data from a single experiment can exceed billions or even trillions of data points. Combining, normalizing and analyzing this data requires a significant investment in time, money and resources.  
 
-Introducing MicroFlex, the world's first microplate library designed for bioscience data processing and software development. MicroFlex saves you time and money by simplifying code and eliminating errors in data handling.
+Introducing MicroFlex, the world's first microplate library designed for bioscience data processing and software development. MicroFlex saves you time and money by simplifying code and eliminating errors in data handling.  
 
 ### Installation:
 
