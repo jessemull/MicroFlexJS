@@ -34,20 +34,20 @@ var Addition = Operators.Addition;
 var LeftShift = Operators.LeftShift;  
 ...  
 
-**var Statistics = MicroFlex.Statistics;**
-var Mean = Statistics.Mean;
-var Kurtosis = Statistics.Kurtosis;
-...
+**var Statistics = MicroFlex.Statistics;**  
+var Mean = Statistics.Mean;  
+var Kurtosis = Statistics.Kurtosis;  
+...  
 
-**var IO = MicroFlex.IO;**
-var MicroJSON = IO.MicroJSON;
-var MicroXML = IO.MicroXML;
-...
+**var IO = MicroFlex.IO;**  
+var MicroJSON = IO.MicroJSON;  
+var MicroXML = IO.MicroXML;  
+...  
 
-**var Utilities =MicroFlex.Utilities;**
-var WellValidation = Utilities.WellValidation;
-var TypedHashSet = Utilities.TypedHashSet;
-...
+**var Utilities =MicroFlex.Utilities;**  
+var WellValidation = Utilities.WellValidation;  
+var TypedHashSet = Utilities.TypedHashSet;  
+...  
 
 ### Features:
 
