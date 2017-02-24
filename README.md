@@ -6,8 +6,8 @@ Introducing MicroFlex, the world's first microplate library designed for bioscie
 
 ### Installation:
 
-Node.js, browserify, and webpack users can install via npm:
-npm install --save-dev microflex
+Node.js, browserify, and webpack users can install via npm:  
+npm install --save-dev microflex  
 
 ### Quick Start:
 
