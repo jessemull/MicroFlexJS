@@ -21,18 +21,18 @@ npm install --save-dev microflex
 
 **var MicroFlex = require('microflex');**
 
-**var Microplate = MicroFlex.Microplate;**
-var Well = Microplate.Well;
-var WellGroup = Microplate.WellGroup;
-var WellSet = Microplate.WellSet;
-var Plate = Microplate.Plate;
-var Stack = Microplate.Stack;
-...
+**var Microplate = MicroFlex.Microplate;**  
+var Well = Microplate.Well;  
+var WellGroup = Microplate.WellGroup;  
+var WellSet = Microplate.WellSet;  
+var Plate = Microplate.Plate;  
+var Stack = Microplate.Stack;  
+...  
 
-**var Operators = MicroFlex.Operators;**
-var Addition = Operators.Addition;
-var LeftShift = Operators.LeftShift;
-...
+**var Operators = MicroFlex.Operators;**  
+var Addition = Operators.Addition;  
+var LeftShift = Operators.LeftShift;  
+...  
 
 **var Statistics = MicroFlex.Statistics;**
 var Mean = Statistics.Mean;
