@@ -39,7 +39,7 @@ var WellSetValidation = require('../util/wellsetvalidation');
 
 /**
  * This class performs statistical operations on stacks, plates, well sets and
- * wells that require two argumets. To create a custom statistical operation
+ * wells that require two arguments. To create a custom statistical operation
  * extend this class and override the calculate method using the appropriate
  * statistical operation.
  *
@@ -62,7 +62,7 @@ var WellSetValidation = require('../util/wellsetvalidation');
  * <table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Operation<div></th>
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Beginning<br>Index<div></th>
- *    <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Length of<br>Subset<div></th>
+ *    <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Ending<br>Index<div></th>
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input/Output</div></th>
  *    <tr>
  *       <td>
@@ -337,9 +337,9 @@ function QuantileStatistic() {}
  * operation can be limited to a subset of data by passing indices into the well
  * data array.
  * @param {(Well|Well[])} wells - the input wells
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.wells = function(wells, begin, end, p) {
@@ -358,7 +358,7 @@ QuantileStatistic.prototype.wells = function(wells, begin, end, p) {
 /**
  * Calculates the descriptive statistic for each well and returns the result.
  * @param {(Well|Well[])} wells - the input wells
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateWells = function(wells, p) {
@@ -402,9 +402,9 @@ QuantileStatistic.prototype.calculateWells = function(wells, p) {
  * Calculates the descriptive statistic for each well using the values between
  * the indices and returns the result.
  * @param {Well[]} wells - the input wells
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateWellsIndices = function(wells, begin, end, p) {
@@ -452,9 +452,9 @@ QuantileStatistic.prototype.calculateWellsIndices = function(wells, begin, end, 
  * returns the result. The operation can be limited to a subset of data by passing
  * indices into the well data array.
  * @param {Well[]} wells - the input wells
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.wellsAggregated = function(wells, begin, end, p) {
@@ -474,7 +474,7 @@ QuantileStatistic.prototype.wellsAggregated = function(wells, begin, end, p) {
  * Aggregates the well values for each well and calculates the descriptive statistic
  * using the aggregated data.
  * @param {Well[]} wells - the input wells
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateWellsAggregated = function(wells, p) {
@@ -486,9 +486,9 @@ QuantileStatistic.prototype.calculateWellsAggregated = function(wells, p) {
  * Aggregates the well values between the indices for each well and calculates
  * the descriptive statistic using the aggregated data.
  * @param {Well[]} wells - the input wells
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateWellsIndicesAggregated = function(wells, begin, end, p) {
@@ -519,9 +519,9 @@ QuantileStatistic.prototype.calculateWellsIndicesAggregated = function(wells, be
  * the result. The operation can be limited to a subset of data by passing indices
  * into the well data array.
  * @param {(WellSet|WellSet[])} sets - the input sets
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.sets = function(sets, begin, end, p) {
@@ -542,7 +542,7 @@ QuantileStatistic.prototype.sets = function(sets, begin, end, p) {
  * Calculates the descriptive statistic for each well in the well set and returns
  * the result.
  * @param {(WellSet|WellSet[])} sets - the input sets
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateSets = function(sets, p) {
@@ -587,9 +587,9 @@ QuantileStatistic.prototype.calculateSets = function(sets, p) {
  * Calculates the descriptive statistic for each well in the well set using the
  * values between the indices and returns the result.
  * @param {(WellSet|WellSet[])} sets - the input sett
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateSetsIndices = function(sets, begin, end, p) {
@@ -636,9 +636,9 @@ QuantileStatistic.prototype.calculateSetsIndices = function(sets, begin, end, p)
  * returns the result. The operation can be limited to a subset of data by passing
  * indices into the well data array.
  * @param {(WellSet|WellSet[])} sets - the input sets
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.setsAggregated = function(sets, begin, end, p) {
@@ -658,7 +658,7 @@ QuantileStatistic.prototype.setsAggregated = function(sets, begin, end, p) {
  * Aggregates the data in each set, calculates the descriptive statistic and
  * returns the result.
  * @param {(WellSet|WellSet[])} sets - the input sets
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateSetsAggregated = function(sets, p) {
@@ -712,9 +712,9 @@ QuantileStatistic.prototype.calculateSetsAggregated = function(sets, p) {
  * Aggregates the data in each set using the values between the indices, calculates
  * the descriptive statistic and returns the result.
  * @param {(WellSet|WellSet[])} sets - the input sets
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateSetsIndicesAggregated = function(sets, begin, end, p) {
@@ -771,9 +771,9 @@ QuantileStatistic.prototype.calculateSetsIndicesAggregated = function(sets, begi
  * the result. The operation can be limited to a subset of data by passing indices
  * into the well data array.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.plates = function(plates, begin, end, p) {
@@ -794,7 +794,7 @@ QuantileStatistic.prototype.plates = function(plates, begin, end, p) {
  * Calculates the descriptive statistic for each well in the plate and returns
  * the result.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculatePlates = function(plates, p) {
@@ -839,9 +839,9 @@ QuantileStatistic.prototype.calculatePlates = function(plates, p) {
  * Calculates the descriptive statistic for each well in the plate using the values
  * between the indices and returns the result.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculatePlatesIndices = function(plates, begin, end, p) {
@@ -888,9 +888,9 @@ QuantileStatistic.prototype.calculatePlatesIndices = function(plates, begin, end
  * returns the result. The operation can be limited to a subset of data by passing
  * indices into the well data array.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.platesAggregated = function(plates, begin, end, p) {
@@ -910,7 +910,7 @@ QuantileStatistic.prototype.platesAggregated = function(plates, begin, end, p) {
  * Aggregates the data in each plate, calculates the descriptive statistic and
  * returns the result.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculatePlatesAggregated = function(plates, p) {
@@ -964,9 +964,9 @@ QuantileStatistic.prototype.calculatePlatesAggregated = function(plates, p) {
  * Aggregates the data in each plate using the values between the indices, calculates
  * the descriptive statistic and returns the result.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculatePlatesIndicesAggregated = function(plates, begin, end, p) {
@@ -1023,9 +1023,9 @@ QuantileStatistic.prototype.calculatePlatesIndicesAggregated = function(plates, 
  * the result. The operation can be limited to a subset of data by passing indices
  * into the well data array.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.stacks = function(stacks, begin, end, p) {
@@ -1045,7 +1045,7 @@ QuantileStatistic.prototype.stacks = function(stacks, begin, end, p) {
  * Calculates the descriptive statistic for each well in the stack and returns
  * the result.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateStacks = function(stacks, p) {
@@ -1090,9 +1090,9 @@ QuantileStatistic.prototype.calculateStacks = function(stacks, p) {
  * Calculates the descriptive statistic for each well in the stack using the values
  * between the indices and returns the result.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateStacksIndices = function(stacks, begin, end, p) {
@@ -1139,9 +1139,9 @@ QuantileStatistic.prototype.calculateStacksIndices = function(stacks, begin, end
  * returns the result. The operation can be limited to a subset of data by passing
  * indices into the well data array.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.stacksAggregated = function(stacks, begin, end, p) {
@@ -1161,7 +1161,7 @@ QuantileStatistic.prototype.stacksAggregated = function(stacks, begin, end, p) {
  * Aggregates the data in each stack, calculates the descriptive statistic and
  * returns the result.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateStacksAggregated = function(stacks, p) {
@@ -1223,9 +1223,9 @@ QuantileStatistic.prototype.calculateStacksAggregated = function(stacks, p) {
  * Aggregates the data in each stack using the values between the indices, calculates
  * the descriptive statistic and returns the result.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateStacksIndicesAggregated = function(stacks, begin, end, p) {

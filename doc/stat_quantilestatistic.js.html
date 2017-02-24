@@ -67,7 +67,7 @@ var WellSetValidation = require('../util/wellsetvalidation');
 
 /**
  * This class performs statistical operations on stacks, plates, well sets and
- * wells that require two argumets. To create a custom statistical operation
+ * wells that require two arguments. To create a custom statistical operation
  * extend this class and override the calculate method using the appropriate
  * statistical operation.
  *
@@ -90,7 +90,7 @@ var WellSetValidation = require('../util/wellsetvalidation');
  * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
  *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Operation&lt;div>&lt;/th>
  *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 2px;">Beginning&lt;br>Index&lt;div>&lt;/th>
- *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 2px;">Length of&lt;br>Subset&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 2px;">Ending&lt;br>Index&lt;div>&lt;/th>
  *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input/Output&lt;/div>&lt;/th>
  *    &lt;tr>
  *       &lt;td>
@@ -365,9 +365,9 @@ function QuantileStatistic() {}
  * operation can be limited to a subset of data by passing indices into the well
  * data array.
  * @param {(Well|Well[])} wells - the input wells
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.wells = function(wells, begin, end, p) {
@@ -386,7 +386,7 @@ QuantileStatistic.prototype.wells = function(wells, begin, end, p) {
 /**
  * Calculates the descriptive statistic for each well and returns the result.
  * @param {(Well|Well[])} wells - the input wells
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateWells = function(wells, p) {
@@ -430,9 +430,9 @@ QuantileStatistic.prototype.calculateWells = function(wells, p) {
  * Calculates the descriptive statistic for each well using the values between
  * the indices and returns the result.
  * @param {Well[]} wells - the input wells
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateWellsIndices = function(wells, begin, end, p) {
@@ -480,9 +480,9 @@ QuantileStatistic.prototype.calculateWellsIndices = function(wells, begin, end, 
  * returns the result. The operation can be limited to a subset of data by passing
  * indices into the well data array.
  * @param {Well[]} wells - the input wells
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.wellsAggregated = function(wells, begin, end, p) {
@@ -502,7 +502,7 @@ QuantileStatistic.prototype.wellsAggregated = function(wells, begin, end, p) {
  * Aggregates the well values for each well and calculates the descriptive statistic
  * using the aggregated data.
  * @param {Well[]} wells - the input wells
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateWellsAggregated = function(wells, p) {
@@ -514,9 +514,9 @@ QuantileStatistic.prototype.calculateWellsAggregated = function(wells, p) {
  * Aggregates the well values between the indices for each well and calculates
  * the descriptive statistic using the aggregated data.
  * @param {Well[]} wells - the input wells
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateWellsIndicesAggregated = function(wells, begin, end, p) {
@@ -547,9 +547,9 @@ QuantileStatistic.prototype.calculateWellsIndicesAggregated = function(wells, be
  * the result. The operation can be limited to a subset of data by passing indices
  * into the well data array.
  * @param {(WellSet|WellSet[])} sets - the input sets
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.sets = function(sets, begin, end, p) {
@@ -570,7 +570,7 @@ QuantileStatistic.prototype.sets = function(sets, begin, end, p) {
  * Calculates the descriptive statistic for each well in the well set and returns
  * the result.
  * @param {(WellSet|WellSet[])} sets - the input sets
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateSets = function(sets, p) {
@@ -615,9 +615,9 @@ QuantileStatistic.prototype.calculateSets = function(sets, p) {
  * Calculates the descriptive statistic for each well in the well set using the
  * values between the indices and returns the result.
  * @param {(WellSet|WellSet[])} sets - the input sett
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateSetsIndices = function(sets, begin, end, p) {
@@ -664,9 +664,9 @@ QuantileStatistic.prototype.calculateSetsIndices = function(sets, begin, end, p)
  * returns the result. The operation can be limited to a subset of data by passing
  * indices into the well data array.
  * @param {(WellSet|WellSet[])} sets - the input sets
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.setsAggregated = function(sets, begin, end, p) {
@@ -686,7 +686,7 @@ QuantileStatistic.prototype.setsAggregated = function(sets, begin, end, p) {
  * Aggregates the data in each set, calculates the descriptive statistic and
  * returns the result.
  * @param {(WellSet|WellSet[])} sets - the input sets
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateSetsAggregated = function(sets, p) {
@@ -740,9 +740,9 @@ QuantileStatistic.prototype.calculateSetsAggregated = function(sets, p) {
  * Aggregates the data in each set using the values between the indices, calculates
  * the descriptive statistic and returns the result.
  * @param {(WellSet|WellSet[])} sets - the input sets
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateSetsIndicesAggregated = function(sets, begin, end, p) {
@@ -799,9 +799,9 @@ QuantileStatistic.prototype.calculateSetsIndicesAggregated = function(sets, begi
  * the result. The operation can be limited to a subset of data by passing indices
  * into the well data array.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.plates = function(plates, begin, end, p) {
@@ -822,7 +822,7 @@ QuantileStatistic.prototype.plates = function(plates, begin, end, p) {
  * Calculates the descriptive statistic for each well in the plate and returns
  * the result.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculatePlates = function(plates, p) {
@@ -867,9 +867,9 @@ QuantileStatistic.prototype.calculatePlates = function(plates, p) {
  * Calculates the descriptive statistic for each well in the plate using the values
  * between the indices and returns the result.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculatePlatesIndices = function(plates, begin, end, p) {
@@ -916,9 +916,9 @@ QuantileStatistic.prototype.calculatePlatesIndices = function(plates, begin, end
  * returns the result. The operation can be limited to a subset of data by passing
  * indices into the well data array.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.platesAggregated = function(plates, begin, end, p) {
@@ -938,7 +938,7 @@ QuantileStatistic.prototype.platesAggregated = function(plates, begin, end, p) {
  * Aggregates the data in each plate, calculates the descriptive statistic and
  * returns the result.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculatePlatesAggregated = function(plates, p) {
@@ -992,9 +992,9 @@ QuantileStatistic.prototype.calculatePlatesAggregated = function(plates, p) {
  * Aggregates the data in each plate using the values between the indices, calculates
  * the descriptive statistic and returns the result.
  * @param {(Plate|Plate[])} plates - the input plates
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculatePlatesIndicesAggregated = function(plates, begin, end, p) {
@@ -1051,9 +1051,9 @@ QuantileStatistic.prototype.calculatePlatesIndicesAggregated = function(plates, 
  * the result. The operation can be limited to a subset of data by passing indices
  * into the well data array.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.stacks = function(stacks, begin, end, p) {
@@ -1073,7 +1073,7 @@ QuantileStatistic.prototype.stacks = function(stacks, begin, end, p) {
  * Calculates the descriptive statistic for each well in the stack and returns
  * the result.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateStacks = function(stacks, p) {
@@ -1118,9 +1118,9 @@ QuantileStatistic.prototype.calculateStacks = function(stacks, p) {
  * Calculates the descriptive statistic for each well in the stack using the values
  * between the indices and returns the result.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateStacksIndices = function(stacks, begin, end, p) {
@@ -1167,9 +1167,9 @@ QuantileStatistic.prototype.calculateStacksIndices = function(stacks, begin, end
  * returns the result. The operation can be limited to a subset of data by passing
  * indices into the well data array.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.stacksAggregated = function(stacks, begin, end, p) {
@@ -1189,7 +1189,7 @@ QuantileStatistic.prototype.stacksAggregated = function(stacks, begin, end, p) {
  * Aggregates the data in each stack, calculates the descriptive statistic and
  * returns the result.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateStacksAggregated = function(stacks, p) {
@@ -1251,9 +1251,9 @@ QuantileStatistic.prototype.calculateStacksAggregated = function(stacks, p) {
  * Aggregates the data in each stack using the values between the indices, calculates
  * the descriptive statistic and returns the result.
  * @param {(Stack|Stack[])} stacks - the input stacks
- * @param {number} begin - the beginning index | the quantile or percentile
+ * @param {number} begin - the beginning index | the additional argument
  * @param {number} end - the ending index
- * @param {number} p - the quantile or percentile
+ * @param {number} p - the additional argument
  * @returns {Object[]} the result
  */
 QuantileStatistic.prototype.calculateStacksIndicesAggregated = function(stacks, begin, end, p) {
@@ -1327,13 +1327,13 @@ QuantileStatistic.prototype.calculate = function(data, p) {}
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-MicroFlex.html">MicroFlex</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Feb 21 2017 21:32:03 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Feb 24 2017 11:19:39 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

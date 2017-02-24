@@ -38,7 +38,7 @@ var WellSetValidation = require('../util/wellsetvalidation');
 /*-------------------------------- Constructor -------------------------------*/
 
 /**
- * This class performs mathematical shift operations for stacks, plates, wells
+ * This class performs mathematical shift operations on stacks, plates, wells
  * and well sets. To create a custom shift operation extend this class and
  * override the calculate methods using the appropriate operation. Shift operations
  * can also be performed on a subset of data by passing indices into the well

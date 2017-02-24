@@ -59,7 +59,7 @@ var DescriptiveStatistic = require('./descriptivestatistic');
  * <table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Operation<div></th>
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Beginning<br>Index<div></th>
- *    <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Length of<br>Subset<div></th>
+ *    <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Ending<br>Index<div></th>
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input/Output</div></th>
  *    <tr>
  *       <td>

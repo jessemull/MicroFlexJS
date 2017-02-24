@@ -222,7 +222,7 @@ Plate.prototype.COLUMNS_1536WELL = 48;
  *
  * The plate constructor accepts a flag for plates with standard dimensions:
  *
- * <table cellspacing="10px" style="text-align:left; margin: 20px;">
+ * <table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Plate Type<div></th>
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Flag</div></th>
  *    <tr>

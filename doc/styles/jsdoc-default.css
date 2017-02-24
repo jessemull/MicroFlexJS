@@ -352,3 +352,9 @@ tr > th:last-child { border-right: 1px solid #ddd; }
 .disabled {
     color: #454545;
 }
+
+.mytable tr, .mytable th, .mytable td {
+    border: none;
+}
+
+.mytable tr > th:last-child { border: none; }

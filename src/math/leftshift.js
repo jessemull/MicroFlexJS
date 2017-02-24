@@ -28,9 +28,9 @@ var ShiftOperation = require('./shiftoperation');
 /*------------------------------- Constructor --------------------------------*/
 
 /**
- * This class performs left shift operations for stacks, plates, wells and well
- * sets. Right shift operations can also be performed on a subset of data by
- * passing indices into the well data array as arguments.
+ * This class performs left shift operations on stacks, plates, wells and well
+ * sets. Left shift operations can also be performed on a subset of data by passing
+ * indices into the well data array as arguments.
  *
  * <br><br>
  *

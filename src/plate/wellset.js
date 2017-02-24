@@ -36,7 +36,8 @@ module.exports = WellSet;
 /**
  * This class represents a set of wells. A well set cannot contain duplicate wells.
  * However, the well set object does not enforce valid row or column numbers. This
- * logic is contained within the plate class.
+ * logic is contained within the plate class, a specialized extension of the well
+ * set.
  *
  * <br><br>
  *

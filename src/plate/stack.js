@@ -36,10 +36,10 @@ var TypedHashSet = require('../util/typedhashset');
 /**
  * This class represents a plate stack, the preferred term in the natural sciences
  * for a collection of micro-plates. The plate stack is initialized using row and
- * column numbers. The plate constructor accepts a flag for plates with standard
+ * column numbers. The stack constructor accepts a flag for plates with standard
  * dimensions:
  *
- * <table cellspacing="10px" style="text-align:left; margin: 20px;">
+ * <table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Plate Type<div></th>
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Flag</div></th>
  *    <tr>

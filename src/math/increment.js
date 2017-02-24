@@ -28,7 +28,7 @@ var UnaryOperation = require('./unaryoperation');
 /*------------------------------- Constructor --------------------------------*/
 
 /**
- * This class performs the increment operation for plate stacks, plates, wells
+ * This class performs the increment operation on plate stacks, plates, wells
  * and well sets. Unary operations can also be performed on a subset of data
  * by passing indices into the well data array as arguments.
  *

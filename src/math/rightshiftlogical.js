@@ -28,7 +28,7 @@ var ShiftOperation = require('./shiftoperation');
 /*------------------------------- Constructor --------------------------------*/
 
 /**
- * This class performs right signed/logical shift operations for stacks, plates,
+ * This class performs right signed/logical shift operations on stacks, plates,
  * wells and well sets. Right shift operations can also be performed on a subset
  * of data by passing indices into the well data array as arguments.
  *

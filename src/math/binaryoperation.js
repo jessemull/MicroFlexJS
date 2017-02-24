@@ -38,7 +38,7 @@ var WellSetValidation = require('../util/wellsetvalidation');
 /*-------------------------------- Constructor -------------------------------*/
 
 /**
- * This class performs mathematical operations with two arguments for integer
+ * This class performs mathematical operations with two arguments on integer
  * stacks, plates, wells and well sets. To create a custom mathematical operation
  * extend this class and override the calculate methods using the appropriate
  * operation.
@@ -95,14 +95,14 @@ var WellSetValidation = require('../util/wellsetvalidation');
  * The functions within the MicroFlex library are designed to be flexible and classes
  * extending the math operation binary object support operations using two stacks,
  * plates, sets and well objects as input. In addition, they support operations using
- * a single stack, plate, set or well object and a collection, array or constant, and
- * also allow the developer to limit the operation to a subset of data:
+ * a single stack, plate, set or well object and an array or constant, and also allow
+ * the developer to limit the operation to a subset of data:
  *
  * <table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input 1<br><div></th>
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input 2</div></th>
- *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Beginning<br>Index</div></th>
- *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Ending<br>Index</div></th>
+ *    <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Beginning<br>Index</div></th>
+ *    <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Ending<br>Index</div></th>
  *    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Operation</div></th>
  *    <tr>
  *       <td>Well</td>
@@ -117,13 +117,6 @@ var WellSetValidation = require('../util/wellsetvalidation');
  *       <td>+/-</td>
  *       <td>+/-</td>
  *       <td>Performs the operation using the values in the array and the values in the well</td>
- *    </tr>
- *    <tr>
- *       <td>Well</td>
- *       <td>Collection</td>
- *       <td>+/-</td>
- *       <td>+/-</td>
- *       <td>Performs the operation using the values in the collection and the values in the well</td>
  *    </tr>
  *    <tr>
  *       <td>Well</td>
@@ -152,13 +145,6 @@ var WellSetValidation = require('../util/wellsetvalidation');
  *    </tr>
  *    <tr>
  *       <td>Set</td>
- *       <td>Collection</td>
- *       <td>+/-</td>
- *       <td>+/-</td>
- *       <td>Performs the operation using the values in the collection and the values in each well of the set</td>
- *    </tr>
- *    <tr>
- *       <td>Set</td>
  *       <td>Constant</td>
  *       <td>+/-</td>
  *       <td>+/-</td>
@@ -184,19 +170,11 @@ var WellSetValidation = require('../util/wellsetvalidation');
  *    </tr>
  *    <tr>
  *       <td>Plate</td>
- *       <td>Collection</td>
- *       <td>+/-</td>
- *       <td>+/-</td>
- *       <td>Performs the operation using the values in the collection and the values in each well of the plate</td>
- *    </tr>
- *    <tr>
- *       <td>Plate</td>
  *       <td>Constant</td>
  *       <td>+/-</td>
  *       <td>+/-</td>
  *       <td>Performs the operation using the constant and each value in each well of the plate</td>
  *    </tr>
-
  *    <tr></tr>
  *    <tr></tr>
  *
@@ -213,13 +191,6 @@ var WellSetValidation = require('../util/wellsetvalidation');
  *       <td>+/-</td>
  *       <td>+/-</td>
  *       <td>Performs the operation using the values in the array and the values in each well of each plate in the stack</td>
- *    </tr>
- *    <tr>
- *       <td>Stack</td>
- *       <td>Collection</td>
- *       <td>+/-</td>
- *       <td>+/-</td>
- *       <td>Performs the operation using the values in the collection and the values in each well of each plate in the stack</td>
  *    </tr>
  *    <tr>
  *       <td>Stack</td>

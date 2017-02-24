@@ -48,7 +48,7 @@
 
 
 <div class="description">
-    This class performs mathematical operations with two arguments for integer
+    This class performs mathematical operations with two arguments on integer
 stacks, plates, wells and well sets. To create a custom mathematical operation
 extend this class and override the calculate methods using the appropriate
 operation.
@@ -105,14 +105,14 @@ and sets missing from one of the input objects:
 The functions within the MicroFlex library are designed to be flexible and classes
 extending the math operation binary object support operations using two stacks,
 plates, sets and well objects as input. In addition, they support operations using
-a single stack, plate, set or well object and a collection, array or constant, and
-also allow the developer to limit the operation to a subset of data:
+a single stack, plate, set or well object and an array or constant, and also allow
+the developer to limit the operation to a subset of data:
 
 <table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input 1<br><div></th>
    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input 2</div></th>
-   <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Beginning<br>Index</div></th>
-   <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Ending<br>Index</div></th>
+   <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Beginning<br>Index</div></th>
+   <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Ending<br>Index</div></th>
    <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Operation</div></th>
    <tr>
       <td>Well</td>
@@ -127,13 +127,6 @@ also allow the developer to limit the operation to a subset of data:
       <td>+/-</td>
       <td>+/-</td>
       <td>Performs the operation using the values in the array and the values in the well</td>
-   </tr>
-   <tr>
-      <td>Well</td>
-      <td>Collection</td>
-      <td>+/-</td>
-      <td>+/-</td>
-      <td>Performs the operation using the values in the collection and the values in the well</td>
    </tr>
    <tr>
       <td>Well</td>
@@ -160,13 +153,6 @@ also allow the developer to limit the operation to a subset of data:
    </tr>
    <tr>
       <td>Set</td>
-      <td>Collection</td>
-      <td>+/-</td>
-      <td>+/-</td>
-      <td>Performs the operation using the values in the collection and the values in each well of the set</td>
-   </tr>
-   <tr>
-      <td>Set</td>
       <td>Constant</td>
       <td>+/-</td>
       <td>+/-</td>
@@ -187,13 +173,6 @@ also allow the developer to limit the operation to a subset of data:
       <td>+/-</td>
       <td>+/-</td>
       <td>Performs the operation using the values in the array and the values in each well of the plate</td>
-   </tr>
-   <tr>
-      <td>Plate</td>
-      <td>Collection</td>
-      <td>+/-</td>
-      <td>+/-</td>
-      <td>Performs the operation using the values in the collection and the values in each well of the plate</td>
    </tr>
    <tr>
       <td>Plate</td>
@@ -218,13 +197,6 @@ also allow the developer to limit the operation to a subset of data:
       <td>+/-</td>
       <td>+/-</td>
       <td>Performs the operation using the values in the array and the values in each well of each plate in the stack</td>
-   </tr>
-   <tr>
-      <td>Stack</td>
-      <td>Collection</td>
-      <td>+/-</td>
-      <td>+/-</td>
-      <td>Performs the operation using the values in the collection and the values in each well of each plate in the stack</td>
    </tr>
    <tr>
       <td>Stack</td>
@@ -424,7 +396,7 @@ also allow the developer to limit the operation to a subset of data:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line375">line 375</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line346">line 346</a>
     </li></ul></dd>
     
 
@@ -605,7 +577,7 @@ also allow the developer to limit the operation to a subset of data:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line2054">line 2054</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line2025">line 2025</a>
     </li></ul></dd>
     
 
@@ -781,7 +753,7 @@ also allow the developer to limit the operation to a subset of data:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line2073">line 2073</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line2044">line 2044</a>
     </li></ul></dd>
     
 
@@ -1004,7 +976,7 @@ and a constant.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line2084">line 2084</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line2055">line 2055</a>
     </li></ul></dd>
     
 
@@ -1227,7 +1199,7 @@ and returns the result.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line2065">line 2065</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line2036">line 2036</a>
     </li></ul></dd>
     
 
@@ -1458,7 +1430,7 @@ passing a beginning and ending index into a well data array,
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line1181">line 1181</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line1152">line 1152</a>
     </li></ul></dd>
     
 
@@ -1686,7 +1658,7 @@ the plate data array,
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line1411">line 1411</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line1382">line 1382</a>
     </li></ul></dd>
     
 
@@ -1917,7 +1889,7 @@ passing a beginning and ending index into a well data array,
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line757">line 757</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line728">line 728</a>
     </li></ul></dd>
     
 
@@ -2145,7 +2117,7 @@ the set data array,
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line987">line 987</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line958">line 958</a>
     </li></ul></dd>
     
 
@@ -2376,7 +2348,7 @@ passing a beginning and ending index into a well data array,
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line1607">line 1607</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line1578">line 1578</a>
     </li></ul></dd>
     
 
@@ -2604,7 +2576,7 @@ the stack data array,
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line1849">line 1849</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line1820">line 1820</a>
     </li></ul></dd>
     
 
@@ -2835,7 +2807,7 @@ and ending index into the well data array,
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line390">line 390</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line361">line 361</a>
     </li></ul></dd>
     
 
@@ -3063,7 +3035,7 @@ the well data array,
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line564">line 564</a>
+        <a href="math_binaryoperation.js.html">math/binaryoperation.js</a>, <a href="math_binaryoperation.js.html#line535">line 535</a>
     </li></ul></dd>
     
 
@@ -3127,13 +3099,13 @@ the well data array,
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-MicroFlex.html">MicroFlex</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Feb 21 2017 21:32:03 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Feb 24 2017 11:19:39 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

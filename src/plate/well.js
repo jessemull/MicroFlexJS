@@ -39,10 +39,10 @@ module.exports = Well;
  *
  * Plate, well set, and well group objects cannot contain duplicate wells. However,
  * the well object does not check for wells outside a specified range. This logic
- * is housed within the well set, plate and stack objects. Wells are compared using
- * row and column numbers in that order. This class implements a compareTo method
- * for comparing two well objects and a sort method for sorting well objects
- * contained within an array.
+ * is housed within the plate and stack objects. Wells are compared using row and
+ * column numbers in that order. This class implements a compareTo method for
+ * comparing two well objects and a sort method for sorting well objects contained
+ * within an array.
  *
  * <br><br>
  *

@@ -38,7 +38,7 @@ var WellSetValidation = require('../util/wellsetvalidation');
 /*-------------------------------- Constructor -------------------------------*/
 
 /**
- * This class performs mathematical operations with a single argument for stacks,
+ * This class performs mathematical operations with a single argument on stacks,
  * plates, wells and well sets. To create a custom mathematical operation extend
  * this class and override the calculate methods using the appropriate operation.
  * Unary operations can also be performed on a subset of data by passing indices
