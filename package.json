@@ -1,6 +1,6 @@
 {
   "name": "microflex",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "MicroFlex - The World's First Microplate Library",
   "main": "microflex.js",
   "directories": {
