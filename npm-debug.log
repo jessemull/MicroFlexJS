@@ -1,138 +1,27 @@
 0 info it worked if it ends with ok
-1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'publish' ]
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'version', 'minor' ]
 2 info using npm@4.1.1
 3 info using node@v7.4.0
-4 verbose publish [ '.' ]
-5 silly cache add args [ '.', null ]
-6 verbose cache add spec .
-7 silly cache add parsed spec Result {
-7 silly cache add   raw: '.',
-7 silly cache add   scope: null,
-7 silly cache add   escapedName: null,
-7 silly cache add   name: null,
-7 silly cache add   rawSpec: '.',
-7 silly cache add   spec: '/home/jessemull/Javascript Projects/microflex',
-7 silly cache add   type: 'directory' }
-8 verbose addLocalDirectory /home/jessemull/.npm/microflex/0.8.0/package.tgz not in flight; packing
-9 verbose correctMkdir /home/jessemull/.npm correctMkdir not in flight; initializing
-10 info lifecycle microflex@0.8.0~prepublish: microflex@0.8.0
-11 silly lifecycle microflex@0.8.0~prepublish: no script for prepublish, continuing
-12 info lifecycle microflex@0.8.0~prepare: microflex@0.8.0
-13 silly lifecycle microflex@0.8.0~prepare: no script for prepare, continuing
-14 verbose tar pack [ '/home/jessemull/.npm/microflex/0.8.0/package.tgz',
-14 verbose tar pack   '/home/jessemull/Javascript Projects/microflex' ]
-15 verbose tarball /home/jessemull/.npm/microflex/0.8.0/package.tgz
-16 verbose folder /home/jessemull/Javascript Projects/microflex
-17 verbose addLocalTarball adding from inside cache /home/jessemull/.npm/microflex/0.8.0/package.tgz
-18 verbose correctMkdir /home/jessemull/.npm correctMkdir not in flight; initializing
-19 silly cache afterAdd microflex@0.8.0
-20 verbose afterAdd /home/jessemull/.npm/microflex/0.8.0/package/package.json not in flight; writing
-21 verbose correctMkdir /home/jessemull/.npm correctMkdir not in flight; initializing
-22 verbose afterAdd /home/jessemull/.npm/microflex/0.8.0/package/package.json written
-23 silly publish { name: 'microflex',
-23 silly publish   version: '0.8.0',
-23 silly publish   description: 'MicroFlex - The World\'s First Microplate Library',
-23 silly publish   main: 'microflex.js',
-23 silly publish   directories: { doc: 'doc' },
-23 silly publish   scripts: { test: 'mocha --reporter spec' },
-23 silly publish   keywords:
-23 silly publish    [ 'microplate',
-23 silly publish      'microflex',
-23 silly publish      'microtiter',
-23 silly publish      'lab',
-23 silly publish      'science',
-23 silly publish      'statistics',
-23 silly publish      'well',
-23 silly publish      'wellset',
-23 silly publish      'plate',
-23 silly publish      'stack',
-23 silly publish      'biology',
-23 silly publish      'biochemistry',
-23 silly publish      'pharmaceutical',
-23 silly publish      'wetlab',
-23 silly publish      'assay',
-23 silly publish      'experiment',
-23 silly publish      'data',
-23 silly publish      'dataset',
-23 silly publish      'biotechnology',
-23 silly publish      'chemistry',
-23 silly publish      'analyze',
-23 silly publish      'analytical',
-23 silly publish      'analysis' ],
-23 silly publish   author:
-23 silly publish    { name: '“Jesse',
-23 silly publish      email: '“hello@jessemull.com”',
-23 silly publish      url: 'http://www.jessemull.com' },
-23 silly publish   license: 'Apache-2.0',
-23 silly publish   repository:
-23 silly publish    { type: 'git',
-23 silly publish      url: 'git+https://github.com/jessemull/MicroFlex.git' },
-23 silly publish   bugs: { url: 'https://github.com/jessemull/MicroFlex/issues' },
-23 silly publish   homepage: 'https://github.com/jessemull/MicroFlex#readme',
-23 silly publish   readme: '## MicroFlex\n\nMicroplate assays produce semi-structured data in a variety of formats. Due to recent advances in high throughput biology, data from a single experiment can exceed billions or even trillions of data points. Combining, normalizing and analyzing this data requires a significant investment in time, money and resources.  \n\nIntroducing MicroFlex, the world\'s first microplate library designed for bioscience data processing and software development. MicroFlex saves you time and money by simplifying code and eliminating errors in data handling.  \n\n### Installation:\n\nNode.js, browserify, and webpack users can install via npm:  \nnpm install --save-dev microflex  \n\n### Quick Start:\n\n##### [Quick Start Tutorial](http://www.jessemull.com)\n\n### Documentation:\n\n##### [JSDoc Documentation](http://www.jessemull.com/microflexjs/index.html)\n\n### Usage:\n\n**var MicroFlex = require(\'microflex\');**\n\n**var Microplate = MicroFlex.Microplate;**  \nvar Well = Microplate.Well;  \nvar WellGroup = Microplate.WellGroup;  \nvar WellSet = Microplate.WellSet;  \nvar Plate = Microplate.Plate;  \nvar Stack = Microplate.Stack;  \n...  \n\n**var Operators = MicroFlex.Operators;**  \nvar Addition = Operators.Addition;  \nvar LeftShift = Operators.LeftShift;  \n...  \n\n**var Statistics = MicroFlex.Statistics;**  \nvar Mean = Statistics.Mean;  \nvar Kurtosis = Statistics.Kurtosis;  \n...  \n\n**var IO = MicroFlex.IO;**  \nvar MicroJSON = IO.MicroJSON;  \nvar MicroXML = IO.MicroXML;  \n...  \n\n**var Utilities = MicroFlex.Utilities;**  \nvar WellValidation = Utilities.WellValidation;  \nvar TypedHashSet = Utilities.TypedHashSet;  \n...  \n\n### Features:\n\n#### MicroFlex.Microplate\n\nWell-based data structures\n\n* Wells\n* WellSets\n* Plates\n* Stacks\n\n#### MicroFlex.Operators\n\nMathematical operators for wells, sets, plates and stacks\n\n* Addition\n* Decrement\n* Division\n* Increment\n* Modulus\n* Multiplication\n* Subtraction\n* AND\n* OR\n* XOR\n* Compliment\n* Left Shift\n* Right Shift Arithmetic\n* Right Shift Logical\n\n#### MicroFlex.IO\n\nCondensed, efficient and easy to read input/output\n\n* JSON\n* XML\n\n#### MicroFlex.Utilities\n\nHelper functions for testing and validation\n\n* Random well, well set, plate and stack objects\n* Validation for all microplate types\n* Hash set and typed hash set implementations\n\n#### MicroFlex.Statistics\n\nDescriptive statistics\n\n* Bins\n* Central Moment\n* Chunk\n* Coefficient of Variation\n* Contra-harmonic Mean\n* Cumulative Product\n* Cumulative Sum\n* Differences\n* Equal Binning\n* Geometric Mean\n* Harmonic Mean\n* Interquartile Range\n* Kurtosis\n* Maximum\n* Mean\n* Mean Deviation\n* Median\n* Median Deviation\n* Minimum\n* Mode\n* N\n* Percentile\n* Population Standard Deviation\n* Population Variance\n* Power Deviation\n* Product\n* Quantile\n* Quartile Deviation\n* Quartiles\n* Quartile Skewness\n* Random Sample\n* Range\n* Root Mean Square\n* Sample Standard Deviation\n* Sample Variance\n* Shuffle\n* Skewness\n* Standard Error\n* Sum\n* Sum of Squares\n',
-23 silly publish   readmeFilename: 'README.md',
-23 silly publish   gitHead: 'ba50562b561f3a2d0e7ac3ab20e0bb610e924db9',
-23 silly publish   _id: 'microflex@0.8.0',
-23 silly publish   _shasum: 'eba76577df67266098d5b2f8bfcd1e7b0dc3db82',
-23 silly publish   _from: '.' }
-24 info lifecycle microflex@0.8.0~prepublishOnly: microflex@0.8.0
-25 silly lifecycle microflex@0.8.0~prepublishOnly: no script for prepublishOnly, continuing
-26 verbose getPublishConfig undefined
-27 silly mapToRegistry name microflex
-28 silly mapToRegistry using default registry
-29 silly mapToRegistry registry https://registry.npmjs.org/
-30 silly mapToRegistry data Result {
-30 silly mapToRegistry   raw: 'microflex',
-30 silly mapToRegistry   scope: null,
-30 silly mapToRegistry   escapedName: 'microflex',
-30 silly mapToRegistry   name: 'microflex',
-30 silly mapToRegistry   rawSpec: '',
-30 silly mapToRegistry   spec: 'latest',
-30 silly mapToRegistry   type: 'tag' }
-31 silly mapToRegistry uri https://registry.npmjs.org/microflex
-32 verbose publish registryBase https://registry.npmjs.org/
-33 silly publish uploading /home/jessemull/.npm/microflex/0.8.0/package.tgz
-34 verbose request uri https://registry.npmjs.org/microflex
-35 verbose request sending authorization for write operation
-36 info attempt registry request try #1 at 8:00:58 PM
-37 verbose request using bearer token for auth
-38 verbose request id 34a1c6b0cab7d1ce
-39 http request PUT https://registry.npmjs.org/microflex
-40 http 403 https://registry.npmjs.org/microflex
-41 verbose headers { 'content-type': 'application/json',
-41 verbose headers   'cache-control': 'max-age=300',
-41 verbose headers   'content-length': '95',
-41 verbose headers   'accept-ranges': 'bytes',
-41 verbose headers   date: 'Sat, 25 Feb 2017 04:01:01 GMT',
-41 verbose headers   via: '1.1 varnish',
-41 verbose headers   connection: 'keep-alive',
-41 verbose headers   'x-served-by': 'cache-sea1039-SEA',
-41 verbose headers   'x-cache': 'MISS',
-41 verbose headers   'x-cache-hits': '0',
-41 verbose headers   'x-timer': 'S1487995259.087747,VS0,VE1977',
-41 verbose headers   vary: 'Accept-Encoding' }
-42 verbose request invalidating /home/jessemull/.npm/registry.npmjs.org/microflex on PUT
-43 error publish Failed PUT 403
-44 verbose stack Error: "You cannot publish over the previously published version 0.8.0." : microflex
-44 verbose stack     at makeError (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:304:12)
-44 verbose stack     at CachingRegistryClient.<anonymous> (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:292:14)
-44 verbose stack     at Request._callback (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:212:14)
-44 verbose stack     at Request.self.callback (/usr/lib/node_modules/npm/node_modules/request/request.js:186:22)
-44 verbose stack     at emitTwo (events.js:106:13)
-44 verbose stack     at Request.emit (events.js:191:7)
-44 verbose stack     at Request.<anonymous> (/usr/lib/node_modules/npm/node_modules/request/request.js:1081:10)
-44 verbose stack     at emitOne (events.js:96:13)
-44 verbose stack     at Request.emit (events.js:188:7)
-44 verbose stack     at IncomingMessage.<anonymous> (/usr/lib/node_modules/npm/node_modules/request/request.js:1001:12)
-45 verbose statusCode 403
-46 verbose pkgid microflex
-47 verbose cwd /home/jessemull/Javascript Projects/microflex
-48 error Linux 4.4.0-64-generic
-49 error argv "/usr/bin/nodejs" "/usr/bin/npm" "publish"
-50 error node v7.4.0
-51 error npm  v4.1.1
-52 error code E403
-53 error "You cannot publish over the previously published version 0.8.0." : microflex
-54 error If you need help, you may report this error at:
-54 error     <https://github.com/npm/npm/issues>
-55 verbose exit [ 1, true ]
+4 info git [ 'status', '--porcelain' ]
+5 verbose stack Error: Git working directory not clean.
+5 verbose stack D npm-debug.log
+5 verbose stack     at /usr/lib/node_modules/npm/lib/version.js:247:19
+5 verbose stack     at /usr/lib/node_modules/npm/lib/utils/no-progress-while-running.js:21:8
+5 verbose stack     at ChildProcess.exithandler (child_process.js:202:7)
+5 verbose stack     at emitTwo (events.js:106:13)
+5 verbose stack     at ChildProcess.emit (events.js:191:7)
+5 verbose stack     at maybeClose (internal/child_process.js:885:16)
+5 verbose stack     at Socket.<anonymous> (internal/child_process.js:334:11)
+5 verbose stack     at emitOne (events.js:96:13)
+5 verbose stack     at Socket.emit (events.js:188:7)
+5 verbose stack     at Pipe._handle.close [as _onclose] (net.js:501:12)
+6 verbose cwd /home/jessemull/Javascript Projects/microflex
+7 error Linux 4.4.0-64-generic
+8 error argv "/usr/bin/nodejs" "/usr/bin/npm" "version" "minor"
+9 error node v7.4.0
+10 error npm  v4.1.1
+11 error Git working directory not clean.
+11 error D npm-debug.log
+12 error If you need help, you may report this error at:
+12 error     <https://github.com/npm/npm/issues>
+13 verbose exit [ 1, true ]
