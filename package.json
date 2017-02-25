@@ -38,10 +38,10 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jessemull/MicroFlex.git"
+    "url": "git+https://github.com/jessemull/MicroFlexJS.git"
   },
   "bugs": {
-    "url": "https://github.com/jessemull/MicroFlex/issues"
+    "url": "https://github.com/jessemull/MicroFlexJS/issues"
   },
-  "homepage": "https://github.com/jessemull/MicroFlex#readme"
+  "homepage": "https://github.com/jessemull/MicroFlexJS#readme"
 }
