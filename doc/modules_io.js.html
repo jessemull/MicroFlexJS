@@ -48,7 +48,919 @@
 "use strict";
 
 /**
- * This module combines the microjson and microxml classes.
+ * This module combines the MicroJSON and MicroXML classes.
+ *
+ * In order to prevent duplicate values, wells and plates are stored in typed
+ * hash sets. The IO classes convert the hash sets to a more condensed, user-friendly
+ * format while adding an object description and type to the JSON or XML
+ * output. The stringify and parse MicroJSON functions mirror the JSON.stringify
+ * and JSON.parse functions, accepting replacer, space number and reviver function
+ * arguments.
+ *
+ * &lt;br>&lt;br>
+ *
+ * The examples below compare the output of console.log, JSON.stringify,
+ * MicroJSON.stringify and MicroXML.stringify functions.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;b>Examples of JSON Output:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Object&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Console.log&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>JSON.stringify&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>MicroJSON.stringify&lt;/b>&lt;/div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>&lt;b>Well&lt;/b>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td  style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">Well {
+ *    base: 26,
+ *    row: 0,
+ *    column: 1,
+ *    data: [ 1, 2, 3, 4 ]
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>
+ *                   &lt;pre style="margin: 0; display: inline;">{
+ *    "base": 26,
+ *    "row": 0,
+ *    "column": 1,
+ *    "data": [ 1, 2, 3, 4]
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">{
+ *    "type": "Well",
+ *    "index": "A1",
+ *    "row": 0,
+ *    "column": 1,
+ *    "data": [ 1, 2, 3, 4]
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td>&lt;b>Well Group&lt;/b>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td  style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">WellGroup {
+ *    groupName: 'Example Group',
+ *    wells: TypedHashSet {
+ *       values: {
+ *          A1: 'A1',
+ *          B2: 'B2',
+ *          C5: 'C5',
+ *          D9: 'D9'
+ *       },
+ *       type: 'String'
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td>
+ *                   &lt;pre style="margin: 0; display: inline;">{
+ *    "groupName": "Example Group",
+ *    "wells": {
+ *       "values": {
+ *          "A1": "A1",
+ *          "B2": "B2",
+ *          "C5": "C5",
+ *          "D9": "D9"
+ *       },
+ *       "type": "String"
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">{
+ *    "type": "WellGroup",
+ *    "label": "Example Group",
+ *    "wells": [ "A1", "B2", "C5", "D9" ]
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td>&lt;b>Well Set&lt;/b>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">WellSet {
+ *    name: 'Example Set',
+ *    wells: TypedHashSet {
+ *       values: {
+ *          A1: Well {
+ *             base: 26,
+ *             row: 0,
+ *             column: 1,
+ *             data: [ 1, 2, 3, 4 ] },
+ *          B2: Well {
+ *             base: 26,
+ *             row: 1,
+ *             column: 2,
+ *             data: [ 5, 6, 7, 8 ]
+ *          }
+ *       },
+ *       type: 'Well'
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">{
+ *    "name": "Example Set",
+ *    "wells": {
+ *       "values": {
+ *          "A1": {
+ *             "base": 26,
+ *             "row": 0,
+ *             "column": 1,
+ *             "data": [ 1, 2, 3, 4 ]
+ *          },
+ *          "B2": {
+ *             "base": 26,
+ *             "row": 1,
+ *             "column": 2,
+ *             "data": [ 5, 6, 7, 8 ]
+ *          }
+ *       },
+ *       "type": "Well"
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">{
+ *    "type": "WellSet",
+ *    "label": "Example Set",
+ *    "wells": {
+ *       "A1": {
+ *          "row": 0,
+ *          "column": 1,
+ *          "data": [ 1, 2, 3, 4 ]
+ *       },
+ *       "B2": {
+ *          "row": 1,
+ *          "column": 2,
+ *          "data": [ 5, 6, 7, 8 ]
+ *       }
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td>&lt;b>Plate&lt;/b>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">Plate {
+ *    plateType: 4,
+ *    rows: 8,
+ *    columns: 12,
+ *    groups: TypedHashSet {
+ *       values: {
+ *          group: WellGroup {
+ *             groupName: 'Example Group',
+ *             wells: TypedHashSet {
+ *                values: {
+ *                   A1: 'A1',
+ *                   B2: 'B2'
+ *                },
+ *                type: 'String'
+ *             }
+ *          }
+ *       },
+ *       type: 'WellGroup'
+ *    },
+ *    name: 'Example Plate',
+ *    wells: TypedHashSet {
+ *       values: {
+ *          A1: Well {
+ *             base: 26,
+ *             row: 0,
+ *             column: 1,
+ *             data: [ 1, 2, 3, 4 ]
+ *          },
+ *          B2: Well {
+ *             base: 26,
+ *             row: 1,
+ *             column: 2,
+ *             data: [ 5, 6, 7, 8 ]
+ *          },
+ *          C5: Well {
+ *             base: 26,
+ *             row: 2,
+ *             column: 5,
+ *             data: [ 9, 10, 11, 12 ]
+ *          }
+ *       },
+ *       type: 'Well'
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">{
+ *    "plateType": 4,
+ *    "rows": 8,
+ *    "columns": 12,
+ *    "groups": {
+ *       "values": {
+ *          group: {
+ *             "groupName": "Example Group",
+ *             "wells": {
+ *                "values": {
+ *                   "A1": "A1",
+ *                   "B2": "B2"
+ *                },
+ *                "type": "String"
+ *             }
+ *          }
+ *       },
+ *       "type": "WellGroup"
+ *    },
+ *    "name": "Example Plate",
+ *    "wells": {
+ *       "values": {
+ *          "A1": {
+ *             "base": 26,
+ *             "row": 0,
+ *             "column": 1,
+ *             "data": [ 1, 2, 3, 4 ]
+ *          },
+ *          "B2": {
+ *             "base": 26,
+ *             "row": 1,
+ *             "column": 2,
+ *             "data": [ 5, 6, 7, 8 ]
+ *          },
+ *          "C5": {
+ *             "base": 26,
+ *             "row": 2,
+ *             "column": 5,
+ *             "data": [ 9, 10, 11, 12 ]
+ *          }
+ *       },
+ *       "type": "Well"
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">{
+ *    "type": "Plate",
+ *    "label": "Example Plate",
+ *    "rows": 8,
+ *    "columns": 12,
+ *    "descriptor": "96-Well",
+ *    "groups": {
+ *       "Example Group": [ "A1", "B2" ]
+ *    },
+ *    "wells": {
+ *       "A1": {
+ *          "row": 0,
+ *          "column": 1,
+ *          "data": [ 1, 2, 3, 4 ]
+ *       },
+ *       "B2": {
+ *          "row": 1,
+ *          "column": 2,
+ *          "data": [ 5, 6, 7, 8 ]
+ *       },
+ *       "C5": {
+ *          "row": 2,
+ *          "column": 5,
+ *          "data": [ 9, 10, 11, 12 ]
+ *       }
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td>&lt;b>Stack&lt;/b>&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">Stack {
+ *    plateType: 4,
+ *    rows: 8,
+ *    columns: 12,
+ *    name: 'Test Stack',
+ *    plates: TypedHashSet {
+ *       values: {
+ * 	    Plate {
+ * 	       plateType: 4,
+ * 	       rows: 8,
+ * 	       columns: 12,
+ * 	       groups: TypedHashSet {
+ * 	          values: {
+ * 		     group: WellGroup {
+ * 		        groupName: 'Example Group',
+ * 		        wells: TypedHashSet {
+ * 		           values: {
+ * 		              A1: 'A1',
+ * 		              B2: 'B2'
+ * 		           },
+ * 		           type: 'String'
+ * 		        }
+ * 		     }
+ * 	          },
+ * 	          type: 'WellGroup'
+ * 	       },
+ * 	       name: 'Example Plate 1',
+ * 	       wells: TypedHashSet {
+ * 	          values: {
+ * 		     A1: Well {
+ * 		        base: 26,
+ * 		        row: 0,
+ * 		        column: 1,
+ * 		        data: [ 1, 2, 3, 4 ]
+ * 		     },
+ * 		     B2: Well {
+ * 		        base: 26,
+ * 		        row: 1,
+ * 		        column: 2,
+ * 		        data: [ 5, 6, 7, 8 ]
+ * 		     },
+ * 		     C5: Well {
+ * 		        base: 26,
+ * 		        row: 2,
+ * 		        column: 5,
+ * 		        data: [ 9, 10, 11, 12 ]
+ * 		     }
+ * 	          },
+ * 	          type: 'Well'
+ * 	       }
+ * 	    },
+ * 	    Plate {
+ * 	       plateType: 4,
+ * 	       rows: 8,
+ * 	       columns: 12,
+ * 	       groups: TypedHashSet {
+ * 	          values: {
+ * 		     group: WellGroup {
+ * 		        groupName: 'Example Group',
+ * 		        wells: TypedHashSet {
+ * 		           values: {
+ * 		              B2: 'B2',
+ * 		              C5: 'C5'
+ * 		           },
+ * 		           type: 'String'
+ * 		        }
+ * 		     }
+ * 	          },
+ * 	          type: 'WellGroup'
+ * 	       },
+ * 	       name: 'Example Plate 1',
+ * 	       wells: TypedHashSet {
+ * 	          values: {
+ * 		     A1: Well {
+ * 		        base: 26,
+ * 		        row: 0,
+ * 		        column: 1,
+ * 		        data: [ 13, 14, 15, 16 ]
+ * 		     },
+ * 		     B2: Well {
+ * 		        base: 26,
+ * 		        row: 1,
+ * 		        column: 2,
+ * 		        data: [ 17, 18, 19, 20 ]
+ * 		     },
+ * 		     C5: Well {
+ * 		        base: 26,
+ * 		        row: 2,
+ * 		        column: 5,
+ * 		        data: [ 21, 22, 23, 24 ]
+ * 		     }
+ * 	          },
+ * 	          type: 'Well'
+ * 	       }
+ * 	    }
+ *       },
+ *       type: 'Plate'
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">{
+ *    "plateType": 4,
+ *    "rows": 8,
+ *    "columns": 12,
+ *    "name": "Test Stack",
+ *    "plates": {
+ *       "values": {
+ *          "plateType": 4,
+ *          "rows": 8,
+ *          "columns": 12,
+ *          "groups": {
+ *             "values": {
+ *                "group": {
+ *                   "groupName": "Example Group",
+ *                   "wells": {
+ *                     "values": {
+ *                         "A1": "A1",
+ *                         "B2": "B2"
+ *                      },
+ *                      "type": "String"
+ *                   }
+ *                }
+ *             },
+ *             "type": "WellGroup"
+ *          },
+ *          "name": "Example Plate 1",
+ *          "wells": {
+ *             "values": {
+ *                "A1": {
+ *                   "base": 26,
+ *                   "row": 0,
+ *                   "column": 1,
+ *                   "data": [ 1, 2, 3, 4 ]
+ *                },
+ *                "B2": {
+ *                   "base": 26,
+ *                   "row": 1,
+ *                   "column": 2,
+ *                   "data": [ 5, 6, 7, 8 ]
+ *                }
+ *             },
+ *             "type": "Well"
+ *          }
+ *       },
+ *       {
+ *          "plateType": 4,
+ *          "rows": 8,
+ *          "columns": 12,
+ *          "groups": {
+ *             "values": {
+ *                "group": {
+ *                   "groupName": "Example Group",
+ *                   "wells": {
+ *                      "values": {
+ *                         "A1": "A1",
+ *                         "B2": "B2"
+ *                      },
+ *                      "type": "String"
+ *                   }
+ *                }
+ *             },
+ *             "type": "WellGroup"
+ *          },
+ *          "name": "Example Plate 1",
+ *          "wells": {
+ *             "values": {
+ *                "A1": {
+ *                   "base": 26,
+ *                   "row": 0,
+ *                   "column": 1,
+ *                   "data": [ 9, 10, 11, 12 ]
+ *                },
+ *                "B2": {
+ *                   "base": 26,
+ *                   "row": 1,
+ *                   "column": 2,
+ *                   "data": [ 13, 14, 15, 16 ]
+ *                }
+ *             },
+ *             "type": "Well"
+ *          }
+ *       },
+ *       "type": "Plate"
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">{
+ *    "type": "Stack",
+ *    "label": "Test Stack",
+ *    "rows": 8,
+ *    "columns": 12,
+ *    "descriptor": "96-Well",
+ *    "plates": {
+ *       "Example Plate 1": {
+ *          "label": "Example Plate 1",
+ *          "groups": {
+ *             "Example Group": [ "A1", "B2" ]
+ *          },
+ *          "wells": {
+ *             "A1": {
+ *                "row": 0,
+ *                "column": 1,
+ *                "data": [ 1, 2, 3, 4 ]
+ *             },
+ *             "B2": {
+ *                "row": 1,
+ *                "column": 2,
+ *                "data": [ 5, 6, 7, 8 ]
+ *             }
+ *          }
+ *       },
+ *       "Example Plate 2": {
+ *          "label": "Example Plate 2",
+ *          "groups": {
+ *             "Example Group": [ "C5", "D9" ]
+ *          },
+ *          "wells": {
+ *             "C5": {
+ *                "row": 2,
+ *                "column": 5,
+ *                "data": [ 9, 10, 11, 12 ]
+ *             },
+ *             "D9": {
+ *                "row": 3,
+ *                "column": 9,
+ *                "data": [ 13, 14, 15, 16 ]
+ *             }
+ *          }
+ *       }
+ *    }
+ * }&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;div style="border-bottom: 1px solid black; margin-bottom: 10px;">&lt;div>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * &lt;br>
+ *
+ * &lt;b>Examples of XML Output:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Well&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Well Group&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Well Set&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Plate&lt;/b>&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">&lt;b>Stack&lt;/b>&lt;/div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td  style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">&amp;lt;WELL&amp;gt;
+ *    &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *    &amp;lt;ROW&amp;gt;0&amp;lt;/ROW&amp;gt;
+ *    &amp;lt;COLUMN&amp;gt;1&amp;lt;/COLUMN&amp;gt;
+ *    &amp;lt;DATA&amp;gt;
+ *       &amp;lt;VALUE&amp;gt;1&amp;lt;/VALUE&amp;gt;
+ *       &amp;lt;VALUE&amp;gt;2&amp;lt;/VALUE&amp;gt;
+ *       &amp;lt;VALUE&amp;gt;3&amp;lt;/VALUE&amp;gt;
+ *       &amp;lt;VALUE&amp;gt;4&amp;lt;/VALUE&amp;gt;
+ *    &amp;lt;/DATA&amp;gt;
+ * &amp;lt;/WELL&amp;gt;&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td  style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">&amp;lt;WELLGROUP&amp;gt;
+ *    &amp;lt;LABEL&amp;gt;Group&amp;lt;/LABEL&amp;gt;
+ *    &amp;lt;WELLS&amp;gt;
+ *       &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *       &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *       &amp;lt;INDEX&amp;gt;C5&amp;lt;/INDEX&amp;gt;
+ *       &amp;lt;INDEX&amp;gt;D9&amp;lt;/INDEX&amp;gt;
+ *    &amp;lt;/WELLS&amp;gt;
+ * &amp;lt;/WELLGROUP&amp;gt;&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td  style="font-size: 70%" valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">&amp;lt;WELLSET&amp;gt;
+ *    &amp;lt;LABEL&amp;gt;Example Set&amp;lt;/LABEL&amp;gt;
+ *    &amp;lt;WELLS&amp;gt;
+ *       &amp;lt;WELL&amp;gt;
+ *          &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *          &amp;lt;ROW&amp;gt;0&amp;lt;/ROW&amp;gt;
+ *          &amp;lt;COLUMN&amp;gt;1&amp;lt;/COLUMN&amp;gt;
+ *          &amp;lt;DATA&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;1&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;2&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;3&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;4&amp;lt;/VALUE&amp;gt;
+ *          &amp;lt;/DATA&amp;gt;
+ *       &amp;lt;/WELL&amp;gt;
+ *       &amp;lt;WELL&amp;gt;
+ *          &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *          &amp;lt;ROW&amp;gt;1&amp;lt;/ROW&amp;gt;
+ *          &amp;lt;COLUMN&amp;gt;2&amp;lt;/COLUMN&amp;gt;
+ *          &amp;lt;DATA&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;5&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;6&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;7&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;8&amp;lt;/VALUE&amp;gt;
+ *          &amp;lt;/DATA&amp;gt;
+ *       &amp;lt;/WELL&amp;gt;
+ *    &amp;lt;/WELLS&amp;gt;
+ * &amp;lt;/WELLSET&amp;gt;&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>
+ *                   &lt;pre style="margin: 0; display: inline;">&amp;lt;PLATE&amp;gt;
+ *    &amp;lt;LABEL&amp;gt;Example Plate&amp;lt;/LABEL&amp;gt;
+ *    &amp;lt;ROWS&amp;gt;8&amp;lt;/ROWS&amp;gt;
+ *    &amp;lt;COLUMNS&amp;gt;12&amp;lt;/COLUMNS&amp;gt;
+ *    &amp;lt;DESCRIPTOR&amp;gt;96-Well&amp;lt;/DESCRIPTOR&amp;gt;
+ *    &amp;lt;WELLGROUPS&amp;gt;
+ *       &amp;lt;WELLGROUP&amp;gt;
+ *          &amp;lt;LABEL&amp;gt;Group&amp;lt;/LABEL&amp;gt;
+ *          &amp;lt;WELLS&amp;gt;
+ *             &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *             &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *          &amp;lt;/WELLS&amp;gt;
+ *       &amp;lt;/WELLGROUP&amp;gt;
+ *    &amp;lt;/WELLGROUPS&amp;gt;
+ *    &amp;lt;WELLS&amp;gt;
+ *       &amp;lt;WELL&amp;gt;
+ *          &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *          &amp;lt;ROW&amp;gt;0&amp;lt;/ROW&amp;gt;
+ *          &amp;lt;COLUMN&amp;gt;1&amp;lt;/COLUMN&amp;gt;
+ *          &amp;lt;DATA&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;1&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;2&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;3&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;4&amp;lt;/VALUE&amp;gt;
+ *          &amp;lt;/DATA&amp;gt;
+ *       &amp;lt;/WELL&amp;gt;
+ *       &amp;lt;WELL&amp;gt;
+ *          &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *          &amp;lt;ROW&amp;gt;1&amp;lt;/ROW&amp;gt;
+ *          &amp;lt;COLUMN&amp;gt;2&amp;lt;/COLUMN&amp;gt;
+ *          &amp;lt;DATA&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;5&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;6&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;7&amp;lt;/VALUE&amp;gt;
+ *             &amp;lt;VALUE&amp;gt;8&amp;lt;/VALUE&amp;gt;
+ *          &amp;lt;/DATA&amp;gt;
+ *       &amp;lt;/WELL&amp;gt;
+ *    &amp;lt;/WELLS&amp;gt;
+ * &amp;lt;/PLATE&amp;gt;&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td style="font-size: 70%" valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td style="padding-top: 7px;">
+ *                   &lt;pre style="margin: 0; display: inline;">&amp;lt;STACK&amp;gt;
+ *    &amp;lt;LABEL&amp;gt;Test Stack&amp;lt;/LABEL&amp;gt;
+ *    &amp;lt;ROWS&amp;gt;8&amp;lt;/ROWS&amp;gt;
+ *    &amp;lt;COLUMNS&amp;gt;12&amp;lt;/COLUMNS&amp;gt;
+ *    &amp;lt;DESCRIPTOR&amp;gt;96-Well&amp;lt;/DESCRIPTOR&amp;gt;
+ *    &amp;lt;PLATES&amp;gt;
+ *       &amp;lt;PLATE&amp;gt;
+ *          &amp;lt;LABEL&amp;gt;Example Plate&amp;lt;/LABEL&amp;gt;
+ *          &amp;lt;ROWS&amp;gt;8&amp;lt;/ROWS&amp;gt;
+ *          &amp;lt;COLUMNS&amp;gt;12&amp;lt;/COLUMNS&amp;gt;
+ *          &amp;lt;DESCRIPTOR&amp;gt;96-Well&amp;lt;/DESCRIPTOR&amp;gt;
+ *          &amp;lt;WELLGROUPS&amp;gt;
+ *             &amp;lt;WELLGROUP&amp;gt;
+ *                &amp;lt;LABEL&amp;gt;Group&amp;lt;/LABEL&amp;gt;
+ *                &amp;lt;WELLS&amp;gt;
+ *                   &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *                   &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;/WELLS&amp;gt;
+ *             &amp;lt;/WELLGROUP&amp;gt;
+ *          &amp;lt;/WELLGROUPS&amp;gt;
+ *          &amp;lt;WELLS&amp;gt;
+ *             &amp;lt;WELL&amp;gt;
+ *                &amp;lt;INDEX&amp;gt;A1&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;ROW&amp;gt;0&amp;lt;/ROW&amp;gt;
+ *                &amp;lt;COLUMN&amp;gt;1&amp;lt;/COLUMN&amp;gt;
+ *                &amp;lt;DATA&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;1&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;2&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;3&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;4&amp;lt;/VALUE&amp;gt;
+ *                &amp;lt;/DATA&amp;gt;
+ *             &amp;lt;/WELL&amp;gt;
+ *             &amp;lt;WELL&amp;gt;
+ *                &amp;lt;INDEX&amp;gt;B2&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;ROW&amp;gt;1&amp;lt;/ROW&amp;gt;
+ *                &amp;lt;COLUMN&amp;gt;2&amp;lt;/COLUMN&amp;gt;
+ *                &amp;lt;DATA&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;5&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;6&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;7&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;8&amp;lt;/VALUE&amp;gt;
+ *                &amp;lt;/DATA&amp;gt;
+ *             &amp;lt;/WELL&amp;gt;
+ *          &amp;lt;/WELLS&amp;gt;
+ *       &amp;lt;/PLATE&amp;gt;
+ *       &amp;lt;PLATE&amp;gt;
+ *          &amp;lt;LABEL&amp;gt;Example Plate 2&amp;lt;/LABEL&amp;gt;
+ *          &amp;lt;ROWS&amp;gt;8&amp;lt;/ROWS&amp;gt;
+ *          &amp;lt;COLUMNS&amp;gt;12&amp;lt;/COLUMNS&amp;gt;
+ *          &amp;lt;DESCRIPTOR&amp;gt;96-Well&amp;lt;/DESCRIPTOR&amp;gt;
+ *          &amp;lt;WELLGROUPS&amp;gt;
+ *             &amp;lt;WELLGROUP&amp;gt;
+ *                &amp;lt;LABEL&amp;gt;Group&amp;lt;/LABEL&amp;gt;
+ *                &amp;lt;WELLS&amp;gt;
+ *                   &amp;lt;INDEX&amp;gt;C5&amp;lt;/INDEX&amp;gt;
+ *                   &amp;lt;INDEX&amp;gt;D9&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;/WELLS&amp;gt;
+ *             &amp;lt;/WELLGROUP&amp;gt;
+ *          &amp;lt;/WELLGROUPS&amp;gt;
+ *          &amp;lt;WELLS&amp;gt;
+ *             &amp;lt;WELL&amp;gt;
+ *                &amp;lt;INDEX&amp;gt;C5&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;ROW&amp;gt;2&amp;lt;/ROW&amp;gt;
+ *                &amp;lt;COLUMN&amp;gt;5&amp;lt;/COLUMN&amp;gt;
+ *                &amp;lt;DATA&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;9&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;10&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;11&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;12&amp;lt;/VALUE&amp;gt;
+ *                &amp;lt;/DATA&amp;gt;
+ *             &amp;lt;/WELL&amp;gt;
+ *             &amp;lt;WELL&amp;gt;
+ *                &amp;lt;INDEX&amp;gt;D9&amp;lt;/INDEX&amp;gt;
+ *                &amp;lt;ROW&amp;gt;3&amp;lt;/ROW&amp;gt;
+ *                &amp;lt;COLUMN&amp;gt;9&amp;lt;/COLUMN&amp;gt;
+ *                &amp;lt;DATA&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;13&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;14&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;15&amp;lt;/VALUE&amp;gt;
+ *                   &amp;lt;VALUE&amp;gt;16&amp;lt;/VALUE&amp;gt;
+ *                &amp;lt;/DATA&amp;gt;
+ *             &amp;lt;/WELL&amp;gt;
+ *          &amp;lt;/WELLS&amp;gt;
+ *       &amp;lt;/PLATE&amp;gt;
+ *    &amp;lt;/PLATES&amp;gt;
+ * &amp;lt;/STACK&amp;gt;&lt;/pre>
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
  * @module IO
  * @author Jesse L. Mull
  * @version Updated February 17, 2016
@@ -70,13 +982,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.UnaryOperation.html">UnaryOperation</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Feb 24 2017 11:19:39 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Feb 24 2017 18:54:16 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

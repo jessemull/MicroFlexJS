@@ -690,31 +690,31 @@ var PlateValidation = require('../util/platevalidation');
  *       <td valign="top">
  *          <table>
  *             <tr>
-  *                <div style="border-bottom: 1px solid black; margin-bottom: 10px;"><div>
+ *                <div style="border-bottom: 1px solid black; margin-bottom: 10px;"><div>
  *             </tr>
  *          </table>
  *       </td>
  *       <td valign="top">
  *          <table>
  *             <tr>
-  *                <div style="border-bottom: 1px solid black; margin-bottom: 10px;"><div>
+ *                <div style="border-bottom: 1px solid black; margin-bottom: 10px;"><div>
  *             </tr>
  *          </table>
  *       </td>
  *       <td valign="top">
  *          <table>
  *             <tr>
-  *                <div style="border-bottom: 1px solid black; margin-bottom: 10px;"><div>
+ *                <div style="border-bottom: 1px solid black; margin-bottom: 10px;"><div>
  *             </tr>
  *          </table>
  *       </td>
  *       <td valign="top">
  *          <table>
  *             <tr>
-  *                <div style="border-bottom: 1px solid black; margin-bottom: 10px;"><div>
+ *                <div style="border-bottom: 1px solid black; margin-bottom: 10px;"><div>
  *             </tr>
  *          </table>
- *       </td>
+ *       <td>
  *    </tr>
  * </table>
  *

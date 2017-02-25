@@ -44,7 +44,7 @@ var MicroJSON = IO.MicroJSON;
 var MicroXML = IO.MicroXML;  
 ...  
 
-**var Utilities =MicroFlex.Utilities;**  
+**var Utilities = MicroFlex.Utilities;**  
 var WellValidation = Utilities.WellValidation;  
 var TypedHashSet = Utilities.TypedHashSet;  
 ...  

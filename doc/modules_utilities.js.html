@@ -49,6 +49,320 @@
 
 /**
  * This module combines the utility classes.
+ *
+ * Utilities include hash sets and typed hash sets as well as static functions
+ * for validating function arguments, wells, well groups, well sets, plates and stacks.
+ * The random class generates random well-based data sets and input.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;h4>&lt;b>Random Utility&lt;/b>&lt;/h4>
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Output&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Function&lt;/div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Description&lt;/div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td>Number&lt;/td>
+ *       &lt;td>
+ *          Random.getInt&lt;br>
+ *          Random.getNumberArray&lt;br>
+ *          Random.getIntegerArray&lt;br>
+ *          Random.getNumberArrayLength&lt;br>
+ *          Random.getIntegerArrayLength
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Returns a random Integer&lt;br>
+ *          Returns an array of random floats&lt;br>
+ *          Returns an array of random Integers&lt;br>
+ *          Returns an array of random floats with the specified length&lt;br>
+ *          Returns an array of random integers with the specified length&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Well Index&lt;/td>
+ *       &lt;td>
+ *          Random.getRow&lt;br>
+ *          Random.getIndex&lt;br>
+ *          Random.getIndexArray
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Returns a random row string&lt;br>
+ *          Returns a random well index string&lt;br>
+ *          Returns an array of random well index strings&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Well&lt;/td>
+ *       &lt;td>
+ *          Random.getWell&lt;br>
+ *          Random.getIntegerWell&lt;br>
+ *          Random.getWellArray
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Returns a random well&lt;br>
+ *          Returns a random well of integers&lt;br>
+ *          Returns an array of random wells
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Well Group&lt;/td>
+ *       &lt;td>
+ *          Random.getGroup&lt;br>
+ *          Random.getGroups
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Returns a random well group&lt;br>
+ *          Returns an array of random well groups
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>WellSet&lt;/td>
+ *       &lt;td>
+ *          Random.getWellSet&lt;br>
+ *          Random.getWellSetArray
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Returns a random well set&lt;br>
+ *          Returns an array of random well sets
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Plate&lt;/td>
+ *       &lt;td>
+ *          Random.getPlate&lt;br>
+ *          Random.getPlateArray
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Returns a random Plate&lt;br>
+ *          Returns an array of random plates
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;h4>&lt;b>Hash Set Utilities&lt;/b>&lt;/h4>
+ *
+ * Hash sets are implemented using a simple Javascript object containing key-value
+ * pairs. Javascript object property keys must be strings. Therefore, any objects
+ * added to the set must have a unique string value provided by the object's
+ * toString function. A for...of loop can be used to iterate over the set.
+ *
+ * &lt;br>&lt;br>
+ *
+ * For typed sets the type is passed as a string parameter to the conslructor and
+ * enforced by comparing the type string of the set input to the value returned by
+ * Object.prototype.toString.call or Object.prototype.constructor.name for objects
+ * and primitive values respectively.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;h4>&lt;b>Validation Utilities&lt;/b>&lt;/h4>
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Input&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Class.function&lt;/div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Description&lt;/div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td>Indices&lt;/td>
+ *       &lt;td>
+ *          Validation.validateRange&lt;br>
+ *          Validation.validatePositiveRange&lt;br>
+ *          Validation.validateArrayRange
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates a set of beginning and ending indices&lt;br>
+ *          Validates a set of positive indices&lt;br>
+ *          Checks that the indices fall within the array
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Numbers&lt;/td>
+ *       &lt;td>
+ *          Validation.validatePositiveNumber&lt;br>
+ *          Validation.validateNegativeNumber&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          WellValidation.validateWellData
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates a positive number&lt;br>
+ *          Validates a negative number&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          Validates an array of numbers
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>String&lt;/td>
+ *       &lt;td>
+ *          Validation.validateString
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates a string primitive
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Well&lt;/td>
+ *       &lt;td>
+ *          WellValidation.validateWell&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          WellSetValidation.validateWellArray&lt;br>
+ *          WellSetValidation.validateWellOrIndexArray&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          PlateValidation.validateWell&lt;br>
+ *          PlateValidation.validateWellArray
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates a well&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          Validates an array of wells&lt;br>
+ *          Validates a mixed array of wells and well indices&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          Validates a well enforcing row and column numbers&lt;br>
+ *          Validates an array of wells enforcing row and column numbers
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Well Group&lt;/td>
+ *       &lt;td>
+ *          WellSetValidation.validateGroup&lt;br>
+ *          WellSetValidation.validateGroupArray&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          PlateValidation.validateGroup&lt;br>
+ *          PlateValidation.validateGroupArray
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates a well group&lt;br>
+ *          Validates an array of well groups&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          Validates a well group enforcing row and column numbers&lt;br>
+ *          Validates an array of well groups enforcing row and column numbers
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>WellSet&lt;/td>
+ *       &lt;td>
+ *           WellSetValidation.validateWellSet&lt;br>
+ *           &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *           PlateValidation.validateWellSet&lt;br>
+ *           PlateValidation.validateWellSetArray
+ *           &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates a well set&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          Validates a well set enforcing row and column numbers&lt;br>
+ *          Validates an array of well sets enforcing row and column numbers
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Plate&lt;/td>
+ *       &lt;td>
+ *           WellSetValidation.validatePlate&lt;br>
+ *           &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *           PlateValidation.validatePlate&lt;br>
+ *           PlateValidation.prototype.validatePlateArray
+ *           &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates a plate&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          Validates a plate enforcing row and column numbers&lt;br>
+ *          Validates an array of plates enforcing row and column numbers
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Stack&lt;/td>
+ *       &lt;td>
+ *          WellSetValidation.validateStack&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          PlateValidation.validateStack
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates a stack&lt;br>
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *          Validates a stack enforcing row and column numbers
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Well Indices&lt;/td>
+ *       &lt;td>
+ *          WellValidation.validateWellIndex&lt;br>
+ *          WellValidation.validateRow&lt;br>
+ *          WellValidation.validateRowInteger&lt;br>
+ *          WellValidation.validateRowString&lt;br>
+ *          WellValidation.parseRow&lt;br>
+ *          WellValidation.validateColumn
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates a well index string (e.g. A1)&lt;br>
+ *          Validates a row number or string&lt;br>
+ *          Validates a row number&lt;br>
+ *          Validates a row string&lt;br>
+ *          Parses the row string and returns the row number&lt;br>
+ *          Validates a column number
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Plate Type Flag&lt;/td>
+ *       &lt;td>
+ *          PlateValidation.validatePlateType&lt;br>
+ *          PlateValidation.plateType
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates the plate type flag&lt;br>
+ *          Parses the plate type and returns the row and column number
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>Function Arguments&lt;/td>
+ *       &lt;td>
+ *          Validation.validateArguments&lt;br>
+ *          Validation.validateArgumentMaximum&lt;br>
+ *          Validation.validateArgumentMinimum&lt;br>
+ *          Validation.validateArgumentRange
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *       &lt;td>
+ *          Validates an exact number of function arguments&lt;br>
+ *          Enforces a maximum number of function arguments&lt;br>
+ *          Enforces a minimum number of function arguments&lt;br>
+ *          Checks if function argument number is within the valid range
+ *          &lt;hr style="margin: 3px; visibility:hidden;"/>
+ *       &lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
  * @module Utilities
  * @author Jesse L. Mull
  * @version Updated February 17, 2016
@@ -75,13 +389,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.UnaryOperation.html">UnaryOperation</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Feb 24 2017 11:19:39 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Feb 24 2017 18:54:16 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -176,6 +176,7 @@ var WellSetValidation = require('../util/wellsetvalidation');
  *    </tr>
  * </table>
  *
+ * @constructor
  * @memberof module:Operations
  * @author Jesse L. Mull
  * @version Updated February 17, 2016

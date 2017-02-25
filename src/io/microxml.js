@@ -272,6 +272,7 @@ var PlateValidation = require('../util/platevalidation');
  *       </td>
  *    </tr>
  * </table>
+ *
  * @constructor
  * @memberof module:IO
  * @author Jesse L. Mull

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Validation</title>
+    <title>JSDoc: Class: UnaryOperation</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Validation</h1>
+    <h1 class="page-title">Class: UnaryOperation</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2>
-            <span class="ancestors"><a href="module-Utilities.html">Utilities</a>.</span>Validation</h2>
+            <span class="ancestors"><a href="module-Operations.html">Operations</a>.</span>UnaryOperation</h2>
         
     
 </header>
@@ -41,15 +41,150 @@
 
     
 
-    <h4 class="name" id="Validation"><span class="type-signature"></span>new Validation<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="UnaryOperation"><span class="type-signature"></span>new UnaryOperation<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    This class validates array indices, numerical ranges, strings, integers, float
-values and function argument lengths.
+    This class performs mathematical operations with a single argument on stacks,
+plates, wells and well sets. To create a custom mathematical operation extend
+this class and override the calculate methods using the appropriate operation.
+Unary operations can also be performed on a subset of data by passing indices
+into the well data array as arguments.
+
+<br><br>
+
+<b>Well Operation Example:</b>
+
+<br><br>
+
+<span style="color: purple;">var</span> increment = <span style="color: purple;">new</span> Increment();<br>
+<span style="color: purple;">var</span> well = <span style="color: purple;">new</span> Well('A1', [1,2,3,4]);<br>
+<pre style="margin: 0; display: inline;">increment.<span style="color: Sienna;">well</span>(well) => Well {
+                           base: 26,
+                           row: 0,
+                           column: 1,
+                           data: [ 2, 3, 4, 5 ]
+                        }</pre>
+
+<br><br>
+
+<b>Set Operation Example:</b>
+
+<br><br>
+
+<span style="color: purple;">var</span> increment = <span style="color: purple;">new</span> Increment();<br>
+<span style="color: purple;">var</span> set = <span style="color: purple;">new</span> WellSet(wells, "Example Set");<br>
+<pre style="margin: 0; display: inline;">increment.<span style="color: Sienna;">set</span>(set); => WellSet {
+                          name: 'Result - Example Set',
+                          wells: TypedHashSet {
+                             values: {
+                                A1: Well { base: 26, row: 0, column: 1, data: [ 2, 3, 4, 5 ] },
+                                B2: Well { base: 26, row: 1, column: 2, data: [ 6, 7, 8, 9 ] }
+                             },
+                             type: 'Well'
+                          }
+                       }</pre>
+
+<br><br>
+
+<b>Plate Operation Example:</b>
+
+<br><br>
+
+<span style="color: purple;">var</span> increment = <span style="color: purple;">new</span> Increment();<br>
+<span style="color: purple;">var</span> plate = <span style="color: purple;">new</span> Plate(8, 12, set, "Example Plate");<br>
+<pre style="margin: 0; display: inline;">increment.<span style="color: Sienna;">plate</span>(plate); => WellSet {
+                              name: 'Result - Example Plate',
+                              wells: TypedHashSet {
+                                 values: {
+                                    A1: Well { base: 26, row: 0, column: 1, data: [ 2, 3, 4, 5 ] },
+                                    B2: Well { base: 26, row: 1, column: 2, data: [ 6, 7, 8, 9 ] }
+                                 },
+                                 type: 'Well'
+                              }
+                           }</pre>
+
+<br><br>
+
+<b>Stack Operation Example:</b>
+
+<br><br>
+
+<span style="color: purple;">var</span> increment = <span style="color: purple;">new</span> Increment();<br>
+<span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> Stack(plates, "Example Stack");<br>
+<pre style="margin: 0; display: inline;">increment.<span style="color: Sienna;">stack</span>(stack); => [ WellSet {
+                                name: 'Result - Example Plate 1',
+                                wells: TypedHashSet {
+                                   values: {
+                                      A1: Well { base: 26, row: 0, column: 1, data: [ 2, 3, 4, 5 ] },
+                                      B2: Well { base: 26, row: 1, column: 2, data: [ 6, 7, 8, 9 ] }
+                                   },
+                                   type: 'Well'
+                                }
+                             },
+                             WellSet {
+                                name: 'Result - Example Plate 2',
+                                wells: TypedHashSet {
+                                   values: {
+                                      A1: Well { base: 26, row: 0, column: 1, data: [ 2, 3, 4, 5 ] },
+                                      B2: Well { base: 26, row: 1, column: 2, data: [ 6, 7, 8, 9 ] }
+                                   },
+                                   type: 'Well'
+                                }
+                             },
+                           ]</pre>
+
+<br><br>
+
+<b>MicroFlex Operators:</b>
+
+<table class="mytable" cellspacing="5px" border="0" style="text-align:left; margin: 20px;">
+   <tr>
+      <td>&raquo;&nbsp; Addition</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; AND</td>
+   </tr>
+   <tr>
+     <td>&raquo;&nbsp; Compliment</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; Decrement</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; Division</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; Increment</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; Left Shift</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; Modulus</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; Multiplication</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; OR</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; Right Shift Arithmetic</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; Right Shift Logical</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; Subtraction</td>
+   </tr>
+   <tr>
+      <td>&raquo;&nbsp; XOR</td>
+   </tr>
+</table>
 </div>
 
 
@@ -106,7 +241,7 @@ values and function argument lengths.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line42">line 42</a>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line187">line 187</a>
     </li></ul></dd>
     
 
@@ -164,14 +299,14 @@ values and function argument lengths.
 
     
 
-    <h4 class="name" id="getType"><span class="type-signature"></span>getType<span class="signature">(input)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="calculate"><span class="type-signature"></span>calculate<span class="signature">(array1)</span><span class="type-signature"> &rarr; {Array.&lt;number>}</span></h4>
 
     
 
 
 
 <div class="description">
-    Returns a string containing the object or primitive type.
+    Performs the unary operation on the array and returns the result.
 </div>
 
 
@@ -207,25 +342,13 @@ values and function argument lengths.
 
         <tr>
             
-                <td class="name"><code>input</code></td>
+                <td class="name"><code>array1</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Object</span>
-|
-
-<span class="param-type">number</span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">boolean</span>
-|
-
-<span class="param-type">symbol</span>
+<span class="param-type">Array.&lt;number></span>
 
 
             
@@ -235,7 +358,7 @@ values and function argument lengths.
 
             
 
-            <td class="description last">the input to type</td>
+            <td class="description last">the array</td>
         </tr>
 
     
@@ -276,7 +399,7 @@ values and function argument lengths.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line220">line 220</a>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line444">line 444</a>
     </li></ul></dd>
     
 
@@ -303,7 +426,7 @@ values and function argument lengths.
 
         
 <div class="param-desc">
-    the type of the input
+    the result of the operation
 </div>
 
 
@@ -314,7 +437,7 @@ values and function argument lengths.
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type">Array.&lt;number></span>
 
 
     </dd>
@@ -329,14 +452,15 @@ values and function argument lengths.
 
     
 
-    <h4 class="name" id="validateArgumentMaximum"><span class="type-signature"></span>validateArgumentMaximum<span class="signature">(numArgs, argsLength, name)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="calculateRange"><span class="type-signature"></span>calculateRange<span class="signature">(array1, begin, end)</span><span class="type-signature"> &rarr; {Array.&lt;number>}</span></h4>
 
     
 
 
 
 <div class="description">
-    Validates the number of arguments passed to a function.
+    Performs the unary operation on the array using the values between the indices
+and returns the result.
 </div>
 
 
@@ -372,13 +496,13 @@ values and function argument lengths.
 
         <tr>
             
-                <td class="name"><code>numArgs</code></td>
+                <td class="name"><code>array1</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Array.&lt;number></span>
 
 
             
@@ -388,833 +512,9 @@ values and function argument lengths.
 
             
 
-            <td class="description last">number of input arguments</td>
+            <td class="description last">the array</td>
         </tr>
 
-    
-
-        <tr>
-            
-                <td class="name"><code>argsLength</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">maximum number of arguments</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">function name</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line69">line 69</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        on invalid argument number
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">TypeError</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="validateArgumentMinimum"><span class="type-signature"></span>validateArgumentMinimum<span class="signature">(numArgs, argsLength, name)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Validates the number of arguments passed to a function.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>numArgs</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">number of input arguments</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>argsLength</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">minimum number of arguments</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">function name</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line82">line 82</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        on invalid argument number
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">TypeError</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="validateArgumentRange"><span class="type-signature"></span>validateArgumentRange<span class="signature">(numArgs, minLength, maxLength, name)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Validates the number of arguments passed to a function.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>numArgs</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">number of input arguments</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>minLength</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">minimum number of arguments</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>maxLength</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">maximum number of arguments</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">function name</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line96">line 96</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        on invalid argument number
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">TypeError</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="validateArguments"><span class="type-signature"></span>validateArguments<span class="signature">(numArgs, argsLength, name)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Validates the number of arguments passed to a function.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>numArgs</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">number of input arguments</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>argsLength</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">number of required arguments</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">function name</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line53">line 53</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        on invalid argument number
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">TypeError</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="validateArrayRange"><span class="type-signature"></span>validateArrayRange<span class="signature">(begin, end, length)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Validates array indices.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
@@ -1235,7 +535,7 @@ values and function argument lengths.
 
             
 
-            <td class="description last">beginning index</td>
+            <td class="description last">the beginning index</td>
         </tr>
 
     
@@ -1258,30 +558,7 @@ values and function argument lengths.
 
             
 
-            <td class="description last">ending index</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>length</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">maximum length of range</td>
+            <td class="description last">the ending index</td>
         </tr>
 
     
@@ -1322,7 +599,7 @@ values and function argument lengths.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line158">line 158</a>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line454">line 454</a>
     </li></ul></dd>
     
 
@@ -1343,37 +620,30 @@ values and function argument lengths.
 
 
 
-<h5>Throws:</h5>
+
+
+<h5>Returns:</h5>
 
         
+<div class="param-desc">
+    the result of the operation
+</div>
+
+
 
 <dl>
     <dt>
-        <div class="param-desc">
-        on invalid range
-        </div>
+        Type
     </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">TypeError</span>
+    <dd>
+        
+<span class="param-type">Array.&lt;number></span>
 
 
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
+    </dd>
 </dl>
 
-
     
-
-
 
 
 
@@ -1382,14 +652,16 @@ values and function argument lengths.
 
     
 
-    <h4 class="name" id="validateNegativeNumber"><span class="type-signature"></span>validateNegativeNumber<span class="signature">(number)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="plate"><span class="type-signature"></span>plate<span class="signature">(well, begin, end)</span><span class="type-signature"> &rarr; {Plate}</span></h4>
 
     
 
 
 
 <div class="description">
-    Validates negative numbers.
+    Performs the unary operation on a plate. Missing data points due to uneven
+array lengths are treated as zeros. The operation can be restricted to a subset
+of data by passing a beginning and ending index into the well data array,
 </div>
 
 
@@ -1425,13 +697,13 @@ values and function argument lengths.
 
         <tr>
             
-                <td class="name"><code>number</code></td>
+                <td class="name"><code>well</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Plate</span>
 
 
             
@@ -1441,306 +713,9 @@ values and function argument lengths.
 
             
 
-            <td class="description last">input value</td>
+            <td class="description last">the input plate</td>
         </tr>
 
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line194">line 194</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        on invalid value
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">TypeError</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="validatePositiveNumber"><span class="type-signature"></span>validatePositiveNumber<span class="signature">(number)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Validates positive numbers.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>number</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">input value</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line183">line 183</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-<h5>Throws:</h5>
-
-        
-
-<dl>
-    <dt>
-        <div class="param-desc">
-        on invalid value
-        </div>
-    </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">TypeError</span>
-
-
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
-</dl>
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="validatePositiveRange"><span class="type-signature"></span>validatePositiveRange<span class="signature">(begin, end)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Validates a positive range of numbers.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
@@ -1761,7 +736,7 @@ values and function argument lengths.
 
             
 
-            <td class="description last">beginning index</td>
+            <td class="description last">the beginning index</td>
         </tr>
 
     
@@ -1784,7 +759,7 @@ values and function argument lengths.
 
             
 
-            <td class="description last">ending index</td>
+            <td class="description last">the ending index</td>
         </tr>
 
     
@@ -1825,7 +800,7 @@ values and function argument lengths.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line138">line 138</a>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line270">line 270</a>
     </li></ul></dd>
     
 
@@ -1846,37 +821,30 @@ values and function argument lengths.
 
 
 
-<h5>Throws:</h5>
+
+
+<h5>Returns:</h5>
 
         
+<div class="param-desc">
+    the result of the unary operation
+</div>
+
+
 
 <dl>
     <dt>
-        <div class="param-desc">
-        on invalid range
-        </div>
+        Type
     </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">TypeError</span>
+    <dd>
+        
+<span class="param-type">Plate</span>
 
 
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
+    </dd>
 </dl>
 
-
     
-
-
 
 
 
@@ -1885,14 +853,16 @@ values and function argument lengths.
 
     
 
-    <h4 class="name" id="validateRange"><span class="type-signature"></span>validateRange<span class="signature">(begin, end)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="plateStrict"><span class="type-signature"></span>plateStrict<span class="signature">(well, begin, end)</span><span class="type-signature"> &rarr; {Plate}</span></h4>
 
     
 
 
 
 <div class="description">
-    Validates a range of numbers.
+    Performs the unary operation on a plate. Missing data points due to uneven
+array lengths are omitted. The operation can be restricted to a subset
+of data by passing a beginning and ending index into the well data array,
 </div>
 
 
@@ -1928,6 +898,29 @@ values and function argument lengths.
 
         <tr>
             
+                <td class="name"><code>well</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Plate</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the input plate</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>begin</code></td>
             
 
@@ -1944,7 +937,7 @@ values and function argument lengths.
 
             
 
-            <td class="description last">beginning index</td>
+            <td class="description last">the beginning index</td>
         </tr>
 
     
@@ -1967,7 +960,7 @@ values and function argument lengths.
 
             
 
-            <td class="description last">ending index</td>
+            <td class="description last">the ending index</td>
         </tr>
 
     
@@ -2008,7 +1001,7 @@ values and function argument lengths.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line116">line 116</a>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line398">line 398</a>
     </li></ul></dd>
     
 
@@ -2029,37 +1022,30 @@ values and function argument lengths.
 
 
 
-<h5>Throws:</h5>
+
+
+<h5>Returns:</h5>
 
         
+<div class="param-desc">
+    the result of the unary operation
+</div>
+
+
 
 <dl>
     <dt>
-        <div class="param-desc">
-        on invalid range
-        </div>
+        Type
     </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">TypeError</span>
+    <dd>
+        
+<span class="param-type">Plate</span>
 
 
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
+    </dd>
 </dl>
 
-
     
-
-
 
 
 
@@ -2068,14 +1054,16 @@ values and function argument lengths.
 
     
 
-    <h4 class="name" id="validateString"><span class="type-signature"></span>validateString<span class="signature">(string)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="set"><span class="type-signature"></span>set<span class="signature">(set, begin, end)</span><span class="type-signature"> &rarr; {WellSet}</span></h4>
 
     
 
 
 
 <div class="description">
-    Validates a string.
+    Performs the unary operation on a well set. Missing data points due to uneven
+array lengths are treated as zeros. The operation can be restricted to a subset
+of data by passing a beginning and ending index into the well data array,
 </div>
 
 
@@ -2111,13 +1099,13 @@ values and function argument lengths.
 
         <tr>
             
-                <td class="name"><code>string</code></td>
+                <td class="name"><code>set</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">WellSet</span>
 
 
             
@@ -2127,7 +1115,53 @@ values and function argument lengths.
 
             
 
-            <td class="description last">input string</td>
+            <td class="description last">the input set</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>begin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the beginning index</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the ending index</td>
         </tr>
 
     
@@ -2168,7 +1202,7 @@ values and function argument lengths.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_validation.js.html">util/validation.js</a>, <a href="util_validation.js.html#line207">line 207</a>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line230">line 230</a>
     </li></ul></dd>
     
 
@@ -2189,37 +1223,1035 @@ values and function argument lengths.
 
 
 
-<h5>Throws:</h5>
+
+
+<h5>Returns:</h5>
 
         
+<div class="param-desc">
+    the result of the unary operation
+</div>
+
+
 
 <dl>
     <dt>
-        <div class="param-desc">
-        on invalid string
-        </div>
+        Type
     </dt>
-    <dd></dd>
-    <dt>
-        <dl>
-            <dt>
-                Type
-            </dt>
-            <dd>
-                
-<span class="param-type">TypeError</span>
+    <dd>
+        
+<span class="param-type">WellSet</span>
 
 
-            </dd>
-        </dl>
-    </dt>
-    <dd></dd>
+    </dd>
 </dl>
-
 
     
 
 
+
+        
+            
+
+    
+
+    <h4 class="name" id="setStrict"><span class="type-signature"></span>setStrict<span class="signature">(set, begin, end)</span><span class="type-signature"> &rarr; {WellSet}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Performs the unary operation on a well set. Missing data points due to uneven
+array lengths are omitted. The operation can be restricted to a subset of data
+by passing a beginning and ending index into the well data array,
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>set</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">WellSet</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the input set</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>begin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the beginning index</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the ending index</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line373">line 373</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the result of the unary operation
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">WellSet</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="stack"><span class="type-signature"></span>stack<span class="signature">(stack, begin, end)</span><span class="type-signature"> &rarr; {Array.&lt;Plate>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Performs the unary operation on a stack. Missing data points due to uneven
+array lengths are treated as zeros. The operation can be restricted to a subset
+of data by passing a beginning and ending index into the well data array,
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>stack</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Stack</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the input stack</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>begin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the beginning index</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the ending index</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line310">line 310</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the result of the unary operation
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;Plate></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="stackStrict"><span class="type-signature"></span>stackStrict<span class="signature">(stack, begin, end)</span><span class="type-signature"> &rarr; {Array.&lt;Plate>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Performs the unary operation on a stack. Missing data points due to uneven
+array lengths are omitted. The operation can be restricted to a subset of data
+by passing a beginning and ending index into the well data array,
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>stack</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Stack</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the input stack</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>begin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the beginning index</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the ending index</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line423">line 423</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the result of the unary operation
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;Plate></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="well"><span class="type-signature"></span>well<span class="signature">(well, begin, end)</span><span class="type-signature"> &rarr; {Well}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Performs the unary operation on a well. Missing data points due to uneven array
+lengths are treated as zeros. The operation can be restricted to a subset of
+data by passing a beginning and ending index into the well data array,
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>well</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Well</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the input well</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>begin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the beginning index</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the ending index</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line200">line 200</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the result of the unary operation
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Well</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="wellStrict"><span class="type-signature"></span>wellStrict<span class="signature">(well, begin, end)</span><span class="type-signature"> &rarr; {Well}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Performs the unary operation on a well. Missing data points due to uneven array
+lengths are omitted. The operation can be restricted to a subset of data by
+passing a beginning and ending index into the well data array,
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>well</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Well</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the input well</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>begin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the beginning index</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the ending index</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="math_unaryoperation.js.html">math/unaryoperation.js</a>, <a href="math_unaryoperation.js.html#line350">line 350</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the result of the unary operation
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Well</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 

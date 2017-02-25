@@ -48,7 +48,305 @@
 "use strict";
 
 /**
- * This module combines all statistics classes.
+ * This module combines all statistic classes. See below for a list of statistical
+ * operations and links to their documentation.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;h4>&lt;b>Standard vs Aggregated&lt;/b>&lt;/h4>
+ *
+ * Statistical operations can be performed using standard or aggregated functions.
+ * Standard functions calculate the desired statistic for each well in the stack,
+ * plate or set. Aggregated functions aggregate the values from all wells in the
+ * stack, plate or set and perform the statistical operation on the aggregated
+ * values. Both standard and aggregated functions can be performed on a subset of
+ * data by passing indices into the well data set as arguments.
+ *
+ * &lt;br>&lt;br>
+ *
+ * The methods within the MicroFlex library are meant to be flexible and the
+ * descriptive statistic object supports operations using a single stack, plate,
+ * set or well as well as arrays of stacks, plates, sets or wells. In case of the
+ * latter a result for each stack, plate, set or well is returned.
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Operation&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 2px;">Beginning&lt;br>Index&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 2px;">Ending&lt;br>Index&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input/Output&lt;/div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Standard&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>+/-&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>+/-&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Accepts a single well, set, plate or stack as input&lt;/td>
+ *             &lt;/tr>
+ *             &lt;tr>
+ *                &lt;td>Calculates the statistic for each well in a well, set, plate or stack&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Aggregated&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>+/-&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>+/-&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Accepts a single well/set/plate/stack or an array of wells/sets/plates/stacks as input&lt;/td>
+ *             &lt;/tr>
+ *              &lt;tr>
+ *                &lt;td>Aggregates the data from all the wells in a well/set/plate/stack and calculates the statistic using the aggregated data&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * &lt;b>Standard Operation Examples:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> well1 = &lt;span style="color: purple;">new&lt;/span> Well('A1', [1, 2, 3, 4, 5]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> well2 = &lt;span style="color: purple;">new&lt;/span> Well('B2', [6, 7, 8, 9, 10]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [well1, well2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">wells&lt;/span>(array) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { well: 'A1', result: 3 }, { well: 'B2', result: 8 } ]; &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> WellSet(wells, "Example Set"); &lt;br>
+ * Mean.&lt;span style="color: Sienna">sets&lt;/span>(set) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { set: 'Example Set', result: [ { well: 'A1', result: 3 }, { well: 'B2', result: 8 } ] } ]; &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> Plate(rows, columns, wells, "Example Plate"); &lt;br>
+ * Mean.&lt;span style="color: Sienna">plates&lt;/span>(plate) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate', result: [ { well: 'A1', result: 3 }, { well: 'B2', result: 8 } ] } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> stack = &lt;span style="color: purple;">new&lt;/span> Stack(rows, columns, plates, "Example Stack"); &lt;br>
+ * Mean.&lt;span style="color: Sienna">stacks&lt;/span>(stack) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate 1', result: [ { well: 'A1', result: 33 }, { well: 'B2', result: 18 } ] },&lt;br>
+ * &lt;span style="margin-left: 160px;">&lt;/span>{ plate: 'Example Plate 2', result: [ { well: 'C3', result: 29 }, { well: 'D4', result: 12 } ] } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;b>Aggregated Operation Examples:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> well1 = &lt;span style="color: purple;">new&lt;/span> Well('A1', [1, 2, 3, 4, 5]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> well2 = &lt;span style="color: purple;">new&lt;/span> Well('B2', [6, 7, 8, 9, 10]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [well1, well2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">wellsAggregated&lt;/span>(array) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> { wells: [ 'A1', 'B2' ], result: 5.5 } &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> set1 = &lt;span style="color: purple;">new&lt;/span> WellSet(wells1, "Example Set 1"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> set2 = &lt;span style="color: purple;">new&lt;/span> WellSet(wells2, "Example Set 2"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [set1, set2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">setsAggregated&lt;/span>(array) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { set: 'Example Set 1', result: 5.5 }, { set: 'Example Set 2', result: 15.5 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> plate1 = &lt;span style="color: purple;">new&lt;/span> Plate(8, 12, set1, "Example Plate 1"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> plate2 = &lt;span style="color: purple;">new&lt;/span> Plate(8, 12, set2, "Example Plate 2"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [plate1, plate2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">platesAggregated&lt;/span>(array) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate 1', result: 5.5 }, { plate: 'Example Plate 2', result: 15.5 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> stack = &lt;span style="color: purple;">new&lt;/span> Stack(rows, columns, plates, "Example Stack"); &lt;br>
+ * Mean.&lt;span style="color: Sienna">stacksAggregated&lt;/span>(stack) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { stack: 'Example Stack', result: 10.5 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;h4>&lt;b>Weighted Statistics&lt;/b>&lt;/h4>
+ *
+ * Weighted statistics can apply an array of weights to the data set prior to the
+ * statistical calculation.
+ *
+ * From wikipedia: a weight function is a mathematical device used when performing
+ * a sum, integral, or average to give some elements more "weight" or influence on
+ * the result than other elements in the same set. In statistics a weighted function
+ * is often used to correct bias. The weighted statistic class implements a weighted
+ * function by accepting an array of values as weights. The values in each well of
+ * the stack, plate, set or well are multiplied by the values within the weights
+ * array prior to the statistical calculation.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;b>Standard Weighted Operation Examples:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> well1 = &lt;span style="color: purple;">new&lt;/span> Well('A1', [1, 2, 3, 4, 5]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> well2 = &lt;span style="color: purple;">new&lt;/span> Well('B2', [6, 7, 8, 9, 10]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [well1, well2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">wells&lt;/span>(array, weights) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { well: 'A1', result: 2.2 }, { well: 'B2', result: 5.2 } ]; &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> WellSet(wells, "Example Set"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">sets&lt;/span>(set, weights) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { set: 'Example Set', result: [ { well: 'A1', result: 2.2 }, { well: 'B2', result: 5.2 } ] } ]; &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> Plate(rows, columns, wells, "Example Plate"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">plates&lt;/span>(plate, weights) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate', result: [ { well: 'A1', result: 2.2 }, { well: 'B2', result: 5.2 } ] } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> stack = &lt;span style="color: purple;">new&lt;/span> Stack(rows, columns, plates, "Example Stack"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">stacks&lt;/span>(stack, weights) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate 1', result: [ { well: 'A1', result: 2.2 }, { well: 'B2', result: 5.2 } ] },&lt;br>
+ * &lt;span style="margin-left: 219px;">&lt;/span>{ plate: 'Example Plate 2', result: [ { well: 'C3', result: 6.9 }, { well: 'D4', result: 7.3 } ] } ] &lt;br>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;b>Aggregated Weighted Operation Examples:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> well1 = &lt;span style="color: purple;">new&lt;/span> Well('A1', [1, 2, 3, 4, 5]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> well2 = &lt;span style="color: purple;">new&lt;/span> Well('B2', [6, 7, 8, 9, 10]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [well1, well2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">wellsAggregated&lt;/span>(array, weights) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> { wells: [ 'A1', 'B2' ], result: 3.7 } &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> set1 = &lt;span style="color: purple;">new&lt;/span> WellSet(wells1, "Example Set 1"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> set2 = &lt;span style="color: purple;">new&lt;/span> WellSet(wells2, "Example Set 2"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [set1, set2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">setsAggregated&lt;/span>(array, weights) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { set: 'Example Set 1', result: 3.7 }, { set: 'Example Set 2', result: 9.65 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> plate1 = &lt;span style="color: purple;">new&lt;/span> Plate(8, 12, set1, "Example Plate 1"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> plate2 = &lt;span style="color: purple;">new&lt;/span> Plate(8, 12, set2, "Example Plate 2"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [plate1, plate2]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">platesAggregated&lt;/span>(array, weights) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate 1', result: 3.7 }, { plate: 'Example Plate 2', result: 9.65 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> stack = &lt;span style="color: purple;">new&lt;/span> Stack(rows, columns, plates, "Example Stack"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; &lt;br>
+ * Mean.&lt;span style="color: Sienna">stacksAggregated&lt;/span>(stack, weights) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { stack: 'Example Stack', result: 10.5 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;h4>&lt;b>Quantile Statistics&lt;/b>&lt;/h4>
+ *
+ * Quantile statistics accept an additional input parameter.
+ *
+ * &lt;br>&lt;br>
+ * &lt;b>Standard Quantile Operation Examples:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> well1 = &lt;span style="color: purple;">new&lt;/span> Well('A1', [1, 2, 3, 4, 5]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> well2 = &lt;span style="color: purple;">new&lt;/span> Well('B2', [6, 7, 8, 9, 10]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [well1, well2]; &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> p = 0.25; &lt;br>
+ * Quantile.&lt;span style="color: Sienna">wells&lt;/span>(array, p) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { well: 'A1', result: 1.25 }, { well: 'B2', result: 5.25 } ]; &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> set = &lt;span style="color: purple;">new&lt;/span> WellSet(wells, "Example Set"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> p = 0.25; &lt;br>
+ * Quantile.&lt;span style="color: Sienna">sets&lt;/span>(set, p) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { set: 'Example Set', result: [ { well: 'A1', result: 1.25 }, { well: 'B2', result: 5.25 } ] } ]; &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> plate = &lt;span style="color: purple;">new&lt;/span> Plate(rows, columns, wells, "Example Plate"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> p = 0.25; &lt;br>
+ * Quantile.&lt;span style="color: Sienna">plates&lt;/span>(plate, p) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate', result: [ { well: 'A1', result: 1.25 }, { well: 'B2', result: 5.25 } ] } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> stack = &lt;span style="color: purple;">new&lt;/span> Stack(rows, columns, plates, "Example Stack"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> p = 0.25; &lt;br>
+ * Quantile.&lt;span style="color: Sienna">stacks&lt;/span>(stack, p) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate 1', result: [ { well: 'A1', result: 33 }, { well: 'B2', result: 18 } ] },&lt;br>
+ * &lt;span style="margin-left: 195px;">&lt;/span>{ plate: 'Example Plate 2', result: [ { well: 'C3', result: 29 }, { well: 'D4', result: 12 } ] } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;b>Aggregated Quantile Operation Examples:&lt;/b>
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> well1 = &lt;span style="color: purple;">new&lt;/span> Well('A1', [1, 2, 3, 4, 5]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> well2 = &lt;span style="color: purple;">new&lt;/span> Well('B2', [6, 7, 8, 9, 10]); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [well1, well2]; &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> p = 0.25; &lt;br>
+ * Quantile.&lt;span style="color: Sienna">wellsAggregated&lt;/span>(array, p) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> { wells: [ 'A1', 'B2' ], result: 2.25 } &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> set1 = &lt;span style="color: purple;">new&lt;/span> WellSet(wells1, "Example Set 1"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> set2 = &lt;span style="color: purple;">new&lt;/span> WellSet(wells2, "Example Set 2"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [set1, set2]; &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> p = 0.25; &lt;br>
+ * Quantile.&lt;span style="color: Sienna">setsAggregated&lt;/span>(array, p) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { set: 'Example Set 1', result: 5.5 }, { set: 'Example Set 2', result: 15.5 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> plate1 = &lt;span style="color: purple;">new&lt;/span> Plate(8, 12, set1, "Example Plate 1"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> plate2 = &lt;span style="color: purple;">new&lt;/span> Plate(8, 12, set2, "Example Plate 2"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> array = [plate1, plate2]; &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> p = 0.25; &lt;br>
+ * Quantile.&lt;span style="color: Sienna">platesAggregated&lt;/span>(array, p) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { plate: 'Example Plate 1', result: 5.5 }, { plate: 'Example Plate 2', result: 15.5 } ] &lt;br>
+ *
+ * &lt;br>
+ *
+ * &lt;span style="color: purple;">var&lt;/span> stack = &lt;span style="color: purple;">new&lt;/span> Stack(rows, columns, plates, "Example Stack"); &lt;br>
+ * &lt;span style="color: purple;">var&lt;/span> p = 0.25; &lt;br>
+ * Quantile.&lt;span style="color: Sienna">stacksAggregated&lt;/span>(stack, p) &lt;span style="color: purple;">  &amp;nbsp=>&amp;nbsp  &lt;/span> [ { stack: 'Example Stack', result: 10.5 } ] &lt;br>
+ *
  * @module Statistics
  * @author Jesse L. Mull
  * @version Updated February 17, 2016
@@ -107,13 +405,13 @@ module.exports = {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-IO.html">IO</a></li><li><a href="module-Microplate.html">Microplate</a></li><li><a href="module-Operations.html">Operations</a></li><li><a href="module-Statistics.html">Statistics</a></li><li><a href="module-Utilities.html">Utilities</a></li></ul><h3>Classes</h3><ul><li><a href="module-IO.MicroJSON.html">MicroJSON</a></li><li><a href="module-IO.MicroXML.html">MicroXML</a></li><li><a href="module-Microplate.Plate.html">Plate</a></li><li><a href="module-Microplate.Stack.html">Stack</a></li><li><a href="module-Microplate.Well.html">Well</a></li><li><a href="module-Microplate.WellGroup.html">WellGroup</a></li><li><a href="module-Microplate.WellSet.html">WellSet</a></li><li><a href="module-Operations.Addition.html">Addition</a></li><li><a href="module-Operations.AND.html">AND</a></li><li><a href="module-Operations.BinaryOperation.html">BinaryOperation</a></li><li><a href="module-Operations.Compliment.html">Compliment</a></li><li><a href="module-Operations.Decrement.html">Decrement</a></li><li><a href="module-Operations.Division.html">Division</a></li><li><a href="module-Operations.Increment.html">Increment</a></li><li><a href="module-Operations.LeftShift.html">LeftShift</a></li><li><a href="module-Operations.Modulus.html">Modulus</a></li><li><a href="module-Operations.Multiplication.html">Multiplication</a></li><li><a href="module-Operations.OR.html">OR</a></li><li><a href="module-Operations.RightShiftArithmetic.html">RightShiftArithmetic</a></li><li><a href="module-Operations.RightShiftLogical.html">RightShiftLogical</a></li><li><a href="module-Operations.ShiftOperation.html">ShiftOperation</a></li><li><a href="module-Operations.Subtraction.html">Subtraction</a></li><li><a href="module-Operations.UnaryOperation.html">UnaryOperation</a></li><li><a href="module-Operations.XOR.html">XOR</a></li><li><a href="module-Statistics.Bins.html">Bins</a></li><li><a href="module-Statistics.CentralMoment.html">CentralMoment</a></li><li><a href="module-Statistics.Chunk.html">Chunk</a></li><li><a href="module-Statistics.CoefficientOfVariation.html">CoefficientOfVariation</a></li><li><a href="module-Statistics.ContraharmonicMean.html">ContraharmonicMean</a></li><li><a href="module-Statistics.CumulativeProduct.html">CumulativeProduct</a></li><li><a href="module-Statistics.CumulativeSum.html">CumulativeSum</a></li><li><a href="module-Statistics.DescriptiveStatistic.html">DescriptiveStatistic</a></li><li><a href="module-Statistics.DescriptiveStatisticWeighted.html">DescriptiveStatisticWeighted</a></li><li><a href="module-Statistics.Differences.html">Differences</a></li><li><a href="module-Statistics.EqualBins.html">EqualBins</a></li><li><a href="module-Statistics.GeometricMean.html">GeometricMean</a></li><li><a href="module-Statistics.HarmonicMean.html">HarmonicMean</a></li><li><a href="module-Statistics.InterquartileRange.html">InterquartileRange</a></li><li><a href="module-Statistics.Kurtosis.html">Kurtosis</a></li><li><a href="module-Statistics.Max.html">Max</a></li><li><a href="module-Statistics.Mean.html">Mean</a></li><li><a href="module-Statistics.MeanDeviation.html">MeanDeviation</a></li><li><a href="module-Statistics.Median.html">Median</a></li><li><a href="module-Statistics.MedianDeviation.html">MedianDeviation</a></li><li><a href="module-Statistics.Min.html">Min</a></li><li><a href="module-Statistics.Mode.html">Mode</a></li><li><a href="module-Statistics.N.html">N</a></li><li><a href="module-Statistics.Percentile.html">Percentile</a></li><li><a href="module-Statistics.PopulationStandardDeviation.html">PopulationStandardDeviation</a></li><li><a href="module-Statistics.PopulationVariance.html">PopulationVariance</a></li><li><a href="module-Statistics.PowerDeviation.html">PowerDeviation</a></li><li><a href="module-Statistics.Product.html">Product</a></li><li><a href="module-Statistics.Quantile.html">Quantile</a></li><li><a href="module-Statistics.QuantileStatistic.html">QuantileStatistic</a></li><li><a href="module-Statistics.QuartileDeviation.html">QuartileDeviation</a></li><li><a href="module-Statistics.Quartiles.html">Quartiles</a></li><li><a href="module-Statistics.QuartileSkewness.html">QuartileSkewness</a></li><li><a href="module-Statistics.RandomSample.html">RandomSample</a></li><li><a href="module-Statistics.Range.html">Range</a></li><li><a href="module-Statistics.SampleStandardDeviation.html">SampleStandardDeviation</a></li><li><a href="module-Statistics.SampleVariance.html">SampleVariance</a></li><li><a href="module-Statistics.Shuffle.html">Shuffle</a></li><li><a href="module-Statistics.Skewness.html">Skewness</a></li><li><a href="module-Statistics.StandardError.html">StandardError</a></li><li><a href="module-Statistics.Sum.html">Sum</a></li><li><a href="module-Statistics.SumOfSquares.html">SumOfSquares</a></li><li><a href="module-Utilities.HashSet.html">HashSet</a></li><li><a href="module-Utilities.PlateValidation.html">PlateValidation</a></li><li><a href="module-Utilities.Random.html">Random</a></li><li><a href="module-Utilities.TypedHashSet.html">TypedHashSet</a></li><li><a href="module-Utilities.Validation.html">Validation</a></li><li><a href="module-Utilities.WellSetValidation.html">WellSetValidation</a></li><li><a href="module-Utilities.WellValidation.html">WellValidation</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Feb 24 2017 11:19:39 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Feb 24 2017 18:54:16 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>
