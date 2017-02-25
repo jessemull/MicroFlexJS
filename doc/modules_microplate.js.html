@@ -49,6 +49,410 @@
 
 /**
  * This module combines the well, well group, well set, plate and stack classes.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;h4>&lt;b>Quick Reference&lt;/b>&lt;/h4>
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th style="width: 10%;">&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Class&lt;div>&lt;/th>
+ *    &lt;th style="width: 15%;">&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Fields&lt;div>&lt;/th>
+ *    &lt;th style="width: 75%;">&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Description&lt;div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Well&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>
+ *                   Data Array&lt;br>
+ *                   Row Index&lt;br>
+ *                   Column Index
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>The well is the fundamental unit of a microplate. It is defined by a row and column index and holds experimental results for a given experiment.&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Well Group&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>
+ *                   Well Index Hash Set&lt;br>
+ *                   Label
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Well groups contain a list of well indices used for grouping experimental plate data.&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>WellSet&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>
+ *                   Well Hash Set&lt;br>
+ *                   Label
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>A well set contains a collection of plate wells without enforcing maximum column or row indices.&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Plate&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>
+ *                   Well Hash Set&lt;br>
+ *                   Well Group Hash Set&lt;br>
+ *                   Row Number&lt;br>
+ *                   Column Number&lt;br>
+ *                   Plate Type&lt;br>
+ *                   Label
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Plates consist of wells arrayed in rows and columns. Plate well groups partition the plate data into subsets for data analysis.&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>Stack&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table border="0">
+ *             &lt;tr>
+ *                &lt;td>
+ *                   Plate Hash Set&lt;br>
+ *                   Row Number&lt;br>
+ *                   Column Number&lt;br>
+ *                   Plate Type&lt;br>
+ *                   Label
+ *                &lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *       &lt;td valign="top">
+ *          &lt;table>
+ *             &lt;tr>
+ *                &lt;td>A collection of plate objects.&lt;/td>
+ *             &lt;/tr>
+ *          &lt;/table>
+ *       &lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * &lt;h4>&lt;b>Plates&lt;/b>&lt;/h4>
+ *
+ * A microplate consists of a rectangular grid of wells. Rows are assigned a
+ * letter starting with A and working towards Z. Rows outside this range are
+ * identified by adding an additional letter to the row index (A -> ... -> Z ->
+ * AA -> AB). Columns are assigned integer values starting at zero working towards
+ * infinity. The row and column indices uniquely identify a single well (A1, A2 etc).
+ * A plate cannot contain duplicate wells or wells with rows or columns outside
+ * the valid range.
+ *
+ * Example of a typical microplate layout:
+ *
+ * &lt;table cellpadding="10px" border="1px" style="margin: 50px; text-align: center">
+ *    &lt;tr>
+ *       &lt;td>&lt;/td>
+ *       &lt;td>1&lt;/td>
+ *       &lt;td>2&lt;/td>
+ *       &lt;td>3&lt;/td>
+ *       &lt;td>4&lt;/td>
+ *       &lt;td>5&lt;/td>
+ *       &lt;td>6&lt;/td>
+ *       &lt;td>7&lt;/td>
+ *       &lt;td>8&lt;/td>
+ *       &lt;td>9&lt;/td>
+ *       &lt;td>10&lt;/td>
+ *       &lt;td>11&lt;/td>
+ *       &lt;td>12&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>A&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>B&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>C&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>D&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>E&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>F&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>G&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>H&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *       &lt;td>&lt;div style="border-radius: 50%; border: 1px solid black; width: 20px; height: 20px;">&lt;/div>&lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * The plate constructor accepts a flag for plates with standard dimensions:
+ *
+ * &lt;table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Plate Type&lt;div>&lt;/th>
+ *    &lt;th>&lt;div style="border-bottom: 1px solid black; padding-bottom: 5px;">Flag&lt;/div>&lt;/th>
+ *    &lt;tr>
+ *       &lt;td>6-Well&lt;/td>
+ *       &lt;td>PLATE_6WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>12-Well&lt;/td>
+ *       &lt;td>PLATE_12WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>24-Well&lt;/td>
+ *       &lt;td>PLATE_24WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>48-Well&lt;/td>
+ *       &lt;td>PLATE_48WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>96-Well&lt;/td>
+ *       &lt;td>PLATE_96WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>384-Well&lt;/td>
+ *       &lt;td>PLATE_384WELL&lt;/td>
+ *    &lt;/tr>
+ *    &lt;tr>
+ *       &lt;td>1536-Well&lt;/td>
+ *       &lt;td>PLATE_1536WELL&lt;/td>
+ *    &lt;/tr>
+ * &lt;/table>
+ *
+ * Row and column numbers for plates with custom dimensions can be passed to the
+ * plate constructor.
+ *
+ * The plate data is implemented as a set of wells and a set of subgroups.
+ * Wells house the well ID and a list of values. Well subsets are used to
+ * aggregate data for different experimental conditions or replicates.
+ *
+ * Descriptive statistics and mathematical operations between plate stacks,
+ * plates, well sets and wells are performed using static methods housed within
+ * the statistics and math packages respectively. Custom mathematical or statistical
+ * calculations can be added by extending the Operation and DescriptiveStatistics
+ * classes and overriding the calculate methods.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;h4>&lt;b>Wells&lt;/b>&lt;/h4>
+ *
+ * A plate consists of wells arranged in rows and columns. The well class contains
+ * the logic to convert row letters to integers and vice-versa, enforces the correct
+ * format for well IDs, and holds an array of data set values. the well object
+ * does not check for wells outside a specified range. Wells are compared using
+ * row then column number. The well iterator iterates over the values in the data
+ * array.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;h4>&lt;b>WellSets&lt;/b>&lt;/h4>
+ *
+ * A well set holds wells without specifying maximum row and column indices. A set
+ * cannot contain duplicate wells. Wells are housed in an ordered set. The add,
+ * remove and contains functions exhibit log n time. Wells are ordered by well row
+ * and column. In addition to functions common to set data structures, the well set
+ * can partition wells into subsets using indices.
+ *
+ * &lt;br>&lt;br>
+ *
+ * Wells in the set can be accessed by row and column numbers or by well index
+ * strings. In addition, the well set implementation includes an iterator which
+ * iterates over the wells in the set using a for...of loop.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;h4>&lt;b>Well Groups&lt;/b>&lt;/h4>
+ *
+ * Well groups house a list of well indices associated with a plate object. It
+ * represents a simplified version of the well set. Unlike the well set object,
+ * the well group object does not store wells or well data, only a list of indices.
+ *
+ * &lt;br>&lt;br>
+ *
+ * Well groups provide a means to retrieve and analyze well subsets within a plate.
+ * A microplate experiment often contains control and experimental wells. These
+ * subsets can be housed within various well groups to facilitate statistical or
+ * mathematical operations.
+ *
+ * &lt;br>&lt;br>
+ *
+ * Well groups are compared using the group name, number of wells, and greatest well
+ * index in that order.
+ *
+ * &lt;br>&lt;br>
+ *
+ * &lt;h4>&lt;b>Stacks&lt;/b>&lt;/h4>
+ *
+ * A plate stack is the preferred term in the natural sciences for a collection
+ * of micro-plates. The plate stack is initialized using row and column numbers.
+ * or a flag for plates with standard dimensions (see the plate class). Plates
+ * are stored in an ordered hash set with the plate label as a key. This means a
+ * stack cannot contain two plates with the same label.
+ *
  * @module Microplate
  * @author Jesse L. Mull
  * @version Updated February 17, 2016
@@ -79,7 +483,7 @@ module.exports = {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Feb 24 2017 18:54:16 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Feb 24 2017 21:03:35 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

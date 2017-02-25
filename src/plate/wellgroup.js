@@ -49,7 +49,7 @@ module.exports = WellGroup;
  * <br><br>
  *
  * Well groups do not enforce row and column numbers. This logic is housed within
- * the plate object. Wells are compared using the group name, number of wells,
+ * the plate object. Well groups are compared using the group name, number of wells,
  * and greatest well index in that order. This class implements a compareTo method
  * for comparing two well group objects and functions for sorting well indices
  * and well groups.
