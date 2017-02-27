@@ -238,8 +238,7 @@ function WellSet(var1, var2) {
 
    switch(arguments.length) {
 
-      case 0: new Well("A2");
-              break;
+      case 0: break;
 
       case 1: if(Validation.getType(var1) === '[object Well]' || Validation.getType(var1) === '[object Array]') {
                  this.add(var1);

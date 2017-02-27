@@ -1127,7 +1127,7 @@ Plate.prototype.groupNamesToWellSet = function(input) {
  */
 Plate.prototype.allGroupsToArray = function() {
    var array = this.groups.toArray();
-   return array.sort();
+   return array.sort(WellGroup.prototype.sort);
 }
 
 /**
