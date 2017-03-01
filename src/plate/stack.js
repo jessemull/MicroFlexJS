@@ -158,7 +158,7 @@ var TypedHashSet = require('../util/typedhashset');
  *       <td valign="top">
  *          <table border="0">
  *             <tr>
- *                <td><span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> <span style="color: chocolate;">Stack</span>(<span style="color: maroon;">Stack.PLATE_96WELL</span>, <span style="color: maroon;">"Example Set"</span>)</td>
+ *                <td><span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> <span style="color: chocolate;">Stack</span>(<span style="color: maroon;">Stack.PLATE_96WELL</span>, <span style="color: maroon;">"Example Stack"</span>)</td>
  *             </tr>
  *             <tr><td>&nbsp;</td></tr>
  *          </table>

@@ -1,0 +1,2406 @@
+<html>
+  <head>
+     <style type="text/css" media="screen">
+        ul li a:link { color: firebrick; text-decoration: none; font-weight: bold; }
+        ul li a:visited { color: firebrick; text-decoration: none; }
+        ul li a:hover { color: red; text-decoration: none; }
+        ul li ul a:link { color: sienna; text-decoration: none; font-weight: bold; }
+        ul li ul a:visited { color: sienna; text-decoration: none; }
+        ul li ul a:hover { color: red; text-decoration: none; }
+     </style>
+  </head>
+  <body style="margin-left: 1%">
+    <div>
+     <div style="margin-left: 270px;">
+     <p id="Home" style="font-size: 50; font-weight: bold; margin-top: 25px">MicroFlex Tutorial & Quick Start</p>
+     <h1 id="Architecture" style="margin: 0px;">MicroFlex <span style="color: darkslategrey">Architecture</span></h1>
+        <div style="font-size: 16px; margin-top: 1%;">
+           <h2 id="Introduction"><b>Introduction</b></h2>
+           <p>
+              Researchers in the natural sciences use microplates to carry out experiments
+              or assays on inorganic chemicals, nucleic acids, proteins and live cells. Basic
+              information concerning the life science can be found <a href="https://www.nsf.gov/"
+              target="_blank">here</a>. Additional information concerning microplate assays
+              can be found <a href="https://en.wikipedia.org/wiki/Microtiter_plate" target="_blank">
+              here</a>.
+           </p>
+           <p>
+              A microplate consists of a rectangular grid of wells. Rows are assigned a
+              letter starting with A and working towards Z. Rows outside this range are
+              identified by adding an additional letter to the row index (A -> ... -> Z ->
+              AA -> AB). Columns are assigned integer values starting at zero working towards
+              infinity. The row and column indices uniquely identify a single well (A1, A2 etc).
+              A plate cannot contain duplicate wells or wells with rows or columns outside
+              the valid range.
+           </p>
+           <p>
+              MicroFlex plate data is implemented as a set of wells and a set of subgroups.
+              Wells house the well ID and a list of values. Well subsets are used to
+              aggregate data for different experimental conditions or replicates.
+              Descriptive statistics and mathematical operations between plate stacks,
+              plates, well sets and wells are performed using static methods housed within
+              the statistics and math packages respectively. Custom mathematical or
+              statistical calculations can be added by extending the Operation and
+              DescriptiveStatistics classes and overriding the calculate methods.
+           </p>
+           <p>
+              <b>MicroFlex consists of five modules:</b>
+              <table class="mytable" cellspacing="10px" style="text-align:left;">
+                 <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Package</div></th>
+                 <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Description</div></th>
+                 <tr style="vertical-align: top;">
+                    <td>
+                       <table>
+                          <tr>
+                             <td><span style="color: chocolate; font-weight: bold;">MicroFlex</span>.<span style="color: firebrick; font-weight: bold;">Microplate</span></td>
+                          </tr>
+                       </table>
+                    </td>
+                    <td valign="top">
+                       <table border="0">
+                          <tr>
+                             <td>Contains well, well set, well group, plate and stack objects</td>
+                          </tr>
+                       </table>
+                    </td>
+                 </tr>
+                 <tr style="vertical-align: top;">
+                    <td>
+                       <table>
+                          <tr>
+                             <td><span style="color: chocolate; font-weight: bold;">MicroFlex</span>.<span style="color: firebrick; font-weight: bold;">Operations</span></td>
+                          </tr>
+                       </table>
+                    </td>
+                    <td valign="top">
+                       <table border="0">
+                          <tr>
+                             <td>Performs mathematical operations on wells, well sets, plates and stacks</td>
+                          </tr>
+                       </table>
+                    </td>
+                 </tr>
+                 <tr style="vertical-align: top;">
+                    <td>
+                       <table>
+                          <tr>
+                             <td><span style="color: chocolate; font-weight: bold;">MicroFlex</span>.<span style="color: firebrick; font-weight: bold;">Statistics</span></td>
+                          </tr>
+                       </table>
+                    </td>
+                    <td valign="top">
+                       <table border="0">
+                          <tr>
+                             <td>Performs statistical operations on wells, well sets, plates and stacks</td>
+                          </tr>
+                       </table>
+                    </td>
+                 </tr>
+                 <tr style="vertical-align: top;">
+                    <td>
+                       <table>
+                          <tr>
+                             <td><span style="color: chocolate; font-weight: bold;">MicroFlex</span>.<span style="color: firebrick; font-weight: bold;">IO</span></td>
+                          </tr>
+                       </table>
+                    </td>
+                    <td valign="top">
+                       <table border="0">
+                          <tr>
+                             <td>JSON & XML input and output in condensed easy to read format for wells, well groups, well sets, plates and stacks.</td>
+                          </tr>
+                       </table>
+                    </td>
+                 </tr>
+                 <tr style="vertical-align: top;">
+                    <td>
+                       <table>
+                          <tr>
+                             <td><span style="color: chocolate; font-weight: bold;">MicroFlex</span>.<span style="color: firebrick; font-weight: bold;">Utilities</span></td>
+                          </tr>
+                       </table>
+                    </td>
+                    <td valign="top">
+                       <table border="0">
+                          <tr>
+                             <td>Validation and random construction of well, well group, well set, plate and stacks. Hash set and typed hash set helper classes.</td>
+                          </tr>
+                       </table>
+                    </td>
+                 </tr>
+              </table>
+           </p>
+        </div>
+        <div style="margin-top: 2%;">
+           <h2 id="Diagram"><b>Quick Reference Diagram</b></h2>
+           <div>
+              <table class="mytable" cellspacing="10px" style="text-align:left; margin-bottom: 2%;">
+              <th style="width: 10%;"><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Class</div></th>
+              <th style="width: 15%;"><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Fields</div></th>
+              <th style="width: 75%;"><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Description</div></th>
+              <tr style="vertical-align: top;">
+                 <td>
+                    <table>
+                       <tr>
+                          <td>Well</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             Data Array<br>
+                             Row Index<br>
+                             Column Index
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table>
+                       <tr>
+                          <td>The well is the fundamental unit of a microplate. It is defined by a row and column index and holds experimental results for a given experiment.</td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+              <tr style="vertical-align: top;">
+                 <td>
+                    <table>
+                       <tr>
+                          <td>Well Group</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             Well Index Hash Set<br>
+                             Label
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table>
+                       <tr>
+                          <td>Well groups contain a list of well indices used for grouping experimental plate data.</td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+              <tr style="vertical-align: top;">
+                 <td>
+                    <table>
+                       <tr>
+                          <td>WellSet</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             Well Hash Set<br>
+                             Label
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table>
+                       <tr>
+                          <td>A well set contains a collection of plate wells without enforcing maximum column or row indices.</td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+              <tr style="vertical-align: top;">
+                 <td>
+                    <table>
+                       <tr>
+                          <td>Plate</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             Well Hash Set<br>
+                             Well Group Hash Set<br>
+                             Row Number<br>
+                             Column Number<br>
+                             Plate Type<br>
+                             Label
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table>
+                       <tr>
+                          <td>Plates consist of wells arrayed in rows and columns. Plate well groups partition the plate data into subsets for data analysis.</td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+              <tr style="vertical-align: top;">
+                 <td>
+                    <table>
+                       <tr>
+                          <td>Stack</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             Plate Hash Set<br>
+                             Row Number<br>
+                             Column Number<br>
+                             Plate Type<br>
+                             Label
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table>
+                       <tr>
+                          <td>A collection of plate objects.</td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+              </table>
+              <img src="microplatediagram.png" width="65%"/>
+           </div>
+        </div>
+     <h1 id="Usage" style="margin-top: 2%;">MicroFlex <span style="color: darkslategrey">Usage</span></h1>
+        <div style="margin-top: 1%;">
+           <h2 id="Importing"><b>Importing MicroFlex</b></h2>
+           <table class="mytable" style="table-layout:fixed; width: 60%;">
+              <tr>
+                 <td>
+                    <b><span style="color: purple;">var</span> MicroFlex = <span style="color: chocolate;">require</span>('<span style="color: firebrick;">microflex</span>');</b>
+                    <br><b><span style="color: purple;">var</span> Microplate = <span style="color: chocolate;">MicroFlex</span>.<span style="color: firebrick;">Microplate</span>;</b>
+                    <br>var Well = Microplate.Well;
+                    <br>var WellGroup = Microplate.WellGroup;
+                    <br>var WellSet = Microplate.WellSet;
+                    <br>var Plate = Microplate.Plate;
+                    <br>var Stack = Microplate.Stack;
+                    <br>...
+                 </td>
+                 <td>
+                    <b><span style="color: purple;">var</span> MicroFlex = <span style="color: chocolate;">require</span>('<span style="color: firebrick;">microflex</span>');</b>
+                    <br><b><span style="color: purple;">var</span> Operators = <span style="color: chocolate;">MicroFlex</span>.<span style="color: firebrick;">Operators</span>;</b>
+                    <br>var Addition = Operators.Addition;
+                    <br>var LeftShift = Operators.LeftShift;
+                    <br>...
+                 </td>
+                 <td>
+                    <b><span style="color: purple;">var</span> MicroFlex = <span style="color: chocolate;">require</span>('<span style="color: firebrick;">microflex</span>');</b>
+                    <br><b><span style="color: purple;">var</span> Statistics = <span style="color: chocolate;">MicroFlex</span>.<span style="color: firebrick;">Statistics</span>;</b>
+                    <br>var Mean = Statistics.Mean;
+                    <br>var Kurtosis = Statistics.Kurtosis;
+                    <br>...
+                 </td>
+              </tr>
+              <tr>
+                 <td>
+                    <b><span style="color: purple;">var</span> MicroFlex = <span style="color: chocolate;">require</span>('<span style="color: firebrick;">microflex</span>');</b>
+                    <br><b><span style="color: purple;">var</span> IO = <span style="color: chocolate;">MicroFlex</span>.<span style="color: firebrick;">IO</span>;</b>
+                    <br>var MicroJSON = IO.MicroJSON;
+                    <br>var MicroXML = IO.MicroXML;
+                    <br>...
+                 </td>
+                 <td>
+                    <b><span style="color: purple;">var</span> MicroFlex = <span style="color: chocolate;">require</span>('<span style="color: firebrick;">microflex</span>');</b>
+                    <br><b><span style="color: purple;">var</span> Utilities = <span style="color: chocolate;">MicroFlex</span>.<span style="color: firebrick;">Utilities</span>;</b>
+                    <br>var WellValidation = Utilities.WellValidation;
+                    <br>var TypedHashSet = Utilities.TypedHashSet;
+                    <br>...
+                 </td>
+                 <td></td>
+              </tr>
+           </table>
+        </div>
+        <div style="margin-top: 1%;">
+           <h2 id="Instantiating"><b>Instantiating MicroFlex Objects</b></h2>
+           <p>
+              The table below contains only a subset of possible constructor arguments. For
+              examples of all constructor function options see the appropriate documentation
+              for the microplate object.
+           </p>
+           <table class="mytable" cellspacing="10px" style="text-align:left;">
+              <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Object</div></th>
+              <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Example</div></th>
+              <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input</div></th>
+              <tr style="vertical-align: top;">
+                 <td>
+                    <table>
+                       <tr>
+                          <td>Well</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             <span style="color: purple;">var</span> well1 = <span style="color: purple;">new</span> <span style="color: chocolate;">Well</span>(<span style="color: maroon;">'A1'</span>, <span style="color: maroon;">[1,2,3,4]</span>);<br>
+                             <span style="color: purple;">var</span> well2 = <span style="color: purple;">new</span> <span style="color: chocolate;">Well</span>(<span style="color: maroon;">1</span>, <span style="color: maroon;">2</span>, <span style="color: maroon;">[5,6,7,8]</span>);<br>
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             Index, Data<br>
+                             Row, Column, Data
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+              <tr style="vertical-align: top;">
+                 <td>
+                    <table>
+                       <tr>
+                          <td>WellGroup</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             <span style="color: purple;">var</span> group1 = <span style="color: purple;">new</span> <span style="color: chocolate;">WellGroup</span>(<span style="color: maroon;">"Example Group"</span>);<br>
+                             <span style="color: purple;">var</span> group2 = <span style="color: purple;">new</span> <span style="color: chocolate;">WellGroup</span>(<span style="color: maroon;">['A1, 'B2, 'C5']</span>, <span style="color: maroon;">"Example Group"</span>);
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             Label<br>
+                             Label, Well Indices
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+              <tr style="vertical-align: top;">
+                 <td>
+                    <table>
+                       <tr>
+                          <td>WellSet</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             <span style="color: purple;">var</span> array = [well1, well2];<br>
+                             <span style="color: purple;">var</span> set1 = <span style="color: purple;">new</span> <span style="color: chocolate;">WellSet</span>(<span style="color: maroon;">"Example WellSet"</span>);<br>
+                             <span style="color: purple;">var</span> set2 = <span style="color: purple;">new</span> <span style="color: chocolate;">WellSet</span>(<span style="color: maroon;">array</span>, <span style="color: maroon;">"Example WellSet"</span>);
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td>
+                    <table>
+                       <tr>
+                          <td>
+                             <br>Label<br>
+                             Label, Well Array
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+              <tr style="vertical-align: top;">
+                 <td>
+                    <table>
+                       <tr>
+                          <td>Plate</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             <span style="color: purple;">var</span> plate1 = <span style="color: purple;">new</span> <span style="color: chocolate;">Plate</span>(<span style="color: maroon;">Plate.PLATE_96WELL</span>, <span style="color: maroon;">set1</span>, <span style="color: maroon;">"Example Plate"</span>);<br>
+                             <span style="color: purple;">var</span> plate2 = <span style="color: purple;">new</span> <span style="color: chocolate;">Plate</span>(<span style="color: maroon;">8</span>, <span style="color: maroon;">12</span>, <span style="color: maroon;">set1</span>, <span style="color: maroon;">"Example Plate"</span>);
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             Plate Type, WellSet, Label<br>
+                             Row Number, Column Number, WellSet, Label
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+              <tr style="vertical-align: top;">
+                 <td>
+                    <table>
+                       <tr>
+                          <td>Stack</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             <span style="color: purple;">var</span> array = [plate1, plate2];<br>
+                             <span style="color: purple;">var</span> stack1 = <span style="color: purple;">new</span> <span style="color: chocolate;">Stack</span>(<span style="color: maroon;">Stack.PLATE_96WELL</span>, <span style="color: maroon;">"Example Stack"</span>);<br>
+                             <span style="color: purple;">var</span> stack2 = <span style="color: purple;">new</span> <span style="color: chocolate;">Stack</span>(<span style="color: maroon;">8</span>, <span style="color: maroon;">12</span>);<br>
+                             <span style="color: purple;">var</span> stack3 = <span style="color: purple;">new</span> <span style="color: chocolate;">Stack</span>(<span style="color: maroon;">array</span>, <span style="color: maroon;">"Example Stack"</span>);
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table border="0">
+                       <tr>
+                          <td>
+                             <br>Plate Type, Label<br>
+                             Row Number, Column Number, Label<br>
+                             Plate Array, Label
+                          </td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+           </table>
+        </div>
+        <div style="margin-top: 1%;">
+           <h2 id="Using"><b>Using Well Groups to Aggregate Data</b></h2>
+           <p>
+              The code below creates the plate seen in the diagram above. Nine wells
+              are initialized and passed to the plate constructor. Well groups for the
+              control and experimental conditions are added to the plate. The data for
+              each group can then be retrieved by group, group name or index.
+           </p>
+           <p>
+              // Instantiate control wells
+
+              <br><br>
+
+              <span style="color: purple;">var</span> control_1 = <span style="color: purple;">new </span><span style="color: chocolate;">Well</span>('B2', [12, 21, 35, 42, 58]);<br>
+              <span style="color: purple;">var</span> control_2 = <span style="color: purple;">new </span><span style="color: chocolate;">Well</span>('B3', [63, 17, 87, 99, 10]);<br>
+              <span style="color: purple;">var</span> control_3 = <span style="color: purple;">new </span><span style="color: chocolate;">Well</span>('B4', [11, 12, 53, 24, 15]);<br>
+
+              <br>
+
+              // Instantiate experimental group one
+
+              <br><br>
+
+              <span style="color: purple;">var</span> condition1_1 = <span style="color: purple;">new </span><span style="color: chocolate;">Well</span>('C2', [31, 23, 32, 74, 45]);<br>
+              <span style="color: purple;">var</span> condition1_2 = <span style="color: purple;">new </span><span style="color: chocolate;">Well</span>('C3', [86, 71, 32, 44, 16]);<br>
+              <span style="color: purple;">var</span> condition1_3 = <span style="color: purple;">new </span><span style="color: chocolate;">Well</span>('C4', [11, 17, 43, 24, 55]);<br>
+
+              <br>
+
+              // Instantiate experimental group two
+
+              <br><br>
+
+              <span style="color: purple;">var</span> condition2_1 = new <span style="color: chocolate;">Well</span>('D2', [16, 87, 66, 39, 53]);<br>
+              <span style="color: purple;">var</span> condition2_2 = new <span style="color: chocolate;">Well</span>('D3', [25, 75, 28, 69, 19]);<br>
+              <span style="color: purple;">var</span> condition2_3 = new <span style="color: chocolate;">Well</span>('D4', [19, 13, 28, 93, 22]);<br>
+
+              <br>
+
+              <span style="color: purple;">var </span>wells = [ control_1,
+              <div style="margin-left: 78px; margin-top: -13px;">
+                 control_2,<br>
+                 control_3,<br>
+                 condition1_1,<br>
+                 condition1_2,<br>
+                 condition1_3,<br>
+                 condition2_1,<br>
+                 condition2_2,<br>
+                 condition2_3 ];<br>
+              </div>
+
+              <br>
+
+              // Instantiate the plate and add the wells
+
+              <br><br>
+
+              <span style="color: purple;">var</span> plate = <span style="color: purple;">new</span> <span style="color: chocolate;">Plate</span>(8, 12, "Example Plate");<br>
+              plate.add(wells);<br>
+
+              <br>
+
+              // Create and add groups for control and experimental conditions
+
+              <br><br>
+
+              <span style="color: purple;">var</span> controlGroup = <span style="color: purple;">new</span> <span style="color: chocolate;">WellGroup</span>(['B2', 'B3', 'B4'], "Control");<br>
+              <span style="color: purple;">var</span> conditionGroup1 = <span style="color: purple;">new</span> <span style="color: chocolate;">WellGroup</span>(['C2', 'C3', 'C4'], "Condition 1");<br>
+              <span style="color: purple;">var</span> conditionGroup2 = <span style="color: purple;">new</span> <span style="color: chocolate;">WellGroup</span>(['D2', 'D3', 'D4'], "Condition 2");<br>
+
+              <br>
+
+              <span style="color: purple;">var</span> array = [controlGroup, conditionGroup1, conditionGroup2];<br>
+              plate.addGroups(array);<br>
+
+              <br>
+
+              // Wells can then be accessed by group, group name or well index.
+
+              <br><br>
+
+              <span style="color: purple;">var</span> allGroups1 = plate.allGroupsToArray();<br>
+              <span style="color: purple;">var</span> allGroups2 = plate.groupNamesToArray(['Control', 'Condition 1', 'Condition 2']);<br>
+              <span style="color: purple;">var</span> control = plate.get(['B2', 'B3', 'B4']);<br>
+              <span style="color: purple;">var</span> condition1 = plate.get(['C2', 'C3', 'C4']);<br>
+              <span style="color: purple;">var</span> condition2 = plate.get(['D2', 'D3', 'D4']);<br>
+
+              <br>
+
+              // The allGroups1 and allGroups2 variables now contain the following:
+
+              <pre style="margin: 0;">
+
+[ WellSet {
+     name: 'Control',
+     wells: TypedHashSet {
+          values: {
+              B2: Well { base: 26, row: 1, column: 2, data: [ 12, 21, 35, 42, 58 ] },
+              B3: Well { base: 26, row: 1, column: 3, data: [ 63, 17, 87, 99, 10 ] },
+              B4: Well { base: 26, row: 1, column: 4, data: [ 11, 12, 53, 24, 15 ] }
+          },
+          type: 'Well'
+      }
+  },
+  WellSet {
+      name: 'Condition 1',
+      wells: TypedHashSet {
+           values: {
+               C2: Well { base: 26, row: 2, column: 2, data: [31, 23, 32, 74, 45] },
+               C3: Well { base: 26, row: 2, column: 3, data: [86, 71, 32, 44, 16] },
+               C4: Well { base: 26, row: 2, column: 4, data: [11, 17, 43, 24, 55] }
+           },
+           type: 'Well' }
+      }
+  },
+  WellSet {
+      name: 'Condition 2',
+      wells: TypedHashSet {
+           values: {
+               D2: Well { base: 26, row: 3, column: 2, data: [16, 87, 66, 39, 53] },
+               D3: Well { base: 26, row: 3, column: 3, data: [25, 75, 28, 69, 19] },
+               D4: Well { base: 26, row: 3, column: 4, data: [19, 13, 28, 93, 22] } },
+           type: 'Well'
+      }
+  } ]
+              </pre>
+           </p>
+        </div>
+     <h1 id="Operations" style="margin-top: 2%;">MicroFlex <span style="color: darkslategrey">Operations</span></h1>
+
+           <h2 id="Strict"><b>Standard vs Strict</b></h2>
+
+           <p>
+              Mathematical operators extend the unary, binary and shift operation
+              classes. Standard functions treat all values missing from either data
+              set as zeroes and combine all stacks, plates, sets and wells from
+              both input objects. Strict functions omit all values, stacks, plates,
+              wells and sets missing from one of the input objects:
+           <p>
+
+           <table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+              <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Operation</div></th>
+              <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Output</div></th>
+              <tr>
+                 <td valign="top">
+                    <table>
+                       <tr>
+                          <td>Standard</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table>
+                       <tr>
+                          <td>Treats missing values as zeroes</td>
+                       </tr>
+                       <tr>
+                          <td>Combines stacks, plates, sets, wells and values from both input objects</td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+              <tr>
+                 <td valign="top">
+                    <table>
+                       <tr>
+                          <td>Strict</td>
+                       </tr>
+                    </table>
+                 </td>
+                 <td valign="top">
+                    <table>
+                       <tr>
+                          <td>Omits all missing values</td>
+                       </tr>
+                        <tr>
+                          <td>Combines stacks, plates, sets, wells and values present in both input objects only</td>
+                       </tr>
+                    </table>
+                 </td>
+              </tr>
+           </table>
+
+           <h2 id="Binary"><b>Binary Operations</b></h2>
+
+           <p>
+              The functions within the MicroFlex library are designed to be
+              flexible and classes extending the math operation binary object support
+              operations using two stacks, plates, sets and well objects as input.
+              In addition, they support operations using a single stack, plate, set
+              or well object and an array or constant. Binary operations can be limited
+              to a subset of data by passing indices into the well data array.
+           </p>
+
+           <table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+              <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input 1<br></div></th>
+              <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input 2</div></th>
+              <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Beginning<br>Index</div></th>
+              <th><div style="border-bottom: 1px solid black; padding-bottom: 5px;">Ending<br>Index</div></th>
+              <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Operation</div></th>
+              <tr>
+                 <td>Well</td>
+                 <td>Well</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation using the values in the two wells</td>
+              </tr>
+              <tr>
+                 <td>Well</td>
+                 <td>Array</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation using the values in the array and the values in the well</td>
+              </tr>
+              <tr>
+                 <td>Well</td>
+                 <td>Constant</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation using the constant value and each value in the well</td>
+              </tr>
+
+              <tr></tr>
+              <tr></tr>
+
+              <tr>
+                 <td>Set</td>
+                 <td>Set</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation on the values in each matching pair of wells in the two sets</td>
+              </tr>
+              <tr>
+                 <td>Set</td>
+                 <td>Array</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation using the values in the array and the values in each well of the set</td>
+              </tr>
+              <tr>
+                 <td>Set</td>
+                 <td>Constant</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation using the constant and each value in each well of the set</td>
+              </tr>
+
+              <tr></tr>
+              <tr></tr>
+
+              <tr>
+                 <td>Plate</td>
+                 <td>Plate</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation on the values in each matching pair of wells in the two plates</td>
+              </tr>
+              <tr>
+                 <td>Plate</td>
+                 <td>Array</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation using the values in the array and the values in each well of the plate</td>
+              </tr>
+              <tr>
+                 <td>Plate</td>
+                 <td>Constant</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation using the constant and each value in each well of the plate</td>
+              </tr>
+              <tr></tr>
+              <tr></tr>
+
+              <tr>
+                 <td>Stack</td>
+                 <td>Stack</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation on the values in each matching pair of wells in each matching plate in the stack</td>
+              </tr>
+              <tr>
+                 <td>Stack</td>
+                 <td>Array</td>
+                 <td>+/-</td>
+                 <td>+/-</td>
+                 <td>Performs the operation using the values in the array and the values in each well of each plate in the stack</td>
+              </tr>
+              <tr>
+                 <td>Stack</td>
+                 <td>Constant</td>
+                 <td>+/-</td>
+                  <td>+/-</td>
+                  <td>Performs the operation using the constant and each value in each well of each plate in the stack</td>
+               </tr>
+            </table>
+
+            <b>Well Binary Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> addition = <span style="color: purple;">new</span> Addition();<br>
+            <span style="color: purple;">var</span> well1 = <span style="color: purple;">new</span> Well('A1', [1,2,3,4]);<br>
+            <span style="color: purple;">var</span> well2 = <span style="color: purple;">new</span> Well('B2', [5,6,7,8]);<br><br>
+            addition.<span style="color: Sienna;">wells</span>(well1, well2)  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">Well {
+                               base: 26,
+                               row: 0,
+                               column: 1,
+                               data: [ 6, 8, 10, 12 ]
+                            }</pre>
+
+            <br><br>
+
+            <b>Set Binary Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> addition = <span style="color: purple;">new</span> Addition();<br>
+            <span style="color: purple;">var</span> set1 = <span style="color: purple;">new</span> WellSet(wells1, "Example Set 1");<br>
+            <span style="color: purple;">var</span> set2 = <span style="color: purple;">new</span> WellSet(wells2, "Example Set 2");<br><br>
+            addition.<span style="color: Sienna;">sets</span>(set1, set2);  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">WellSet {
+                            name: 'Result - Example Set 1, Example Set 2',
+                            wells: TypedHashSet {
+                               values: {
+                                  A1: Well { base: 26, row: 0, column: 1, data: [ 10, 12, 14, 16 ] },
+                                  B2: Well { base: 26, row: 1, column: 2, data: [ 18, 20, 22, 24 ] }
+                               },
+                               type: 'Well'
+                            }
+                         }</pre>
+
+            <br><br>
+
+            <b>Plate Binary Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> addition = <span style="color: purple;">new</span> Addition();<br>
+            <span style="color: purple;">var</span> plate1 = <span style="color: purple;">new</span> Plate(8, 12, set1, "Example Plate 1");<br>
+            <span style="color: purple;">var</span> plate2 = <span style="color: purple;">new</span> Plate(8, 12, set2, "Example Plate 2");<br><br>
+            addition.<span style="color: Sienna;">plates</span>(plate1, plate2);  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">WellSet {
+                                 name: 'Result - Example Plate 1, Example Plate 2',
+                                 wells: TypedHashSet {
+                                    values: {
+                                       A1: Well { base: 26, row: 0, column: 1, data: [ 10, 12, 14, 16 ] },
+                                       B2: Well { base: 26, row: 1, column: 2, data: [ 18, 20, 22, 24 ] }
+                                    },
+                                    type: 'Well'
+                                 }
+                              }</pre>
+
+            <br><br>
+
+            <b>Stack Binary Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> addition = <span style="color: purple;">new</span> Addition();<br>
+            <span style="color: purple;">var</span> stack1 = <span style="color: purple;">new</span> Stack(plates1, "Example Stack 1");<br>
+            <span style="color: purple;">var</span> stack2 = <span style="color: purple;">new</span> Stack(plates2, "Example Stack 2");<br><br>
+            addition.<span style="color: Sienna;">stacks</span>(stack1, stack2);  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">[ WellSet {
+                                    name: 'Result - Example Plate 1',
+                                    wells: TypedHashSet {
+                                       values: {
+                                          A1: Well { base: 26, row: 0, column: 1, data: [ 10, 12, 14, 16 ] },
+                                          B2: Well { base: 26, row: 1, column: 2, data: [ 18, 20, 22, 24 ] }
+                                       },
+                                       type: 'Well'
+                                    }
+                                 },
+                                 WellSet {
+                                    name: 'Result - Example Plate 2',
+                                    wells: TypedHashSet {
+                                       values: {
+                                          A1: Well { base: 26, row: 0, column: 1, data: [ 14, 11, 55, 26 ] },
+                                          B2: Well { base: 26, row: 1, column: 2, data: [ 44, 91, 42, 24 ] }
+                                       },
+                                       type: 'Well'
+                                    }
+                                 },
+                               ]</pre>
+
+            <br><br>
+
+            <h2 id="Unary"><b>Unary Operations</b></h2>
+
+            Unary operations take a single well, well set, plate or stack as input and
+            perform a mathematical operation on each well value or a subset of well values
+            using indices into the data array.
+
+            <br><br>
+
+            <b>Well Unary Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> increment = <span style="color: purple;">new</span> Increment();<br>
+            <span style="color: purple;">var</span> well = <span style="color: purple;">new</span> Well('A1', [1,2,3,4]);<br><br>
+            increment.<span style="color: Sienna;">well</span>(well)  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">Well {
+                         base: 26,
+                         row: 0,
+                         column: 1,
+                         data: [ 2, 3, 4, 5 ]
+                      }</pre>
+
+            <br><br>
+
+            <b>Set Unary Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> increment = <span style="color: purple;">new</span> Increment();<br>
+            <span style="color: purple;">var</span> set = <span style="color: purple;">new</span> WellSet(wells, "Example Set");<br><br>
+            increment.<span style="color: Sienna;">set</span>(set);  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">WellSet {
+                       name: 'Result - Example Set',
+                       wells: TypedHashSet {
+                          values: {
+                             A1: Well { base: 26, row: 0, column: 1, data: [ 2, 3, 4, 5 ] },
+                             B2: Well { base: 26, row: 1, column: 2, data: [ 6, 7, 8, 9 ] }
+                          },
+                          type: 'Well'
+                       }
+                    }</pre>
+
+            <br><br>
+
+            <b>Plate Unary Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> increment = <span style="color: purple;">new</span> Increment();<br>
+            <span style="color: purple;">var</span> plate = <span style="color: purple;">new</span> Plate(8, 12, set, "Example Plate");<br><br>
+            increment.<span style="color: Sienna;">plate</span>(plate);  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">WellSet {
+                           name: 'Result - Example Plate',
+                           wells: TypedHashSet {
+                             values: {
+                                A1: Well { base: 26, row: 0, column: 1, data: [ 2, 3, 4, 5 ] },
+                                B2: Well { base: 26, row: 1, column: 2, data: [ 6, 7, 8, 9 ] }
+                             },
+                             type: 'Well'
+                          }
+                       }</pre>
+
+            <br><br>
+
+            <b>Stack Unary Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> increment = <span style="color: purple;">new</span> Increment();<br>
+            <span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> Stack(plates, "Example Stack");<br><br>
+            increment.<span style="color: Sienna;">stack</span>(stack);  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">[ WellSet {
+                             name: 'Result - Example Plate 1',
+                             wells: TypedHashSet {
+                                values: {
+                                   A1: Well { base: 26, row: 0, column: 1, data: [ 2, 3, 4, 5 ] },
+                                   B2: Well { base: 26, row: 1, column: 2, data: [ 6, 7, 8, 9 ] }
+                                },
+                                type: 'Well'
+                             }
+                          },
+                          WellSet {
+                             name: 'Result - Example Plate 2',
+                             wells: TypedHashSet {
+                                values: {
+                                   A1: Well { base: 26, row: 0, column: 1, data: [ 2, 3, 4, 5 ] },
+                                   B2: Well { base: 26, row: 1, column: 2, data: [ 6, 7, 8, 9 ] }
+                                },
+                                type: 'Well'
+                             }
+                          },
+                       ]</pre>
+
+            <br><br>
+
+            <h2 id="Shift"><b>Shift Operations</b></h2>
+
+            Shift operations take a single well, well set, plate or stack and the number of
+            bits to shift as input and perform a mathematical operation on each well value
+            or a subset of well values using indices into the data array.
+
+            <br><br>
+
+            <b>Well Shift Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> leftShift = <span style="color: purple;">new</span> LeftShift();<br>
+            <span style="color: purple;">var</span> well = <span style="color: purple;">new</span> Well('A1', [1,2,3,4]);<br>
+            <span style="color: purple;">var</span> bits = 2;<br><br>
+            leftShift.<span style="color: Sienna;">well</span>(well, bits)  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">Well {
+                            base: 26,
+                            row: 0,
+                            column: 1,
+                            data: [ 4, 8, 12, 16 ]
+                         }</pre>
+
+            <br><br>
+
+            <b>Set Shift Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> leftShift = <span style="color: purple;">new</span> LeftShift();<br>
+            <span style="color: purple;">var</span> set = <span style="color: purple;">new</span> WellSet(wells, "Example Set");<br>
+            <span style="color: purple;">var</span> bits = 2;<br><br>
+            leftShift.<span style="color: Sienna;">set</span>(set, bits);  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">WellSet {
+                          name: 'Result - Example Set',
+                          wells: TypedHashSet {
+                             values: {
+                                A1: Well { base: 26, row: 0, column: 1, data: [ 4, 8, 12, 16 ] },
+                                B2: Well { base: 26, row: 1, column: 2, data: [ 18, 20, 22, 24 ] }
+                             },
+                             type: 'Well'
+                          }
+                       }</pre>
+
+            <br><br>
+
+            <b>Plate Shift Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> leftShift = <span style="color: purple;">new</span> LeftShift();<br>
+            <span style="color: purple;">var</span> plate = <span style="color: purple;">new</span> Plate(8, 12, set, "Example Plate");<br>
+            <span style="color: purple;">var</span> bits = 2;<br><br>
+            leftShift.<span style="color: Sienna;">plate</span>(plate, bits);  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">WellSet {
+                              name: 'Result - Example Plate',
+                              wells: TypedHashSet {
+                                 values: {
+                                    A1: Well { base: 26, row: 0, column: 1, data: [ 4, 8, 12, 16 ] },
+                                    B2: Well { base: 26, row: 1, column: 2, data: [ 18, 20, 22, 24 ] }
+                                 },
+                                 type: 'Well'
+                              }
+                           }</pre>
+
+            <br><br>
+
+            <b>Stack Shift Operation Example:</b>
+
+            <br><br>
+
+            <span style="color: purple;">var</span> leftShift = <span style="color: purple;">new</span> LeftShift();<br>
+            <span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> Stack(plates, "Example Stack");<br>
+            <span style="color: purple;">var</span> bits = 2;<br><br>
+            leftShift.<span style="color: Sienna;">stack</span>(stack, bits);  &nbsp&nbsp=>&nbsp&nbsp <pre style="margin: 0; display: inline;">[ WellSet {
+                                name: 'Result - Example Plate 1',
+                                wells: TypedHashSet {
+                                   values: {
+                                      A1: Well { base: 26, row: 0, column: 1, data: [ 4, 8, 12, 16 ] },
+                                      B2: Well { base: 26, row: 1, column: 2, data: [ 18, 20, 22, 24 ] }
+                                   },
+                                   type: 'Well'
+                                }
+                             },
+                             WellSet {
+                                name: 'Result - Example Plate 2',
+                                wells: TypedHashSet {
+                                   values: {
+                                      A1: Well { base: 26, row: 0, column: 1, data: [ 41, 82, 12, 16 ] },
+                                      B2: Well { base: 26, row: 1, column: 2, data: [ 44, 91, 42, 24 ] }
+                                   },
+                                   type: 'Well'
+                                }
+                             },
+                           ]</pre>
+
+            <br><br>
+
+            <h2 id="CustomMath"><b>Creating Custom Mathematical Operations</b></h2>
+
+            <p>
+               Creating MicroFlex mathematical operations is simple. Extend the appropriate
+               operation class and override the calculation methods with the operation of choice.
+               This example returns the inverse of each data set value:
+            </p>
+
+            <pre style="margin: 0;">
+
+   // Create the constructor and extend the unary operation class
+
+   <span style="color: purple;">function</span> Invert() {
+      <span style="color: firebrick;">UnaryOperation</span>.<span style="color: sienna;">call</span>(<span style="color: firebrick;">this</span>);
+   }
+
+   <span style="color: firebrick;">Invert</span>.<span style="color: Sienna;">prototype</span> = <span style="color: purple;">new</span> UnaryOperation();
+   <span style="color: firebrick;">Invert</span>.<span style="color: Sienna;">prototype</span>.<span style="color: darkblue;">constructor</span> = Invert;
+
+   // For unary operations overwrite the calculate and calculate range functions
+
+   <span style="color: firebrick;">Invert</span>.<span style="color: Sienna;">prototype</span>.<span style="color: darkblue;">calculate</span> = <span style="color: purple;">function</span>(array) {
+
+      <span style="color: purple;">var</span> result = [];
+
+      <span style="color: purple;">for</span>(<span style="color: purple;">var</span> i = 0; i < <span style="color: firebrick;">array</span>.length; i++) {
+         <span style="color: firebrick;">result</span>.<span style="color: Sienna;">push</span>(1 / array[i]);
+      }
+
+      return result;
+
+  }
+
+  <span style="color: firebrick;">Invert</span>.<span style="color: Sienna;">prototype</span>.<span style="color: darkblue;">calculateRange</span> = <span style="color: purple;">function</span>(array, begin, end) {
+
+     <span style="color: purple;">var</span> result = [];
+
+     <span style="color: purple;">for</span>(<span style="color: purple;">var</span> i = begin; i < end && i < result.length; i++) {
+        <span style="color: firebrick;">result</span>.<span style="color: Sienna;">push</span>(1 / array[i]);
+     }
+
+     return result;
+  }</pre>
+
+  <h1 id="Statistics" style="margin-top: 2%;">MicroFlex <span style="color: darkslategrey">Statistics</span></h1>
+
+    <h2 id="Aggregated"><b>Standard vs Aggregated</b></h2>
+
+    <p>
+       Statistical operations can be performed using standard or aggregated functions.
+       Standard functions calculate the desired statistic for each well in the stack,
+       plate or set. Aggregated functions aggregate the values from all wells in the
+       stack, plate or set and perform the statistical operation on the aggregated
+       values. Both standard and aggregated functions can be performed on a subset of
+       data by passing indices into the well data set as arguments.
+    </p>
+
+    <p>
+       The methods within the MicroFlex library are meant to be flexible and the
+       descriptive statistic object supports operations using a single stack, plate,
+       set or well as well as arrays of stacks, plates, sets or wells. In case of the
+       latter a result for each stack, plate, set or well is returned.
+    </p>
+
+    <table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px;">
+       <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Operation</div></th>
+       <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Beginning<br>Index</div></th>
+       <th><div style="border-bottom: 1px solid black; padding-bottom: 2px;">Ending<br>Index</div></th>
+       <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;">Input/Output</div></th>
+       <tr>
+          <td>
+             <table>
+                <tr>
+                   <td>Standard</td>
+                </tr>
+             </table>
+          </td>
+          <td valign="top">
+             <table border="0">
+                <tr>
+                   <td>+/-</td>
+                </tr>
+             </table>
+          </td>
+          <td valign="top">
+             <table>
+                <tr>
+                   <td>+/-</td>
+                </tr>
+             </table>
+          </td>
+          <td valign="top">
+             <table>
+                <tr>
+                   <td>Accepts a single well, set, plate or stack as input</td>
+                </tr>
+                <tr>
+                   <td>Calculates the statistic for each well in a well, set, plate or stack</td>
+                </tr>
+             </table>
+          </td>
+       </tr>
+       <tr>
+          <td valign="top">
+             <table>
+                <tr>
+                   <td>Aggregated</td>
+                </tr>
+             </table>
+          </td>
+          <td valign="top">
+             <table>
+                <tr>
+                   <td>+/-</td>
+                </tr>
+             </table>
+          </td>
+          <td valign="top">
+             <table>
+                <tr>
+                   <td>+/-</td>
+                </tr>
+             </table>
+          </td>
+          <td valign="top">
+             <table>
+                <tr>
+                   <td>Accepts a single well/set/plate/stack or an array of wells/sets/plates/stacks as input</td>
+                </tr>
+                 <tr>
+                   <td>Aggregates the data from all the wells in a well/set/plate/stack and calculates the statistic using the aggregated data</td>
+                </tr>
+             </table>
+          </td>
+       </tr>
+    </table>
+
+    <b>Standard Operation Examples:</b>
+
+    <br><br>
+
+    <span style="color: purple;">var</span> well1 = <span style="color: purple;">new</span> Well('A1', [1, 2, 3, 4, 5]); <br>
+    <span style="color: purple;">var</span> well2 = <span style="color: purple;">new</span> Well('B2', [6, 7, 8, 9, 10]); <br>
+    <span style="color: purple;">var</span> array = [well1, well2]; <br>
+    Mean.<span style="color: Sienna">wells</span>(array) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { well: 'A1', result: 3 }, { well: 'B2', result: 8 } ]</pre> <br>
+
+    <br>
+
+    <span style="color: purple;">var</span> set = <span style="color: purple;">new</span> WellSet(wells, "Example Set"); <br>
+    Mean.<span style="color: Sienna">sets</span>(set) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { set: 'Example Set', result: [ { well: 'A1', result: 3 }, { well: 'B2', result: 8 } ] } ]</pre> <br>
+
+    <br>
+
+    <span style="color: purple;">var</span> plate = <span style="color: purple;">new</span> Plate(rows, columns, wells, "Example Plate"); <br>
+    Mean.<span style="color: Sienna">plates</span>(plate) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { plate: 'Example Plate', result: [ { well: 'A1', result: 3 }, { well: 'B2', result: 8 } ] } ]</pre> <br>
+
+    <br>
+
+    <span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> Stack(rows, columns, plates, "Example Stack"); <br>
+    Mean.<span style="color: Sienna">stacks</span>(stack) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { plate: 'Example Plate 1', result: [ { well: 'A1', result: 33 }, { well: 'B2', result: 18 } ] },
+                      { plate: 'Example Plate 2', result: [ { well: 'C3', result: 29 }, { well: 'D4', result: 12 } ] } ]</pre> <br>
+
+    <br>
+
+    <b>Aggregated Operation Examples:</b>
+
+    <br><br>
+
+    <span style="color: purple;">var</span> well1 = <span style="color: purple;">new</span> Well('A1', [1, 2, 3, 4, 5]); <br>
+    <span style="color: purple;">var</span> well2 = <span style="color: purple;">new</span> Well('B2', [6, 7, 8, 9, 10]); <br>
+    <span style="color: purple;">var</span> array = [well1, well2]; <br>
+    Mean.<span style="color: Sienna">wellsAggregated</span>(array) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">{ wells: [ 'A1', 'B2' ], result: 5.5 }</pre> <br>
+
+    <br>
+
+    <span style="color: purple;">var</span> set1 = <span style="color: purple;">new</span> WellSet(wells1, "Example Set 1"); <br>
+    <span style="color: purple;">var</span> set2 = <span style="color: purple;">new</span> WellSet(wells2, "Example Set 2"); <br>
+    <span style="color: purple;">var</span> array = [set1, set2]; <br>
+    Mean.<span style="color: Sienna">setsAggregated</span>(array) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { set: 'Example Set 1', result: 5.5 }, { set: 'Example Set 2', result: 15.5 } ]</pre> <br>
+
+    <br>
+
+    <span style="color: purple;">var</span> plate1 = <span style="color: purple;">new</span> Plate(8, 12, set1, "Example Plate 1"); <br>
+    <span style="color: purple;">var</span> plate2 = <span style="color: purple;">new</span> Plate(8, 12, set2, "Example Plate 2"); <br>
+    <span style="color: purple;">var</span> array = [plate1, plate2]; <br>
+    Mean.<span style="color: Sienna">platesAggregated</span>(array) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { plate: 'Example Plate 1', result: 5.5 }, { plate: 'Example Plate 2', result: 15.5 } ]</pre> <br>
+
+    <br>
+
+    <span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> Stack(rows, columns, plates, "Example Stack"); <br>
+    Mean.<span style="color: Sienna">stacksAggregated</span>(stack) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { stack: 'Example Stack', result: 10.5 } ]</pre> <br>
+
+    <br>
+
+    <h2 id="Weighted"><b>Weighted Statistics</b></h2>
+
+      <p>
+         Weighted statistics can apply an array of weights to the data set prior to the
+         statistical calculation.
+      </P>
+
+      <p>
+         From wikipedia: a weight function is a mathematical device used when performing
+         a sum, integral, or average to give some elements more "weight" or influence on
+         the result than other elements in the same set. In statistics a weighted function
+         is often used to correct bias. The weighted statistic class implements a weighted
+         function by accepting an array of values as weights. The values in each well of
+         the stack, plate, set or well are multiplied by the values within the weights
+         array prior to the statistical calculation.
+      </p>
+
+      <b>Standard Weighted Operation Examples:</b>
+
+      <br><br>
+
+      <span style="color: purple;">var</span> well1 = <span style="color: purple;">new</span> Well('A1', [1, 2, 3, 4, 5]); <br>
+      <span style="color: purple;">var</span> well2 = <span style="color: purple;">new</span> Well('B2', [6, 7, 8, 9, 10]); <br>
+      <span style="color: purple;">var</span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; <br>
+      <span style="color: purple;">var</span> array = [well1, well2]; <br>
+      Mean.<span style="color: Sienna">wells</span>(array, weights) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { well: 'A1', result: 2.2 }, { well: 'B2', result: 5.2 } ]</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> set = <span style="color: purple;">new</span> WellSet(wells, "Example Set"); <br>
+      <span style="color: purple;">var</span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; <br>
+      Mean.<span style="color: Sienna">sets</span>(set, weights) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { set: 'Example Set', result: [ { well: 'A1', result: 2.2 }, { well: 'B2', result: 5.2 } ] } ]</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> plate = <span style="color: purple;">new</span> Plate(rows, columns, wells, "Example Plate"); <br>
+      <span style="color: purple;">var</span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; <br>
+      Mean.<span style="color: Sienna">plates</span>(plate, weights) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { plate: 'Example Plate', result: [ { well: 'A1', result: 2.2 }, { well: 'B2', result: 5.2 } ] } ]</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> Stack(rows, columns, plates, "Example Stack"); <br>
+      <span style="color: purple;">var</span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; <br>
+      Mean.<span style="color: Sienna">stacks</span>(stack, weights) <span style="color: purple;">  &nbsp=>&nbsp  </span><pre style="margin: 0; display: inline;">[ { plate: 'Example Plate 1', result: [ { well: 'A1', result: 2.2 }, { well: 'B2', result: 5.2 } ] },
+                              { plate: 'Example Plate 2', result: [ { well: 'C3', result: 6.9 }, { well: 'D4', result: 7.3 } ] } ]</pre> <br>
+
+      <br><br>
+
+      <b>Aggregated Weighted Operation Examples:</b>
+
+      <br><br>
+
+      <span style="color: purple;">var</span> well1 = <span style="color: purple;">new</span> Well('A1', [1, 2, 3, 4, 5]); <br>
+      <span style="color: purple;">var</span> well2 = <span style="color: purple;">new</span> Well('B2', [6, 7, 8, 9, 10]); <br>
+      <span style="color: purple;">var</span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; <br>
+      <span style="color: purple;">var</span> array = [well1, well2]; <br>
+      Mean.<span style="color: Sienna">wellsAggregated</span>(array, weights) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">{ wells: [ 'A1', 'B2' ], result: 3.7 }</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> set1 = <span style="color: purple;">new</span> WellSet(wells1, "Example Set 1"); <br>
+      <span style="color: purple;">var</span> set2 = <span style="color: purple;">new</span> WellSet(wells2, "Example Set 2"); <br>
+      <span style="color: purple;">var</span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; <br>
+      <span style="color: purple;">var</span> array = [set1, set2]; <br>
+      Mean.<span style="color: Sienna">setsAggregated</span>(array, weights) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { set: 'Example Set 1', result: 3.7 }, { set: 'Example Set 2', result: 9.65 } ]</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> plate1 = <span style="color: purple;">new</span> Plate(8, 12, set1, "Example Plate 1"); <br>
+      <span style="color: purple;">var</span> plate2 = <span style="color: purple;">new</span> Plate(8, 12, set2, "Example Plate 2"); <br>
+      <span style="color: purple;">var</span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; <br>
+      <span style="color: purple;">var</span> array = [plate1, plate2]; <br>
+      Mean.<span style="color: Sienna">platesAggregated</span>(array, weights) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { plate: 'Example Plate 1', result: 3.7 }, { plate: 'Example Plate 2', result: 9.65 } ]</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> Stack(rows, columns, plates, "Example Stack"); <br>
+      <span style="color: purple;">var</span> weights = [0.2, 0.4, 0.6, 0.8, 1.0]; <br>
+      Mean.<span style="color: Sienna">stacksAggregated</span>(stack, weights) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { stack: 'Example Stack', result: 10.5 } ]</pre> <br>
+
+      <br>
+
+      <h2 id="Quantile"><b>Quantile Statistics</b></h2>
+
+      Quantile statistics accept an additional input parameter.
+
+      <br><br>
+
+      <b>Standard Quantile Operation Examples:</b>
+
+      <br><br>
+
+      <span style="color: purple;">var</span> well1 = <span style="color: purple;">new</span> Well('A1', [1, 2, 3, 4, 5]); <br>
+      <span style="color: purple;">var</span> well2 = <span style="color: purple;">new</span> Well('B2', [6, 7, 8, 9, 10]); <br>
+      <span style="color: purple;">var</span> array = [well1, well2]; <br>
+      <span style="color: purple;">var</span> p = 0.25; <br>
+      Quantile.<span style="color: Sienna">wells</span>(array, p) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { well: 'A1', result: 1.25 }, { well: 'B2', result: 5.25 } ]</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> set = <span style="color: purple;">new</span> WellSet(wells, "Example Set"); <br>
+      <span style="color: purple;">var</span> p = 0.25; <br>
+      Quantile.<span style="color: Sienna">sets</span>(set, p) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { set: 'Example Set', result: [ { well: 'A1', result: 1.25 }, { well: 'B2', result: 5.25 } ] } ]</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> plate = <span style="color: purple;">new</span> Plate(rows, columns, wells, "Example Plate"); <br>
+      <span style="color: purple;">var</span> p = 0.25; <br>
+      Quantile.<span style="color: Sienna">plates</span>(plate, p) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { plate: 'Example Plate', result: [ { well: 'A1', result: 1.25 }, { well: 'B2', result: 5.25 } ] } ]</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> Stack(rows, columns, plates, "Example Stack"); <br>
+      <span style="color: purple;">var</span> p = 0.25; <br>
+      Quantile.<span style="color: Sienna">stacks</span>(stack, p) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { plate: 'Example Plate 1', result: [ { well: 'A1', result: 33 }, { well: 'B2', result: 18 } ] },
+                           { plate: 'Example Plate 2', result: [ { well: 'C3', result: 29 }, { well: 'D4', result: 12 } ] } ]</pre> <br>
+
+      <br>
+
+      <b>Aggregated Quantile Operation Examples:</b>
+
+      <br><br>
+
+      <span style="color: purple;">var</span> well1 = <span style="color: purple;">new</span> Well('A1', [1, 2, 3, 4, 5]); <br>
+      <span style="color: purple;">var</span> well2 = <span style="color: purple;">new</span> Well('B2', [6, 7, 8, 9, 10]); <br>
+      <span style="color: purple;">var</span> array = [well1, well2]; <br>
+      <span style="color: purple;">var</span> p = 0.25; <br>
+      Quantile.<span style="color: Sienna">wellsAggregated</span>(array, p) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">{ wells: [ 'A1', 'B2' ], result: 2.25 }</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> set1 = <span style="color: purple;">new</span> WellSet(wells1, "Example Set 1"); <br>
+      <span style="color: purple;">var</span> set2 = <span style="color: purple;">new</span> WellSet(wells2, "Example Set 2"); <br>
+      <span style="color: purple;">var</span> array = [set1, set2]; <br>
+      <span style="color: purple;">var</span> p = 0.25; <br>
+      Quantile.<span style="color: Sienna">setsAggregated</span>(array, p) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { set: 'Example Set 1', result: 5.5 }, { set: 'Example Set 2', result: 15.5 } ]</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> plate1 = <span style="color: purple;">new</span> Plate(8, 12, set1, "Example Plate 1"); <br>
+      <span style="color: purple;">var</span> plate2 = <span style="color: purple;">new</span> Plate(8, 12, set2, "Example Plate 2"); <br>
+      <span style="color: purple;">var</span> array = [plate1, plate2]; <br>
+      <span style="color: purple;">var</span> p = 0.25; <br>
+      Quantile.<span style="color: Sienna">platesAggregated</span>(array, p) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { plate: 'Example Plate 1', result: 5.5 }, { plate: 'Example Plate 2', result: 15.5 } ]</pre> <br>
+
+      <br>
+
+      <span style="color: purple;">var</span> stack = <span style="color: purple;">new</span> Stack(rows, columns, plates, "Example Stack"); <br>
+      <span style="color: purple;">var</span> p = 0.25; <br>
+      Quantile.<span style="color: Sienna">stacksAggregated</span>(stack, p) <span style="color: purple;">  &nbsp=>&nbsp  </span> <pre style="margin: 0; display: inline;">[ { stack: 'Example Stack', result: 10.5 } ]</pre> <br>
+
+   <h2 id="CustomStat">Creating Custom Statistical Operations</h2>
+
+   <p>
+      Creating MicroFlex statistical operations is simple. Extend the appropriate
+      statistics class and override the calculate method with the statistical
+      operation of choice. This example returns the inverse of the mean:
+   </p>
+
+   <pre style="margin: 0;">
+
+   // Create the constructor and extend the descriptive statistic class
+
+   <span style="color: purple;">function</span> InverseMean() {
+      <span style="color: firebrick;">DescriptiveStatisticWeighted</span>.<span style="color: sienna;">call</span>(<span style="color: firebrick;">this</span>);
+   }
+
+   <span style="color: firebrick;">InverseMean</span>.<span style="color: Sienna;">prototype</span> = <span style="color: purple;">new</span> DescriptiveStatisticWeighted();
+   <span style="color: firebrick;">InverseMean</span>.<span style="color: Sienna;">prototype</span>.<span style="color: darkblue;">constructor</span> = InverseMean;
+
+   // Overwrite the calculate method
+
+   <span style="color: firebrick;">InverseMean</span>.<span style="color: Sienna;">prototype</span>.<span style="color: darkblue;">calculate</span> = <span style="color: purple;">function</span>(data) {
+
+      <span style="color: purple;">var</span> sum = 0;
+
+      <span style="color: purple;">for</span>(<span style="color: purple;">var</span> value <span style="color: purple;">of</span> data) {
+         <span style="color: firebrick;">sum</span> += value;
+      }
+
+      return 1 / (<span style="color: firebrick;">sum</span> / <span style="color: firebrick;">data</span>.<span style="color: Sienna;">length</span>);
+
+   }</pre>
+
+   <h1 id="IO" style="margin-top: 2%;">MicroFlex <span style="color: darkslategrey">IO</span></h1>
+
+
+   <h2 id="JSON">JSON IO</h2>
+
+   <p>
+      The MicroJSON class formats stack, plate, well set and well objects into a
+      condensed and easy to read JSON format. The MicroJSON.stringify and MicroJSON.parse
+      functions mirror JSON.stringify and JSON.parse, accepting replacer/space and reviver
+      arguments. Wells, well groups and plates are housed within typed hash set objects.
+      This class converts the hash sets to simple objects which are easier to read
+      and parse.
+    </p>
+
+    <b>Comparison of JSON Output:</b>
+
+    <table table class="mytable" cellspacing="10px" style="text-align:left; border: none; margin-top: 0px;">
+       <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Object</b></div></th>
+       <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Console.log</b></div></th>
+       <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>JSON.stringify</b></div></th>
+       <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>MicroJSON.stringify</b></div></th>
+       <tr>
+          <td valign="top">
+             <table>
+                <tr>
+                   <td><b>Well</b></td>
+                </tr>
+             </table>
+          </td>
+          <td  style="font-size: 70%" valign="top">
+             <table border="0">
+                <tr>
+                   <td>
+                      <pre style="margin: 0; display: inline;">Well {
+   base: 26,
+   row: 0,
+   column: 1,
+   data: [ 1, 2, 3, 4 ]
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table>
+                <tr>
+                   <td>
+                      <pre style="margin: 0; display: inline;">{
+   "base": 26,
+   "row": 0,
+   "column": 1,
+   "data": [ 1, 2, 3, 4]
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table>
+                <tr>
+                   <td>
+                      <pre style="margin: 0; display: inline;">{
+   "type": "Well",
+   "index": "A1",
+   "row": 0,
+   "column": 1,
+   "data": [ 1, 2, 3, 4]
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+       </tr>
+       <tr>
+          <td valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td><b>Well Group</b></td>
+                </tr>
+             </table>
+          </td>
+          <td  style="font-size: 70%" valign="top">
+             <table border="0">
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">WellGroup {
+   groupName: 'Example Group',
+   wells: TypedHashSet {
+      values: {
+         A1: 'A1',
+         B2: 'B2',
+         C5: 'C5',
+         D9: 'D9'
+      },
+      type: 'String'
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">{
+   "groupName": "Example Group",
+   "wells": {
+      "values": {
+         "A1": "A1",
+         "B2": "B2",
+         "C5": "C5",
+         "D9": "D9"
+      },
+      "type": "String"
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">{
+   "type": "WellGroup",
+   "label": "Example Group",
+   "wells": [ "A1", "B2", "C5", "D9" ]
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+       </tr>
+       <tr>
+          <td valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td><b>Well Set</b></td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table border="0">
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">WellSet {
+   name: 'Example Set',
+   wells: TypedHashSet {
+      values: {
+         A1: Well {
+            base: 26,
+            row: 0,
+            column: 1,
+            data: [ 1, 2, 3, 4 ] },
+         B2: Well {
+            base: 26,
+            row: 1,
+            column: 2,
+            data: [ 5, 6, 7, 8 ]
+         }
+      },
+      type: 'Well'
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">{
+   "name": "Example Set",
+   "wells": {
+      "values": {
+         "A1": {
+            "base": 26,
+            "row": 0,
+            "column": 1,
+            "data": [ 1, 2, 3, 4 ]
+         },
+         "B2": {
+            "base": 26,
+            "row": 1,
+            "column": 2,
+            "data": [ 5, 6, 7, 8 ]
+         }
+      },
+      "type": "Well"
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">{
+   "type": "WellSet",
+   "label": "Example Set",
+   "wells": {
+      "A1": {
+         "row": 0,
+         "column": 1,
+         "data": [ 1, 2, 3, 4 ]
+      },
+      "B2": {
+         "row": 1,
+         "column": 2,
+         "data": [ 5, 6, 7, 8 ]
+      }
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+       </tr>
+       <tr>
+          <td valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td><b>Plate</b></td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table border="0">
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">Plate {
+   plateType: 4,
+   rows: 8,
+   columns: 12,
+   groups: TypedHashSet {
+      values: {
+         group: WellGroup {
+            groupName: 'Example Group',
+            wells: TypedHashSet {
+               values: {
+                  A1: 'A1',
+                  B2: 'B2'
+               },
+               type: 'String'
+            }
+         }
+      },
+      type: 'WellGroup'
+   },
+   name: 'Example Plate',
+   wells: TypedHashSet {
+      values: {
+         A1: Well {
+            base: 26,
+            row: 0,
+            column: 1,
+            data: [ 1, 2, 3, 4 ]
+         },
+         B2: Well {
+            base: 26,
+            row: 1,
+            column: 2,
+            data: [ 5, 6, 7, 8 ]
+         },
+         C5: Well {
+            base: 26,
+            row: 2,
+            column: 5,
+            data: [ 9, 10, 11, 12 ]
+         }
+      },
+      type: 'Well'
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">{
+   "plateType": 4,
+   "rows": 8,
+   "columns": 12,
+   "groups": {
+      "values": {
+         group: {
+            "groupName": "Example Group",
+            "wells": {
+               "values": {
+                  "A1": "A1",
+                  "B2": "B2"
+               },
+               "type": "String"
+            }
+         }
+      },
+      "type": "WellGroup"
+   },
+   "name": "Example Plate",
+   "wells": {
+      "values": {
+         "A1": {
+            "base": 26,
+            "row": 0,
+            "column": 1,
+            "data": [ 1, 2, 3, 4 ]
+         },
+         "B2": {
+            "base": 26,
+            "row": 1,
+            "column": 2,
+            "data": [ 5, 6, 7, 8 ]
+         },
+         "C5": {
+            "base": 26,
+            "row": 2,
+            "column": 5,
+            "data": [ 9, 10, 11, 12 ]
+         }
+      },
+      "type": "Well"
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">{
+   "type": "Plate",
+   "label": "Example Plate",
+   "rows": 8,
+   "columns": 12,
+   "descriptor": "96-Well",
+   "groups": {
+      "Example Group": [ "A1", "B2" ]
+   },
+   "wells": {
+      "A1": {
+         "row": 0,
+         "column": 1,
+         "data": [ 1, 2, 3, 4 ]
+      },
+      "B2": {
+         "row": 1,
+         "column": 2,
+         "data": [ 5, 6, 7, 8 ]
+      },
+      "C5": {
+         "row": 2,
+         "column": 5,
+         "data": [ 9, 10, 11, 12 ]
+      }
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+       </tr>
+       <tr>
+          <td valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td><b>Stack</b></td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table border="0">
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">Stack {
+   plateType: 4,
+   rows: 8,
+   columns: 12,
+   name: 'Test Stack',
+   plates: TypedHashSet {
+      values: {
+	    Plate {
+	       plateType: 4,
+	       rows: 8,
+	       columns: 12,
+	       groups: TypedHashSet {
+	          values: {
+		     group: WellGroup {
+		        groupName: 'Example Group',
+		        wells: TypedHashSet {
+		           values: {
+		              A1: 'A1',
+		              B2: 'B2'
+		           },
+		           type: 'String'
+		        }
+		     }
+	          },
+	          type: 'WellGroup'
+	       },
+	       name: 'Example Plate 1',
+	       wells: TypedHashSet {
+	          values: {
+		     A1: Well {
+		        base: 26,
+		        row: 0,
+		        column: 1,
+		        data: [ 1, 2, 3, 4 ]
+		     },
+		     B2: Well {
+		        base: 26,
+		        row: 1,
+		        column: 2,
+		        data: [ 5, 6, 7, 8 ]
+		     },
+		     C5: Well {
+		        base: 26,
+		        row: 2,
+		        column: 5,
+		        data: [ 9, 10, 11, 12 ]
+		     }
+	          },
+	          type: 'Well'
+	       }
+	    },
+	    Plate {
+	       plateType: 4,
+	       rows: 8,
+	       columns: 12,
+	       groups: TypedHashSet {
+	          values: {
+		     group: WellGroup {
+		        groupName: 'Example Group',
+		        wells: TypedHashSet {
+		           values: {
+		              B2: 'B2',
+		              C5: 'C5'
+		           },
+		           type: 'String'
+		        }
+		     }
+	          },
+	          type: 'WellGroup'
+	       },
+	       name: 'Example Plate 1',
+	       wells: TypedHashSet {
+	          values: {
+		     A1: Well {
+		        base: 26,
+		        row: 0,
+		        column: 1,
+		        data: [ 13, 14, 15, 16 ]
+		     },
+		     B2: Well {
+		        base: 26,
+		        row: 1,
+		        column: 2,
+		        data: [ 17, 18, 19, 20 ]
+		     },
+		     C5: Well {
+		        base: 26,
+		        row: 2,
+		        column: 5,
+		        data: [ 21, 22, 23, 24 ]
+		     }
+	          },
+	          type: 'Well'
+	       }
+	    }
+      },
+      type: 'Plate'
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">{
+   "plateType": 4,
+   "rows": 8,
+   "columns": 12,
+   "name": "Test Stack",
+   "plates": {
+      "values": {
+         "plateType": 4,
+         "rows": 8,
+         "columns": 12,
+         "groups": {
+            "values": {
+               "group": {
+                  "groupName": "Example Group",
+                  "wells": {
+                    "values": {
+                        "A1": "A1",
+                        "B2": "B2"
+                     },
+                     "type": "String"
+                  }
+               }
+            },
+            "type": "WellGroup"
+         },
+         "name": "Example Plate 1",
+         "wells": {
+            "values": {
+               "A1": {
+                  "base": 26,
+                  "row": 0,
+                  "column": 1,
+                  "data": [ 1, 2, 3, 4 ]
+               },
+               "B2": {
+                  "base": 26,
+                  "row": 1,
+                  "column": 2,
+                  "data": [ 5, 6, 7, 8 ]
+               }
+            },
+            "type": "Well"
+         }
+      },
+      {
+         "plateType": 4,
+         "rows": 8,
+         "columns": 12,
+         "groups": {
+            "values": {
+               "group": {
+                  "groupName": "Example Group",
+                  "wells": {
+                     "values": {
+                        "A1": "A1",
+                        "B2": "B2"
+                     },
+                     "type": "String"
+                  }
+               }
+            },
+            "type": "WellGroup"
+         },
+         "name": "Example Plate 1",
+         "wells": {
+            "values": {
+               "A1": {
+                  "base": 26,
+                  "row": 0,
+                  "column": 1,
+                  "data": [ 9, 10, 11, 12 ]
+               },
+               "B2": {
+                  "base": 26,
+                  "row": 1,
+                  "column": 2,
+                  "data": [ 13, 14, 15, 16 ]
+               }
+            },
+            "type": "Well"
+         }
+      },
+      "type": "Plate"
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+          <td style="font-size: 70%" valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                   <td>
+                      <pre style="margin: 0; display: inline;">{
+   "type": "Stack",
+   "label": "Test Stack",
+   "rows": 8,
+   "columns": 12,
+   "descriptor": "96-Well",
+   "plates": {
+      "Example Plate 1": {
+         "label": "Example Plate 1",
+         "groups": {
+            "Example Group": [ "A1", "B2" ]
+         },
+         "wells": {
+            "A1": {
+               "row": 0,
+               "column": 1,
+               "data": [ 1, 2, 3, 4 ]
+            },
+            "B2": {
+               "row": 1,
+               "column": 2,
+               "data": [ 5, 6, 7, 8 ]
+            }
+         }
+      },
+      "Example Plate 2": {
+         "label": "Example Plate 2",
+         "groups": {
+            "Example Group": [ "C5", "D9" ]
+         },
+         "wells": {
+            "C5": {
+               "row": 2,
+               "column": 5,
+               "data": [ 9, 10, 11, 12 ]
+            },
+            "D9": {
+               "row": 3,
+               "column": 9,
+               "data": [ 13, 14, 15, 16 ]
+            }
+         }
+      }
+   }
+}</pre>
+                   </td>
+                </tr>
+             </table>
+          </td>
+       </tr>
+       <tr>
+          <td valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                </tr>
+             </table>
+          </td>
+          <td valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                </tr>
+             </table>
+          </td>
+          <td valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                </tr>
+             </table>
+          </td>
+          <td valign="top">
+             <table>
+                <tr>
+                   <div style="border-bottom: 1px solid black; margin-bottom: 10px;"></div>
+                </tr>
+             </table>
+          <td>
+       </tr>
+    </table>
+
+   <h2 id="XML">XML IO</h2>
+
+   <p>
+      The MicroXML class formats stack, plate, well set and well objects into a
+      condensed and easy to read XML format. Wells, well groups and plates are
+      housed within typed hash set objects. This class converts the hash sets to
+      simple objects which are easier to read and parse.
+   </p>
+
+   <b>Examples of XML Output:</b>
+
+   <table class="mytable" cellspacing="10px" style="text-align:left; margin: 20px; margin-top: 0px;">
+      <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Well</b></div></th>
+      <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Well Group</b></div></th>
+      <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Well Set</b></div></th>
+      <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Plate</b></div></th>
+      <th><div style="border-bottom: 1px solid black; padding-bottom: 5px; padding-top: 18px;"><b>Stack</b></div></th>
+      <tr>
+         <td  style="font-size: 70%" valign="top">
+            <table border="0">
+               <tr>
+                  <td style="padding-top: 7px;">
+                  <pre style="margin: 0; display: inline;">&lt;WELL&gt;
+   &lt;INDEX&gt;A1&lt;/INDEX&gt;
+   &lt;ROW&gt;0&lt;/ROW&gt;
+   &lt;COLUMN&gt;1&lt;/COLUMN&gt;
+   &lt;DATA&gt;
+      &lt;VALUE&gt;1&lt;/VALUE&gt;
+      &lt;VALUE&gt;2&lt;/VALUE&gt;
+      &lt;VALUE&gt;3&lt;/VALUE&gt;
+      &lt;VALUE&gt;4&lt;/VALUE&gt;
+   &lt;/DATA&gt;
+&lt;/WELL&gt;</pre>
+                  </td>
+               </tr>
+            </table>
+         </td>
+         <td  style="font-size: 70%" valign="top">
+            <table border="0">
+               <tr>
+                  <td style="padding-top: 7px;">
+                  <pre style="margin: 0; display: inline;">&lt;WELLGROUP&gt;
+   &lt;LABEL&gt;Group&lt;/LABEL&gt;
+   &lt;WELLS&gt;
+      &lt;INDEX&gt;A1&lt;/INDEX&gt;
+      &lt;INDEX&gt;B2&lt;/INDEX&gt;
+      &lt;INDEX&gt;C5&lt;/INDEX&gt;
+      &lt;INDEX&gt;D9&lt;/INDEX&gt;
+   &lt;/WELLS&gt;
+&lt;/WELLGROUP&gt;</pre>
+                  </td>
+               </tr>
+            </table>
+         </td>
+         <td  style="font-size: 70%" valign="top">
+            <table border="0">
+               <tr>
+                  <td style="padding-top: 7px;">
+                  <pre style="margin: 0; display: inline;">&lt;WELLSET&gt;
+   &lt;LABEL&gt;Example Set&lt;/LABEL&gt;
+   &lt;WELLS&gt;
+      &lt;WELL&gt;
+         &lt;INDEX&gt;A1&lt;/INDEX&gt;
+         &lt;ROW&gt;0&lt;/ROW&gt;
+         &lt;COLUMN&gt;1&lt;/COLUMN&gt;
+         &lt;DATA&gt;
+            &lt;VALUE&gt;1&lt;/VALUE&gt;
+            &lt;VALUE&gt;2&lt;/VALUE&gt;
+            &lt;VALUE&gt;3&lt;/VALUE&gt;
+            &lt;VALUE&gt;4&lt;/VALUE&gt;
+         &lt;/DATA&gt;
+      &lt;/WELL&gt;
+      &lt;WELL&gt;
+         &lt;INDEX&gt;B2&lt;/INDEX&gt;
+         &lt;ROW&gt;1&lt;/ROW&gt;
+         &lt;COLUMN&gt;2&lt;/COLUMN&gt;
+         &lt;DATA&gt;
+            &lt;VALUE&gt;5&lt;/VALUE&gt;
+            &lt;VALUE&gt;6&lt;/VALUE&gt;
+            &lt;VALUE&gt;7&lt;/VALUE&gt;
+            &lt;VALUE&gt;8&lt;/VALUE&gt;
+         &lt;/DATA&gt;
+      &lt;/WELL&gt;
+   &lt;/WELLS&gt;
+&lt;/WELLSET&gt;</pre>
+                  </td>
+               </tr>
+            </table>
+         </td>
+         <td style="font-size: 70%" valign="top">
+            <table>
+               <tr>
+                  <td>
+                  <pre style="margin: 0; display: inline;">&lt;PLATE&gt;
+   &lt;LABEL&gt;Example Plate&lt;/LABEL&gt;
+   &lt;ROWS&gt;8&lt;/ROWS&gt;
+   &lt;COLUMNS&gt;12&lt;/COLUMNS&gt;
+   &lt;DESCRIPTOR&gt;96-Well&lt;/DESCRIPTOR&gt;
+   &lt;WELLGROUPS&gt;
+      &lt;WELLGROUP&gt;
+         &lt;LABEL&gt;Group&lt;/LABEL&gt;
+         &lt;WELLS&gt;
+            &lt;INDEX&gt;A1&lt;/INDEX&gt;
+            &lt;INDEX&gt;B2&lt;/INDEX&gt;
+         &lt;/WELLS&gt;
+      &lt;/WELLGROUP&gt;
+   &lt;/WELLGROUPS&gt;
+   &lt;WELLS&gt;
+      &lt;WELL&gt;
+         &lt;INDEX&gt;A1&lt;/INDEX&gt;
+         &lt;ROW&gt;0&lt;/ROW&gt;
+         &lt;COLUMN&gt;1&lt;/COLUMN&gt;
+         &lt;DATA&gt;
+            &lt;VALUE&gt;1&lt;/VALUE&gt;
+            &lt;VALUE&gt;2&lt;/VALUE&gt;
+            &lt;VALUE&gt;3&lt;/VALUE&gt;
+            &lt;VALUE&gt;4&lt;/VALUE&gt;
+         &lt;/DATA&gt;
+      &lt;/WELL&gt;
+      &lt;WELL&gt;
+         &lt;INDEX&gt;B2&lt;/INDEX&gt;
+         &lt;ROW&gt;1&lt;/ROW&gt;
+         &lt;COLUMN&gt;2&lt;/COLUMN&gt;
+         &lt;DATA&gt;
+            &lt;VALUE&gt;5&lt;/VALUE&gt;
+            &lt;VALUE&gt;6&lt;/VALUE&gt;
+            &lt;VALUE&gt;7&lt;/VALUE&gt;
+            &lt;VALUE&gt;8&lt;/VALUE&gt;
+         &lt;/DATA&gt;
+      &lt;/WELL&gt;
+   &lt;/WELLS&gt;
+&lt;/PLATE&gt;</pre>
+                  </td>
+               </tr>
+            </table>
+         </td>
+         <td style="font-size: 70%" valign="top">
+            <table>
+               <tr>
+                  <td style="padding-top: 7px;">
+                  <pre style="margin: 0; display: inline;">&lt;STACK&gt;
+   &lt;LABEL&gt;Test Stack&lt;/LABEL&gt;
+   &lt;ROWS&gt;8&lt;/ROWS&gt;
+   &lt;COLUMNS&gt;12&lt;/COLUMNS&gt;
+   &lt;DESCRIPTOR&gt;96-Well&lt;/DESCRIPTOR&gt;
+   &lt;PLATES&gt;
+      &lt;PLATE&gt;
+         &lt;LABEL&gt;Example Plate&lt;/LABEL&gt;
+         &lt;ROWS&gt;8&lt;/ROWS&gt;
+         &lt;COLUMNS&gt;12&lt;/COLUMNS&gt;
+         &lt;DESCRIPTOR&gt;96-Well&lt;/DESCRIPTOR&gt;
+         &lt;WELLGROUPS&gt;
+            &lt;WELLGROUP&gt;
+               &lt;LABEL&gt;Group&lt;/LABEL&gt;
+               &lt;WELLS&gt;
+                  &lt;INDEX&gt;A1&lt;/INDEX&gt;
+                  &lt;INDEX&gt;B2&lt;/INDEX&gt;
+               &lt;/WELLS&gt;
+            &lt;/WELLGROUP&gt;
+         &lt;/WELLGROUPS&gt;
+         &lt;WELLS&gt;
+            &lt;WELL&gt;
+               &lt;INDEX&gt;A1&lt;/INDEX&gt;
+               &lt;ROW&gt;0&lt;/ROW&gt;
+               &lt;COLUMN&gt;1&lt;/COLUMN&gt;
+               &lt;DATA&gt;
+                  &lt;VALUE&gt;1&lt;/VALUE&gt;
+                  &lt;VALUE&gt;2&lt;/VALUE&gt;
+                  &lt;VALUE&gt;3&lt;/VALUE&gt;
+                  &lt;VALUE&gt;4&lt;/VALUE&gt;
+               &lt;/DATA&gt;
+            &lt;/WELL&gt;
+            &lt;WELL&gt;
+               &lt;INDEX&gt;B2&lt;/INDEX&gt;
+               &lt;ROW&gt;1&lt;/ROW&gt;
+               &lt;COLUMN&gt;2&lt;/COLUMN&gt;
+               &lt;DATA&gt;
+                  &lt;VALUE&gt;5&lt;/VALUE&gt;
+                  &lt;VALUE&gt;6&lt;/VALUE&gt;
+                  &lt;VALUE&gt;7&lt;/VALUE&gt;
+                  &lt;VALUE&gt;8&lt;/VALUE&gt;
+               &lt;/DATA&gt;
+            &lt;/WELL&gt;
+         &lt;/WELLS&gt;
+      &lt;/PLATE&gt;
+      &lt;PLATE&gt;
+         &lt;LABEL&gt;Example Plate 2&lt;/LABEL&gt;
+         &lt;ROWS&gt;8&lt;/ROWS&gt;
+         &lt;COLUMNS&gt;12&lt;/COLUMNS&gt;
+         &lt;DESCRIPTOR&gt;96-Well&lt;/DESCRIPTOR&gt;
+         &lt;WELLGROUPS&gt;
+            &lt;WELLGROUP&gt;
+               &lt;LABEL&gt;Group&lt;/LABEL&gt;
+               &lt;WELLS&gt;
+                  &lt;INDEX&gt;C5&lt;/INDEX&gt;
+                  &lt;INDEX&gt;D9&lt;/INDEX&gt;
+               &lt;/WELLS&gt;
+            &lt;/WELLGROUP&gt;
+         &lt;/WELLGROUPS&gt;
+         &lt;WELLS&gt;
+            &lt;WELL&gt;
+               &lt;INDEX&gt;C5&lt;/INDEX&gt;
+               &lt;ROW&gt;2&lt;/ROW&gt;
+               &lt;COLUMN&gt;5&lt;/COLUMN&gt;
+               &lt;DATA&gt;
+                  &lt;VALUE&gt;9&lt;/VALUE&gt;
+                  &lt;VALUE&gt;10&lt;/VALUE&gt;
+                  &lt;VALUE&gt;11&lt;/VALUE&gt;
+                  &lt;VALUE&gt;12&lt;/VALUE&gt;
+               &lt;/DATA&gt;
+            &lt;/WELL&gt;
+            &lt;WELL&gt;
+               &lt;INDEX&gt;D9&lt;/INDEX&gt;
+               &lt;ROW&gt;3&lt;/ROW&gt;
+               &lt;COLUMN&gt;9&lt;/COLUMN&gt;
+               &lt;DATA&gt;
+                  &lt;VALUE&gt;13&lt;/VALUE&gt;
+                  &lt;VALUE&gt;14&lt;/VALUE&gt;
+                  &lt;VALUE&gt;15&lt;/VALUE&gt;
+                  &lt;VALUE&gt;16&lt;/VALUE&gt;
+               &lt;/DATA&gt;
+            &lt;/WELL&gt;
+         &lt;/WELLS&gt;
+      &lt;/PLATE&gt;
+   &lt;/PLATES&gt;
+&lt;/STACK&gt;</pre>
+                  </td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+   </table>
+</div>
+   <div style="position: fixed; top:0; bottom:0; left:0; width: 250px; background-color: #fffae6; padding-right: 15px;">
+      <ul style="padding-left: 15px; list-style-type: none;">
+         <li style="margin-bottom: 15px;">
+            <a style="text-decoration: none;" href="#Home">Home</a>
+         </li>
+         <li style="margin-bottom: 5px;">
+            <a style="text-decoration: none;" href="#Architecture">MicroFlex Architecture</a>
+            <ul style="padding-left: 15px; list-style-type: none;">
+               <a style="text-decoration: none;" href="#Introduction"><li style="margin-bottom: 5px; margin-top: 5px;">Introduction</li></a>
+               <a style="text-decoration: none;" href="#Diagram"><li style="margin-bottom: 15px;">Quick Reference Diagram</li></a>
+            </ul>
+         </li>
+         <li style="margin-bottom: 5px;">
+            <a style="text-decoration: none;" href="#Usage">MicroFlex Usage</a>
+            <ul style="padding-left: 15px; list-style-type: none;">
+               <a style="text-decoration: none;" href="#Importing"><li style="margin-bottom: 5px; margin-top: 5px;">Importing MicroFlex</li></a>
+               <a href="#Instantiating"><li style="margin-bottom: 5px;">Instantiating MicroFlex Objects</li></a>
+               <a style="text-decoration: none;" href="#Using"><li style="margin-bottom: 15px;">Using Well Groups</li></a>
+            </ul>
+         </li>
+         <li style="margin-bottom: 5px;">
+            <a style="text-decoration: none;" href="#Operations">MicroFlex Operations</a>
+            <ul style="padding-left: 15px; list-style-type: none;">
+               <a style="text-decoration: none;" href="#Strict"><li style="margin-bottom: 5px; margin-top: 5px;">Standard vs Strict</li></a>
+               <a style="text-decoration: none;" href="#Binary"><li style="margin-bottom: 5px;">Binary Operations</li></a>
+               <a style="text-decoration: none;" href="#Unary"><li style="margin-bottom: 5px;">Unary Operations</li></a>
+               <a style="text-decoration: none;" href="#Shift"><li style="margin-bottom: 5px;">Shift Operations</li></a>
+               <a style="text-decoration: none;" href="#CustomMath"><li style="margin-bottom: 15px;">Custom Math Operations</li></a>
+            </ul>
+         </li>
+         <li style="margin-bottom: 5px;">
+            <a style="text-decoration: none;" href="#Statistics">MicroFlex Statistics</a>
+            <ul style="padding-left: 15px; list-style-type: none;">
+               <a style="text-decoration: none;" href="#Aggregated"><li style="margin-bottom: 5px; margin-top: 5px;">Standard vs Aggregated</li></a>
+               <a style="text-decoration: none;" href="#Weighted"><li style="margin-bottom: 5px;">Weighted Statistics</li></a>
+               <a style="text-decoration: none;" href="#Quantile"><li style="margin-bottom: 5px;">Quantile Statistics</li></a>
+               <a style="text-decoration: none;" href="#CustomStat"><li style="margin-bottom: 15px;">Custom Statistical Operations</li></a>
+            </ul>
+         </li>
+         <li style="margin-bottom: 5px;">
+            <a style="text-decoration: none;" href="#IO">MicroFlex IO</a>
+            <ul style="padding-left: 15px; list-style-type: none;">
+               <a style="text-decoration: none;" href="#JSON"><li style="margin-bottom: 5px; margin-top: 5px;">JSON IO</li></a>
+               <a style="text-decoration: none;" href="#XML"><li style="margin-bottom: 15px;">XML IO</li></a>
+            </ul>
+         </li>
+      </ul>
+   </div>
+</div>
+   </body>
+</html>

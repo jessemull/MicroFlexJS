@@ -11,7 +11,7 @@ npm install --save-dev microflex
 
 ### Quick Start:
 
-##### [Quick Start Tutorial](http://www.jessemull.com)
+##### [Quick Start Tutorial](http://www.jessemull.com/microflexjs/quickstart.html)
 
 ### Documentation:
 
